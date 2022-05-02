@@ -1,0 +1,27 @@
+﻿@page "/koansteacher"
+
+<h3>KoansPage</h3>
+<div>
+<div @onclick="(()=>activeTab = Enums.TabKoansTeacher.Koans)">Мои коаны</div>
+<div @onclick="(()=>activeTab = Enums.TabKoansTeacher.AddKoan)">Добавить коан</div>
+</div>
+
+@switch(activeTab)
+{
+    case Enums.TabKoansTeacher.Koans:
+     <ListKoansComp></ListKoansComp>
+    break;
+    case Enums.TabKoansTeacher.AddKoan:
+    <CreateEditKoan Koan="new Koan()"></CreateEditKoan>
+    break;
+
+}
+
+
+
+@code {
+ 
+    public Enums.TabKoansTeacher activeTab { get; set; } = Enums.TabKoansTeacher.Koans;
+
+
+}

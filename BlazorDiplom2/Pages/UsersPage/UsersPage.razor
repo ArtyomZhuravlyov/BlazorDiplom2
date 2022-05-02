@@ -1,0 +1,22 @@
+﻿@page "/Users"
+<h3>UsersPage</h3>
+<div class="btn" @onclick="(()=>activeTab = Enums.TabUsers.Users)">
+      Пользователи
+</div>
+<div class="btn" @onclick="(()=>activeTab = Enums.TabUsers.AddUser)">
+     Добавить пользователя
+</div>
+
+@switch(activeTab)
+{
+    case Enums.TabUsers.Users:
+     <ListUsersComp></ListUsersComp>
+    break;
+    case Enums.TabUsers.AddUser:
+    <CreateEditUsersComp UserModelForm="new StudentModelForm()"></CreateEditUsersComp>
+    break;
+}
+
+@code {
+     public Enums.TabUsers activeTab { get; set; } = Enums.TabUsers.Users;
+}

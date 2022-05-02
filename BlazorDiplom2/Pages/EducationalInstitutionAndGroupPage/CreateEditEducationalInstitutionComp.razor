@@ -1,0 +1,48 @@
+﻿@inject DB _db;
+<h3>EducationalInstitutionCreateEditComp</h3>
+@if (edit)
+{
+    <button @onclick="ShowList">Назад</button>
+}
+
+<EditForm Model="EducationalInstitution" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator />
+        <InputText  class="form-control" @bind-Value="EducationalInstitution.FullName"></InputText>
+        <InputText  class="form-control" @bind-Value="EducationalInstitution.ShortName"></InputText>
+        <button>@messageBtn</button>
+</EditForm>
+@code {
+
+    [Parameter] public EducationalInstitution EducationalInstitution { get; set; }
+
+    [Parameter] public EventCallback ShowList { get; set; }
+
+    private bool edit;
+
+    private string messageBtn;
+
+    protected override void OnInitialized() 
+    {
+        edit = EducationalInstitution.Id != 0;
+        messageBtn = edit ? "Изменить"  : "Добавить";
+    }
+
+    private void OnValidSubmit()
+    {
+        if (edit) //если изменяем
+        {
+            var changeE = _db.EducationalInstitutions.First(x => x.Id == EducationalInstitution.Id);
+            changeE.FullName = EducationalInstitution.FullName;
+            changeE.ShortName = EducationalInstitution.ShortName;
+        }
+        else //если добавляем
+        {
+            _db.EducationalInstitutions.Add(EducationalInstitution);
+
+        }
+        _db.SaveChanges();
+        EducationalInstitution = new();
+    }
+
+    //  [Parameter] public EventCallback<TeacherModelForm> AddTeacher { get; set; }
+}

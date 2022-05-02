@@ -1,0 +1,94 @@
+﻿@using BlazorDiplom2.ModelForm
+@using Microsoft.EntityFrameworkCore
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.AspNetCore.Identity.UI.Services;
+
+@inject RoleManager<IdentityRole> _roleManager;
+@inject UserManager<AspNetUsers> _userManager;
+@inject IUserStore<AspNetUsers> _userStore;
+@inject DB _db;
+
+<h3>NewStudent</h3>
+<div>@mes</div>
+
+<CreateUser StudentModelForm="new StudentModelForm()" CurrentRole="Enums.Roles.Student" Refresh="RefreshMe"></CreateUser>
+@if (displayEditModal)
+{
+    <EditUser StudentModelForm="changedStudent" CurrentRole="Enums.Roles.Student" CloseModal="CloseModal" Refresh="RefreshMe"> </EditUser>
+}
+
+@if (students2 == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @foreach (var student in students2)
+    {
+        <div>
+            @student.FirstName
+        </div>
+        <button @onclick="(()=>OpenChangedStudent(student))">Изменить</button>
+        <button class="btn btn-danger" @onclick="(()=>DelStudent(student))">Удалить</button>
+    }
+}
+
+@code {
+
+    bool displayEditModal = false;
+    StudentModelForm changedStudent = new();
+    string mes = "";
+
+    bool shouldRender = true;
+    List<Group> groups;
+
+    IEnumerable<Student> students2;
+
+    protected override async Task OnInitializedAsync() =>  students2 = await _db.GetStudentsAsync();
+
+
+    public void CloseModal()
+    {
+        displayEditModal = false;
+    }
+
+    protected override bool ShouldRender()
+    {
+        return shouldRender;
+    }
+
+    private void RefreshMe()
+    {
+        StateHasChanged();
+    }
+
+    private async Task OpenChangedStudent(Student cStudent)
+    {
+        changedStudent.UserName = cStudent.AspNetUser.UserName;
+        changedStudent.Email = cStudent.AspNetUser.Email;
+        changedStudent.LastName = cStudent.LastName;
+        changedStudent.FirstName = cStudent.FirstName;
+         changedStudent.FatherName = cStudent.FatherName;
+        changedStudent.Group = cStudent.Group.Name;
+        changedStudent.IdUser = cStudent.AspNetUsersId;
+        changedStudent.Password = "";
+        displayEditModal = true;
+
+    }
+
+    private async Task<bool> DelStudent(Student delStudent)
+    {
+        try
+        {
+            shouldRender = false;
+            await _userManager.DeleteAsync(delStudent.AspNetUser);
+            shouldRender = true;
+            return true;
+        }
+        catch (Exception exp)
+        {
+            return false;
+        }
+    }
+}

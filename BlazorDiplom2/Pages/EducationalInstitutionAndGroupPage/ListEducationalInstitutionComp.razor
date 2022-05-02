@@ -1,0 +1,53 @@
+﻿@using Microsoft.EntityFrameworkCore
+@inject DB _db;
+<h3>Universities</h3>
+@if(showList)
+{
+    <div>
+    @foreach(var item in educationalInstitutions)
+    {
+          <div>@item.FullName</div>
+          <div>@item.ShortName</div>
+          <button @onclick="(()=>OpenChanged(item))">Изменить</button>
+          <button class="btn btn-danger" @onclick="(()=>Delete(item))">Удалить</button>
+    }
+  
+    </div>
+}
+else
+{
+    <CreateEditEducationalInstitutionComp ShowList="ShowList" EducationalInstitution="editEducation"></CreateEditEducationalInstitutionComp>
+}
+
+@code {
+    IEnumerable<EducationalInstitution> educationalInstitutions;
+    EducationalInstitution editEducation;
+    bool showList = true;
+
+
+    //protected override async Task OnInitializedAsync() =>  students2 = await _db.GetStudentsAsync();
+
+    protected override void OnInitialized() =>  educationalInstitutions =  _db.EducationalInstitutions;
+
+    private void Delete(EducationalInstitution educationalInstitution)
+    {
+        _db.EducationalInstitutions.Remove(educationalInstitution);
+        _db.Groups.RemoveRange(_db.Groups.Include(x => x.EducationalInstitution)
+        .Where(x => x.EducationalInstitutionId == educationalInstitution.Id));//если нет каскадного удаления
+        _db.SaveChanges();
+    }
+
+    private void ShowList()
+    {
+        showList = true;
+    }
+
+    private void OpenChanged(EducationalInstitution educationalInstitution)
+    {
+        editEducation = educationalInstitution;
+        showList = false;
+        //<CreateEditEducationalInstitutionComp EducationalInstitution="educationalInstitution"></CreateEditEducationalInstitutionComp>
+    }
+
+
+}

@@ -1,0 +1,99 @@
+﻿<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">BlazorDiplom</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="counter">
+                <span class="oi oi-plus" aria-hidden="true"></span> Counter
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="fetchdata">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout">
+                <button id="logout" type="submit" class="nav-link btn btn-link text-dark">Logout</button>
+            </form>
+        </div>
+
+
+        <AuthorizeView Roles="Administrators">
+            @* <AuthorizeView>*@
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="AdminRegister">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> AdminRegister
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="users">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> users
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="loadkoans2">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> loadkoans2
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="EducationalInstitutionAndGroup">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> EducationalInstitutionAndGroup
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="koansteacher">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> koansteacher
+                    </NavLink>
+                </div>
+
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="coursesteacher">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> coursesteacher
+                    </NavLink>
+                </div>
+                     <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="slnkoans">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> slnkoans
+                    </NavLink>
+                </div>
+                  <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="slnkoans2">
+                        <span class="oi oi-list-rich" aria-hidden="true"></span> slnkoans2
+                    </NavLink>
+                </div>
+                
+
+            </Authorized>
+
+
+        </AuthorizeView>
+
+
+
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

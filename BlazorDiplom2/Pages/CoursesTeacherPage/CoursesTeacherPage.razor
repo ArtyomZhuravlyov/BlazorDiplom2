@@ -1,0 +1,30 @@
+﻿@page "/coursesteacher"
+
+<div>
+<div @onclick="(()=>activeTab = Enums.TabCoursesTeacher.Courses)">Мои курсы</div>
+<div @onclick="(()=>activeTab = Enums.TabCoursesTeacher.AddCourse)">Добавить курс</div>
+<div @onclick="(()=>activeTab = Enums.TabCoursesTeacher.AddGroupsToCourse)">Записать группы на курс</div>
+</div>
+
+@switch(activeTab)
+{
+    case Enums.TabCoursesTeacher.Courses:
+     <ListCoursesComp></ListCoursesComp>
+    break;
+    case Enums.TabCoursesTeacher.AddCourse:
+    <CreateEditCoursesComp Course="new Course()"></CreateEditCoursesComp>
+    break;
+    case Enums.TabCoursesTeacher.AddGroupsToCourse: 
+    <NewStudent></NewStudent>
+    break;
+
+}
+
+
+
+@code {
+    //[CascadingParameter]
+    public Enums.TabCoursesTeacher activeTab { get; set; } = Enums.TabCoursesTeacher.Courses;
+
+
+}

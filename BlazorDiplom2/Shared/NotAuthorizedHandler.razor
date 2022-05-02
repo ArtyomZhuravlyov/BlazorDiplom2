@@ -1,0 +1,34 @@
+﻿@inject NavigationManager navigation
+@inject DB _db
+@inject SignInManager<AspNetUsers> _signInManager
+@inject UserManager<AspNetUsers> _userManager
+
+@code {
+
+    public override async Task SetParametersAsync(ParameterView parameters)
+    {
+
+        if (DB.StatusStart)
+        {
+            DB.StatusStart = false;
+            _db.SetDefValue();
+            navigation.NavigateTo("/Identity/Account/Register");
+
+        }
+        else
+        {
+            //await InUserAsync();
+            //var t = _userManager.Users.ToList();
+            await _signInManager.SignInAsync(_userManager.Users.First(x=>x.UserName == "art@mail.ru"), isPersistent: false);
+            navigation.NavigateTo("/");
+        }
+        //   navigation.NavigateTo("/Identity/Account/Login");
+
+        await base.SetParametersAsync(parameters);
+    }
+
+    //private async Task InUserAsync()
+    //{
+    //    await _signInManager.SignInAsync(_db.AspNetUsers.First(x=>x.Id == "1"), isPersistent: false);
+    //}
+}

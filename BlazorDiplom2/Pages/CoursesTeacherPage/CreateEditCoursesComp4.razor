@@ -1,0 +1,304 @@
+﻿@using Microsoft.EntityFrameworkCore
+@inject DB _db;
+@inject UserManager<AspNetUsers> _userManager;
+@inject AuthenticationStateProvider GetAuthenticationStateAsync
+<h3>CreateEditCourse</h3>
+@if (edit)
+{
+    <button @onclick="ShowList">Назад</button>
+}
+<div>@mesError</div>
+
+
+<div>
+    <label>Название</label>
+    <input type="text" @bind="Course.Name" />
+    <label>Описание</label>
+    <input type="text" @bind="Course.Description" />
+
+
+    @foreach (var modul in modules)
+    {
+        <label>Модуль @modules.IndexOf(modul)</label>
+        <button @onclick="(()=>modules.Remove(modul))">X</button>
+        if (listIdModuleInvisible.Contains(modul))
+        {
+            <button @onclick="(()=>ChangeVisibleModule(modul))">раскрыть</button>
+        }
+        else
+        {
+            <button @onclick="(()=>ChangeVisibleModule(modul))">скрыть</button>
+        }
+
+        <div style="@GetVisibleClass(modul)">
+            <label>Название модуля</label>
+            <input type="text" @bind="modul.Name" />
+
+            @foreach (var koanInModule in modul.KoanInModules)
+            {
+                <label>Коан</label>
+                <select @bind="koanInModule.Koan.Name">
+
+                    @if (koanInModule.Koan.Name == null)
+                    {
+                        <option selected value="-1">Выберите коан</option>
+                    }
+
+                    @foreach (var item in koansName)
+                    {
+                        @if (String.Equals(item, koanInModule.Koan.Name,
+                       StringComparison.OrdinalIgnoreCase))
+                        {
+                            <option selected value="@koanInModule.Koan.Name">@koanInModule.Koan.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@item">@item</option>
+                        }
+
+                    }
+
+                </select>
+                <button @onclick="()=>modul.KoanInModules.Remove(koanInModule)">X</button>
+            }
+            <button @onclick="()=>AddEmptyKoanInModule(modul)">Добавить ещё один коан в модуль</button>
+        </div>
+        <div>
+            <label>Тест</label>
+            <label>Время</label>
+            <input type="time" @bind="modul.Test.Time" />
+            <label>Проходной балл</label>
+            <input type="number" @bind="modul.Test.MinScore" />
+            @foreach (var koanInTest in modul.Test.KoanInTests)
+            {
+                <label>Коан</label>
+                <select @bind="koanInTest.Koan.Name">
+                    @if (koanInTest.Koan.Name == null)
+                    {
+                        <option selected value="-1">Выберите коан</option>
+                    }
+
+                    @foreach (var item in koansName)
+                    {
+                        @if (String.Equals(item, koanInTest.Koan.Name,
+                       StringComparison.OrdinalIgnoreCase))
+                        {
+                            <option selected value="@koanInTest.Koan.Name">@koanInTest.Koan.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@item">@item</option>
+                        }
+
+                    }
+                </select>
+                <button @onclick="()=>modul.Test.KoanInTests.Remove(koanInTest)">X</button>
+            }
+            <button @onclick="()=>AddEmptyKoanInTest(modul)">Добавить ещё один коан в тест</button>
+        </div>
+    }
+    <button @onclick="AddEmptyModul">Добавить модуль</button>
+
+    <button type="button" @onclick="OnValidSubmit">@messageBtn</button>
+</div>
+
+
+
+@code {
+
+    [Parameter] public Course Course { get; set; }
+
+    [Parameter] public EventCallback ShowList { get; set; }
+
+    [Parameter] public Teacher Teacher { get; set; }
+
+    private List<Koan> koans = new();
+
+    List<string> koansName = new();
+
+    //private IEnumerable<Module> modules;
+
+    private List<Module> modules;
+
+
+
+    Dictionary<string, KoanInModule> dicStrKoansInModule;
+    Dictionary<string, KoanInModule> dicStrKoansInTestInModule;
+
+
+
+    List<Module> listIdModuleInvisible = new();
+
+    private Test test;
+
+    private bool edit;
+
+    private string messageBtn;
+    private string mesError = "";
+
+    private bool isLoaded;
+
+    protected override async Task OnInitializedAsync()
+    {
+        edit = Course.Id != 0;
+        messageBtn = edit ? "Изменить" : "Добавить";
+        if (!edit)
+        {
+            var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+            var user = authstate.User;
+            var aspUser = await _userManager.GetUserAsync(user);
+            Teacher = _db.Teachers.Include(x => x.AspNetUser).Include(x => x.Koans).First(x => x.AspNetUser == aspUser);
+        }
+        modules = Course.Modules.ToList();
+
+        foreach(var m in modules)
+        {
+            foreach(var km in m.KoanInModules)
+            {
+                km.Koan = km.Koan.Copy();
+                km.Koan.Id = 0;
+            }
+
+            foreach(var kt in m.Test.KoanInTests)
+            {
+                kt.Koan = kt.Koan.Copy();
+                kt.Koan.Id = 0;
+            }
+        }
+
+        koansName = _db.Koans.Where(x => x.TeacherId == Teacher.Id).Select(x=>x.Name).ToList();
+                                                                                                  
+    }
+
+    private void OnValidSubmit()
+    {
+        try
+        {
+
+            if (edit) //если изменяем
+            {
+
+                foreach (var module in modules)
+                {
+ 
+                    module.Priority = modules.IndexOf(module);
+
+                    foreach (var kModule in module.KoanInModules)
+                    {
+                        kModule.Priority = module.KoanInModules.IndexOf(kModule);
+                        kModule.Koan = _db.Koans.First(x => x.Name == kModule.Koan.Name && x.TeacherId == Teacher.Id);
+                    }
+
+                    foreach (var kTest in module.Test.KoanInTests)
+                    {
+                        kTest.Priority = module.Test.KoanInTests.IndexOf(kTest);
+                        kTest.Koan = _db.Koans.First(x => x.Name == kTest.Koan.Name && x.TeacherId == Teacher.Id);
+                    }
+
+                }
+                Course.Modules = modules;
+                var course = _db.Courses.Attach(Course);
+                course.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+
+            }
+            else //если добавляем
+            {
+                foreach (var module in modules)
+                {
+                    module.Priority = modules.IndexOf(module);
+
+                    foreach (var kModule in module.KoanInModules)
+                    {
+                        kModule.Priority = module.KoanInModules.IndexOf(kModule);
+                        kModule.Koan = _db.Koans.First(x => x.Name == kModule.Koan.Name && x.TeacherId == Teacher.Id);
+                    }
+
+                    foreach (var kTest in module.Test.KoanInTests)
+                    {
+                        kTest.Priority = module.Test.KoanInTests.IndexOf(kTest);
+                        kTest.Koan = _db.Koans.First(x => x.Name == kTest.Koan.Name && x.TeacherId == Teacher.Id);
+                    }
+
+                }
+
+                Course.Modules = modules;
+                Course.Teacher = Teacher;
+                _db.Courses.Add(Course);
+
+            }
+            _db.SaveChanges();
+            Course = new Course();
+            modules = new List<Module>();
+
+
+
+        }
+        catch (Exception exp)
+        {
+            mesError = exp.Message;
+        }
+
+    }
+
+    private string GetVisibleClass(Module module)
+    {
+        if (listIdModuleInvisible.Contains(module))
+            return "display: none;";
+        else
+            return "";
+    }
+
+
+
+    private void AddEmptyModul()
+    {
+        KoanInTest koanInTest = new()
+            {
+                Koan = new Koan()
+            };
+
+        Test test = new();
+        test.KoanInTests.Add(koanInTest);
+
+        Module module = new()
+            {
+                Test = test
+            };
+
+        KoanInModule koanInModule = new()
+            {
+                Koan = new Koan()
+            };
+        module.KoanInModules.Add(koanInModule);
+
+        modules.Add(module);
+    }
+
+    private void AddEmptyKoanInModule(Module module)
+    {
+        KoanInModule koanInModule = new()
+            {
+                Koan = new Koan()
+            };
+        module.KoanInModules.Add(koanInModule);
+    }
+
+    private void AddEmptyKoanInTest(Module module)
+    {
+        KoanInTest koanInTest = new()
+            {
+                Koan = new Koan()
+            };
+        module.Test.KoanInTests.Add(koanInTest);
+    }
+
+    private void ChangeVisibleModule(Module module)
+    {
+        if (listIdModuleInvisible.Contains(module))
+            listIdModuleInvisible.Remove(module);
+        else
+            listIdModuleInvisible.Add(module);
+    }
+
+
+}

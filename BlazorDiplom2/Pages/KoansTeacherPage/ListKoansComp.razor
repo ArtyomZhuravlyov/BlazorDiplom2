@@ -1,0 +1,76 @@
+﻿@using Microsoft.EntityFrameworkCore
+@inject DB _db;
+@inject UserManager<AspNetUsers> _userManager;
+@inject AuthenticationStateProvider GetAuthenticationStateAsync
+<h3>ListKoansComp</h3>
+@if(isLoaded)
+{
+    @if(showList)
+{
+    @if(koans!=null)
+    {
+        
+    
+    <div>
+    @foreach(var item in koans)
+    {
+          <div>@item.Name</div>
+          <button @onclick="(()=>OpenChanged(item))">Изменить</button>
+          <button class="btn btn-danger" @onclick="(()=>Delete(item))">Удалить</button>
+    }
+  
+        </div>
+    }
+    else
+    {
+       <div> Loading   </div>
+    }
+}
+else
+{
+    <CreateEditKoan ShowList="ShowList" Koan="editKoan" Teacher="thisTeacher"></CreateEditKoan>
+}
+}
+
+
+@code {
+    IEnumerable<Koan> koans;
+    Koan editKoan;
+    bool showList = true;
+    Teacher thisTeacher;
+    bool isLoaded;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        var user = authstate.User;
+        var aspUser = await _userManager.GetUserAsync(user);
+        thisTeacher = _db.Teachers.Include(x => x.AspNetUser).Include(x=>x.Koans).First(x => x.AspNetUser == aspUser);
+        koans = thisTeacher.Koans;
+        isLoaded = true;
+    }
+
+    private void Delete(Koan delKoan)
+    {
+        thisTeacher.Koans.Remove(delKoan);
+        //_db.Koans.Remove(delKoan);//если нет каскадного удаления и проверить для модуля
+        
+        _db.SaveChanges();
+    }
+
+    private void ShowList()
+    {
+        showList = true;
+    }
+
+    private void OpenChanged(Koan eKoan)
+    {
+        editKoan = eKoan;
+        showList = false;
+       
+    }
+
+
+}

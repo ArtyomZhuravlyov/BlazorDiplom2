@@ -1,0 +1,296 @@
+﻿@using BlazorDiplom2.ModelForm
+@using Microsoft.EntityFrameworkCore
+@inject RoleManager<IdentityRole> _RoleManager;
+@inject UserManager<AspNetUsers> _userManager;
+@inject IUserStore<AspNetUsers> _userStore;
+@inject DB _db;
+
+@if (edit)
+{
+    <button @onclick="ShowList">Назад</button>
+    <select disabled class="form-control" @onchange="@ChangeRole">
+        <option selected value="@Constants.ROLE_STUDENT">@Constants.ROLE_STUDENT</option>
+        <option value="@Constants.ROLE_TEACHER">@Constants.ROLE_TEACHER</option>
+    </select>
+}
+else
+{
+    <select class="form-control" @onchange="@ChangeRole">
+        <option selected value="@Constants.ROLE_STUDENT">@Constants.ROLE_STUDENT</option>
+        <option value="@Constants.ROLE_TEACHER">@Constants.ROLE_TEACHER</option>
+    </select>
+}
+
+
+<div>@mes</div>
+@if (UserModelForm is TeacherModelForm TeacherModelForm)
+{
+
+    <EditForm Model="TeacherModelForm" OnValidSubmit="OnValidSubmitAsync">
+        <DataAnnotationsValidator />
+        <label>teacherModelForm.UserName</label>
+        <InputText class="form-control" @bind-Value="TeacherModelForm.UserName"></InputText>
+        <label>teacherModelForm.Email</label>
+        <InputText class="form-control" @bind-Value="TeacherModelForm.Email"></InputText>
+
+        <label>teacherModelForm.Password</label>
+        <InputText class="form-control" @bind-Value="TeacherModelForm.Password"></InputText>
+
+        <label>teacherModelForm.FirstName</label>
+        <InputText class="form-control" @bind-Value="TeacherModelForm.FirstName"></InputText>
+
+        <label>teacherModelForm.LastName</label>
+        <InputText class="form-control" @bind-Value="TeacherModelForm.LastName"></InputText>
+        <label>teacherModelForm.FatherName</label>
+        <InputText class="form-control" @bind-Value="TeacherModelForm.FatherName"></InputText>
+        <button class="btn btn-primary">@messageBtn</button>
+    </EditForm>
+}
+else if (UserModelForm is StudentModelForm StudentModelForm)
+{
+    <EditForm Model="StudentModelForm" OnValidSubmit="OnValidSubmitAsync">
+        <DataAnnotationsValidator />
+        <label>studentModelForm.UserName</label>
+        <InputText class="form-control" @bind-Value="StudentModelForm.UserName"></InputText>
+        <label>studentModelForm.Email</label>
+        <InputText class="form-control" @bind-Value="StudentModelForm.Email"></InputText>
+
+        <label>studentModelForm.Password</label>
+        <InputText class="form-control" @bind-Value="StudentModelForm.Password"></InputText>
+
+        <label>studentModelForm.FirstName</label>
+        <InputText class="form-control" @bind-Value="StudentModelForm.FirstName"></InputText>
+
+        <label>studentModelForm.LastName</label>
+        <InputText class="form-control" @bind-Value="StudentModelForm.LastName"></InputText>
+        <label>studentModelForm.FatherName</label>
+        <InputText class="form-control" @bind-Value="StudentModelForm.FatherName"></InputText>
+
+        <label>studentModelForm.EducationalInstitution</label>
+        <InputSelect class="form-control"
+                 ValueExpression="@(()=>StudentModelForm.EducationalInstitution)"
+                 Value="@StudentModelForm.EducationalInstitution"
+                 ValueChanged="@((string value) => OnChangedEduc(value))">
+            @*<option selected value="@StudentModelForm.EducationalInstitution">@StudentModelForm.EducationalInstitution</option>*@
+            @if (StudentModelForm.EducationalInstitution == null)
+        {
+            <option selected value="-1">Выберите учебное заведение</option>
+        }
+
+        @foreach (var item in educationalInstitutions)
+        {
+            @if (String.Equals(item.FullName, StudentModelForm.EducationalInstitution,
+           StringComparison.OrdinalIgnoreCase))
+            {
+                <option selected value="@StudentModelForm.EducationalInstitution">@StudentModelForm.EducationalInstitution</option>
+            }
+            else
+            {
+                <option value="@item.FullName">@item.FullName</option>
+            }
+
+        }
+    </InputSelect>
+
+    <InputSelect class="form-control" @bind-Value="StudentModelForm.Group">
+        @if (StudentModelForm.Group == null)
+            {
+            <option selected value="-1">Выберите группу</option>
+            }
+    
+        @foreach (var item in groups)
+            {
+            @if (String.Equals(item.Name, StudentModelForm.Group,
+           StringComparison.OrdinalIgnoreCase))
+                {
+                <option selected value="@StudentModelForm.Group">@StudentModelForm.Group</option>
+                }
+                else
+                {
+                <option value="@item.Name">@item.Name</option>
+                }
+         
+            }
+    </InputSelect>
+    <button class="btn btn-primary">@messageBtn</button>
+</EditForm>
+}
+
+
+@code {
+    [Parameter] public UserModelForm UserModelForm { get; set; }
+
+    [Parameter] public EventCallback ShowList { get; set; }
+
+    [Parameter] public EventCallback Refresh { get; set; }
+
+    private string selectRol { get; set; } = Constants.ROLE_STUDENT;
+
+    private bool edit;
+
+    private string messageBtn;
+
+
+
+    string mes = "";
+
+    //IEnumerable<EducationalInstitution> educationalInstitutions;
+    //IEnumerable<Group> groups;
+    List<EducationalInstitution> educationalInstitutions;
+    List<Group> groups = new();
+
+    protected override void OnInitialized()
+    {
+        edit = UserModelForm.IdUser != null; //!= "0";
+        messageBtn = edit ? Constants.BTN_CHANGE : Constants.BTN_ADD;
+        educationalInstitutions = _db.EducationalInstitutions.Include(x => x.Groups).ToList();
+
+        if (UserModelForm is StudentModelForm studentModelForm && studentModelForm.Group != null)
+            groups = educationalInstitutions.First(x => x.FullName == studentModelForm.EducationalInstitution).Groups.ToList();
+        //groups = _db.Groups.ToList();
+    }
+
+    private void ChangeRole(ChangeEventArgs eventArgs)
+    {
+        if (eventArgs.Value.ToString().Equals(Constants.ROLE_STUDENT))
+            UserModelForm = new StudentModelForm();
+        else
+            UserModelForm = new TeacherModelForm();
+    }
+
+    private Task OnChangedEduc(string value)
+    {
+        // Assign the selected value to the Model
+        ((StudentModelForm)UserModelForm).EducationalInstitution = value;
+        //groups = _db.Groups.Include(x => x.EducationalInstitution).Where(x => x.EducationalInstitution.Id.ToString() == value).ToList();
+        groups = educationalInstitutions.First(x => x.FullName == ((StudentModelForm)UserModelForm).EducationalInstitution).Groups.ToList();
+        return Task.CompletedTask;
+    }
+
+    private async Task OnValidSubmitAsync()
+    {
+
+        var userRepeat = (await _userManager.FindByNameAsync(UserModelForm.UserName));
+
+        if (userRepeat != null && userRepeat.Id != UserModelForm.IdUser) // userRepeat.Id != UserModelForm.IdUser это важно при редактированнии пользователя
+        {
+            mes = "Пользователь с таким именем уже существует";
+            return;
+        }
+
+        userRepeat = (await _userManager.FindByEmailAsync(UserModelForm.Email));
+
+        if (userRepeat != null && userRepeat.Id != UserModelForm.IdUser)
+        {
+            mes = "Пользователь с такой почтой уже существует";
+            return;
+        }
+
+        mes = "";
+
+        if (edit)
+            await EditUserAsync();
+        else
+            await CreateUserAsync();
+
+        await Refresh.InvokeAsync();
+    }
+
+
+    private async Task EditUserAsync()
+    {
+        var editUser = await _userManager.FindByIdAsync(UserModelForm.IdUser);
+
+        await _userStore.SetUserNameAsync(editUser, UserModelForm.UserName, CancellationToken.None);
+        var token = await _userManager.GeneratePasswordResetTokenAsync(editUser);
+        await _userManager.ResetPasswordAsync(editUser, token, UserModelForm.Password);
+        await ((IUserEmailStore<AspNetUsers>)_userStore).SetEmailAsync(editUser, UserModelForm.Email, CancellationToken.None);
+
+        if (UserModelForm is StudentModelForm studentModelForm1)
+        {
+            editUser.Student.FirstName = studentModelForm1.FirstName;
+            editUser.Student.LastName = studentModelForm1.LastName;
+            editUser.Student.FatherName = studentModelForm1.FatherName;
+            //editUser.Student.Group = groups.First(x => x.Id.ToString() == studentModelForm1.Group);
+            editUser.Student.Group = groups.First(x => x.Name == studentModelForm1.Group);
+            UserModelForm = new StudentModelForm();
+            groups.Clear();
+        }
+        else
+        {
+            editUser.Teacher.FirstName = UserModelForm.FirstName;
+            editUser.Teacher.LastName = UserModelForm.LastName;
+            editUser.Teacher.FatherName = UserModelForm.FatherName;
+            UserModelForm = new TeacherModelForm();
+        }
+
+
+        var r = await _userManager.UpdateAsync(editUser);
+        if (r.Errors.Count() > 0)
+        {
+            mes = r.Errors.ElementAt(0).Description;
+            //transaction.Rollback();
+            return;
+        }
+    }
+
+
+    private async Task CreateUserAsync()
+    {
+        //using var transaction = _db.Database.BeginTransaction();
+        var user = Activator.CreateInstance<AspNetUsers>();
+        await _userStore.SetUserNameAsync(user, UserModelForm.UserName, CancellationToken.None);
+        await ((IUserEmailStore<AspNetUsers>)_userStore).SetEmailAsync(user, UserModelForm.Email, CancellationToken.None);
+
+
+        var r = await _userManager.CreateAsync(user, UserModelForm.Password);
+        if (r.Errors.Count() > 0)
+        {
+            mes = r.Errors.ElementAt(0).Description;
+            //transaction.Rollback();
+            return;
+        }
+
+
+        if (UserModelForm is StudentModelForm studentModelForm)
+        {
+            //var group = groups.First(x => x.Id.ToString() == studentModelForm.Group);
+            var group = groups.First(x => x.Name == studentModelForm.Group);
+
+            Student student = new()
+                {
+                    FirstName = studentModelForm.FirstName,
+                    LastName = studentModelForm.LastName,
+                    FatherName = studentModelForm.FatherName,
+                    Group = group
+                };
+
+            _db.Students.Add(student);
+            user.Student = student;
+
+            await _userManager.AddToRoleAsync(user, "Students");
+            //transaction.Commit();
+            groups.Clear();
+            UserModelForm = new StudentModelForm();
+        }
+        else
+        {
+            var teacherModelForm = UserModelForm as TeacherModelForm;
+            Teacher teacher = new()
+                {
+                    FirstName = teacherModelForm.FirstName,
+                    LastName = teacherModelForm.LastName,
+                    FatherName = teacherModelForm.FatherName
+                };
+
+            _db.Teachers.Add(teacher);
+            user.Teacher = teacher;
+
+            await _userManager.CreateAsync(user, UserModelForm.Password);
+            await _userManager.AddToRoleAsync(user, "Teachers" /*Enums.Roles.Student.ToString()*/);
+            //transaction.Commit();
+            UserModelForm = new TeacherModelForm();
+        }
+    }
+
+}

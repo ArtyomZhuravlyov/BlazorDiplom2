@@ -1,0 +1,187 @@
+﻿@using Microsoft.EntityFrameworkCore
+@inject DB _db;
+@inject UserManager<AspNetUsers> _userManager;
+@inject AuthenticationStateProvider GetAuthenticationStateAsync
+<h3>CreateEditKoan</h3>
+@if (edit)
+{
+    <button @onclick="ShowList">Назад</button>
+}
+<div>@mesError</div>
+<EditForm Model="Koan" OnValidSubmit="OnValidSubmitAsync">
+    <DataAnnotationsValidator />
+    <InputText class="form-control" @bind-Value="Koan.Name"></InputText>
+    <InputText class="form-control" @bind-Value="Koan.Description"></InputText>
+    <InputFile OnChange="@LoadFiles" />
+    @if (isLoading)
+    {
+        <p>Uploading...</p>
+    }
+    <button>@messageBtn</button>
+</EditForm>
+@code {
+
+    [Parameter] public Koan Koan { get; set; }
+
+    [Parameter] public EventCallback ShowList { get; set; }
+
+    [Parameter] public Teacher Teacher { get; set; }
+
+    private bool edit;
+
+    private string messageBtn;
+    private string mesError = "";
+    private string link;
+    string oldKoanName;
+
+
+    private IBrowserFile loadedFile;
+    private bool isLoading;
+
+    protected override void OnInitialized()
+    {
+        edit = Koan.Id != 0;
+        messageBtn = edit ? "Изменить" : "Добавить";
+    }
+
+    private async Task OnValidSubmitAsync()
+    {
+        try
+        {
+            var changeK = _db.Koans.FirstOrDefault(x => x.Name == Koan.Name && x.Teacher == Teacher);
+
+            if (changeK != null && Koan.Id != changeK.Id)
+            {
+                mesError = "Коан с таким именем уже существует";
+                return;
+            }
+
+            if (edit) //если изменяем
+            {
+                changeK = _db.Koans.FirstOrDefault(x => x.Id == Koan.Id);
+                if (loadedFile != null)
+                {
+                    await SaveFileAsync2();
+                    changeK.Link = link;
+                }
+                //else
+                //    await SaveFileAsync2(changeK.Link);
+
+                
+                changeK.Name = Koan.Name;
+                changeK.Description = Koan.Description;
+            }
+            else //если добавляем
+            {
+                if (loadedFile == null)
+                {
+                    mesError = "Необходимо прикрепить фаил Коана";
+                    return;
+                }
+
+                var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+                var user = authstate.User;
+                var aspUser = await _userManager.GetUserAsync(user);
+                Teacher = _db.Teachers.Include(x => x.AspNetUser).First(x => x.AspNetUser == aspUser);
+                await SaveFileAsync2();
+                _db.Koans.Add(Koan);
+                Koan.Teacher = Teacher;
+                Koan.Link = link;
+                
+                //Teacher.Koans.Add(Koan);
+            }
+            _db.SaveChanges();
+
+            Koan = new();
+        }
+        catch (Exception exp)
+        {
+            mesError = exp.Message;
+        }
+
+    }
+
+    private void LoadFiles(InputFileChangeEventArgs e) => loadedFile = e.File;
+    //{
+    //    isLoading = true;
+    //    loadedFile = e.File;
+    //    isLoading = false;
+    //}
+
+    private async Task<string> SaveFileAsync(string path = null)
+    {
+        try
+        {
+            if (loadedFile == null)
+                return "Необходимо прикрепить фаил Коана";
+
+
+            string fileName;
+            if (path == null)
+                fileName = Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
+            else
+                fileName = Path.GetFileNameWithoutExtension(path);
+
+
+            var pathTeacher = $"{Directory.GetCurrentDirectory()}\\wwwroot\\Koans\\Teacher{Teacher.Id}";
+            if (!Directory.Exists(pathTeacher))
+            {
+                Directory.CreateDirectory(pathTeacher);
+            }
+            //var path = $"{Directory.GetCurrentDirectory()}\\wwwroot\\Koans\\{loadedFile.Name}";
+
+            link = $"{pathTeacher}\\{fileName}.cs";
+            using FileStream fs = new(link, FileMode.Create);
+            await loadedFile.OpenReadStream().CopyToAsync(fs);
+            //link = fullpath;
+        }
+        catch (Exception ex)
+        {
+            return ex.Message;
+            //mesError = ex.Message;
+            //Logger.LogError("File: {Filename} Error: {Error}",
+            //    file.Name, ex.Message);
+        }
+        return null;
+    }
+
+
+    private async Task<string> SaveFileAsync2(string oldFileRemove = null)
+    {
+        try
+        {
+            //var oldKoan = _db.Koans.First(x => x.Id == Koan.Id);
+            //if (Koan.Name != oldKoan.Name)
+            //{
+            //    File.Delete(oldKoan.Link);
+            //}
+            if (oldFileRemove != null)
+            {
+                File.Delete(oldFileRemove);
+            }
+
+
+            var pathTeacher = $"{Directory.GetCurrentDirectory()}\\wwwroot\\Koans\\Teacher{Teacher.Id}";
+            if (!Directory.Exists(pathTeacher))
+            {
+                Directory.CreateDirectory(pathTeacher);
+            }
+            //var path = $"{Directory.GetCurrentDirectory()}\\wwwroot\\Koans\\{loadedFile.Name}";
+
+            link = $"{pathTeacher}\\{Koan.Name}.cs";
+            using FileStream fs = new(link, FileMode.Create);
+            await loadedFile.OpenReadStream().CopyToAsync(fs);
+            //link = fullpath;
+        }
+        catch (Exception ex)
+        {
+            return ex.Message;
+            //mesError = ex.Message;
+            //Logger.LogError("File: {Filename} Error: {Error}",
+            //    file.Name, ex.Message);
+        }
+        return null;
+    }
+
+
+}

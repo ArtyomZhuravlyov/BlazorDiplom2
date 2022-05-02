@@ -1,0 +1,88 @@
+﻿@page "/loadkoans"
+
+@inject RoleManager<IdentityRole> _RoleManager;
+@inject UserManager<AspNetUsers> _userManager;
+@inject DB _db;
+@using System.Net.Http;
+@using System.Net.Http.Json;
+@attribute [Authorize(Roles = "Administrators")]
+<h3>LoadKoans</h3>
+ <h2>Выберите файл для загрузки</h2>
+    <form action="upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="uploads" /><br>
+        <input type="submit" value="Загрузить" />
+    </form>
+
+
+
+<h1>Single file</h1>
+<p>In this page we will simulate how to upload a image file. This page don't upload really any file so you can see the functionality.</p>
+<p>Is setup like multiple files but limited to only 1, you can see the error event response if you try to select more than 1 file</p>
+
+<div class="row">
+    <div class="col-6">
+        <EditForm>
+        <InputFileExtended   
+        TargetToPostFile="@file"
+                           MaxUploatedFiles="1"
+                           MultiFile="true"
+                           MaxFileSize="111151200"
+                           CanDropFiles = "true"
+                           CleanOnSuccessUpload="true"
+                           OnError="Error"
+                           OnUploadedFile="UploadFile"
+                           OnUploadComleted="Completed"
+                             OnSave="Save"
+                           ButtonShow="true"
+                           ButtonCss="btn btn-primary"
+                           ButtonTitle="Click here to upload the file">
+           
+        </InputFileExtended>
+        @* <InputContent>@SelectText</InputContent>
+            <ButtonContent>Загрузить</ButtonContent>
+      
+    *@
+     </EditForm>
+    </div>
+   
+    @ErrorsMessage
+
+</div>
+
+  <ol>
+            <li><strong>Upload File:</strong> @UploadMessage</li>
+            <li><strong>Complete:</strong> @CompletedMessage</li>
+            <li><strong>Save:</strong> @SaveMessage</li>
+            <li><strong>Error:</strong> @ErrorsMessage</li>
+        </ol>
+
+@code{
+    string ErrorsMessage;
+    string UploadMessage;
+    string CompletedMessage;
+    string SaveMessage;
+    string SelectText = "Choose File";
+    string UploadText = "Upload";
+    string file = @"https://localhost:7012/api/files"; /*$"{Directory.GetCurrentDirectory()}\\Koans\\1611422853_14-p-fon-s-razorvannoi-bumagoi-20.jpg";*/
+
+    async Task Save(HttpResponseMessage respose)
+    {
+        SaveMessage = "Uploading image ... (Simulate 3 seconds)";
+        await Task.Delay(3000);
+         if (respose.IsSuccessStatusCode) SaveMessage = $"Image Upload with result {await respose.Content.ReadFromJsonAsync<bool>()}";
+            else SaveMessage = $"Can't upload images." + respose.StatusCode + respose.RequestMessage ;
+    }
+
+    void Error(InputFileException e) =>
+        ErrorsMessage = e.Message;
+
+    void UploadFile(FileUploadEventArgs e) =>
+        UploadMessage = $"File name: {e.File.Name} File type: {e.File.ContentType} Size: {e.File.Size} Action: {e.Action}";
+
+    void Completed(FilesUploadEventArgs e) =>
+        CompletedMessage = $". Files loaded: {e.Count} with total size: {e.Size} Action: {e.Action}";
+
+
+
+}
+

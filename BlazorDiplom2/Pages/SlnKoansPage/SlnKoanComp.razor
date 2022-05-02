@@ -1,0 +1,103 @@
+﻿@using System.Text
+<h3>slnKoanComp</h3>
+@if(isTest)
+{
+    
+}
+else
+{
+    <div>
+        <textarea class="form-control" id="exampleFormControlTextarea1" rows="10" @bind="@codeKoan"></textarea>
+        @if (listKoans.IndexOf(CurKoan) > 0)
+        {
+            <button type="button" class="btn btn-primary" @onclick="BackKoan">Назад</button>
+        }
+
+        <button type="button" class="btn btn-primary" @onclick="CheckAsync">Проверить</button>
+        <button type="button" class="btn btn-primary" @onclick="ReadFileKoanAsync">Обновить</button>
+        @if (listKoans.IndexOf(CurKoan) < listKoans.Count && student.KoanInModules.Contains(CurModule.KoanInModules.First(x => x.KoanId.Equals(CurKoan.Id))))
+        {
+            <button type="button" class="btn btn-primary" @onclick="NextKoan">Вперёд</button>
+        }
+    </div>
+    <div>@CurKoan.Description</div>
+
+}
+
+
+
+@code {
+
+    [Parameter] public Student Student { get; set; }
+
+    [Parameter] public Koan CurKoan { get; set; }
+
+    [Parameter] public Module CurModule { get; set; }
+
+    [Parameter] public Test CutTest { get; set; }
+
+    [Parameter] public EventCallback BackKoan { get; set; }
+
+    [Parameter] public EventCallback NextKoan { get; set; }
+
+    [Parameter] public EventCallback CheckAsync { get; set; }
+
+    [Parameter] public EventCallback RefreshGui { get; set; }
+
+    bool IsTest = false;
+
+
+
+    string codeKoan;
+    string message = "";
+    string log = "";
+    IEnumerable<Koan> koans;
+
+    bool isTest = false;
+
+    List<Koan> listKoans = new();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        IsTest = (CutTest != null);
+    }
+
+    //Koan curKoan;
+    int numberCurKoan
+    {
+        get
+        {
+            return listKoans.IndexOf(CurKoan);
+        }
+    }
+
+    //Module curModule;
+    int numberCurModule
+    {
+        get
+        {
+            return listModules.IndexOf(CurModule);
+        }
+    }
+    //List<KoanInModule> CurKoansInModule = new();
+    int countAllLessons;
+    int curLesson;
+    bool showList = true;
+    Student student;
+    bool isLoaded;
+    List<Module> listModules;
+    List<Module> listIdModuleInvisible = new();
+
+    private async void ReadFileKoanAsync()
+    {
+        using (FileStream fstream = File.OpenRead(CurKoan.Link))
+        {
+            byte[] buffer = new byte[fstream.Length];
+            await fstream.ReadAsync(buffer, 0, buffer.Length);
+            codeKoan = Encoding.Default.GetString(buffer);
+        }
+        this.StateHasChanged();
+    }
+
+}

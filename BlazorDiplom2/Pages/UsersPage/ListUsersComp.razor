@@ -1,0 +1,149 @@
+﻿@using Microsoft.EntityFrameworkCore
+@inject DB _db;
+@*@inject RoleManager<IdentityRole> _roleManager;
+    @inject IUserStore<AspNetUsers> _userStore;*@
+@inject UserManager<AspNetUsers> _userManager;
+
+<h3>ListUsersComp</h3>
+@if (showList)
+{
+    <div>
+       @* <select class="form-control" @bind-value="selectRol" @bind-value:event="ChangeRole">
+            <option selected value="Студент">Студент</option>
+            <option value="Преподаватель">Преподаватель</option>
+        </select>*@
+         <select class="form-control" @bind="selectRol">
+            <option selected value="@Constants.ROLE_STUDENT">@Constants.ROLE_STUDENT</option>
+            <option value="@Constants.ROLE_TEACHER">@Constants.ROLE_TEACHER</option>
+        </select>
+        @if (teachers == null)
+        {
+            <p><em>Loading...</em></p>
+        }
+        else
+        {
+            @if (selectRol.Equals(Constants.ROLE_STUDENT))
+            {
+                @foreach (var item in students)
+                {
+                    <div>@($"{item.LastName } {item.FirstName} {item.FatherName}")</div>
+                    <div>@item.AspNetUser.UserName</div>
+                    <div>@item.AspNetUser.Email</div>
+                    <div>@item.Group.EducationalInstitution.ShortName</div>
+                    <div>@item.Group.Name</div>
+                    <button @onclick="(()=>OpenChanged(item))">Изменить</button>
+                    <button class="btn btn-danger" @onclick="(()=>Delete(item.AspNetUser))">Удалить</button>
+                }
+            }
+            else
+            {
+                @foreach (var item in teachers)
+                {
+                    <div>@($"{item.LastName } {item.FirstName} {item.FatherName}")</div>
+                    <div>@item.AspNetUser.UserName</div>
+                    <div>@item.AspNetUser.Email</div>
+                    <button @onclick="(()=>OpenChanged(item))">Изменить</button>
+                    <button class="btn btn-danger" @onclick="(()=>Delete(item.AspNetUser))">Удалить</button>
+                }
+            }
+        }
+
+
+
+    </div>
+}
+else
+{
+    <CreateEditUsersComp ShowList="ShowList" UserModelForm="userModelForm"></CreateEditUsersComp>
+}
+
+@code {
+    IEnumerable<Student> students;
+    IEnumerable<Teacher> teachers;
+
+    UserModelForm userModelForm;
+    bool shouldRender = true;
+    bool showList = true;
+    string selectRol = Constants.ROLE_STUDENT;
+
+    //protected override async Task OnInitializedAsync() =>  students2 = await _db.GetStudentsAsync();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        students = await Task.FromResult(_db.Students
+        .Include(x => x.AspNetUser)
+        .Include(x => x.Group)
+            .ThenInclude(x => x.EducationalInstitution));
+
+        teachers = await _db.GetTeachersAsync();
+    }
+
+
+    private void ChangeRole()
+    {
+
+    }
+
+    private void Delete(EducationalInstitution educationalInstitution)
+    {
+        _db.EducationalInstitutions.Remove(educationalInstitution);
+        _db.Groups.RemoveRange(_db.Groups.Include(x => x.EducationalInstitution)
+        .Where(x => x.EducationalInstitutionId == educationalInstitution.Id));//если нет каскадного удаления
+        _db.SaveChanges();
+    }
+
+    private void ShowList()
+    {
+        showList = true;
+    }
+
+    private void OpenChanged(Object user)
+    {
+        //UserModelForm userModelForm = new UserModelForm();
+        //var a = (StudentModelForm)userModelForm;
+
+        if (user is Student student)
+        {
+            userModelForm = new StudentModelForm()
+                {
+                    FirstName = student.FirstName,
+                    LastName = student.LastName,
+                    FatherName = student.FatherName,
+                    Group = student.Group.Name,
+                    Email = student.AspNetUser.Email,
+                    UserName = student.AspNetUser.UserName,
+                    IdUser = student.AspNetUsersId,
+                    EducationalInstitution = student.Group.EducationalInstitution.FullName
+                };
+        }
+        else
+        {
+            var teacher = user as Teacher;
+            userModelForm = new TeacherModelForm()
+                {
+                    FirstName = teacher.FirstName,
+                    LastName = teacher.LastName,
+                    FatherName = teacher.FatherName,
+                    Email = teacher.AspNetUser.Email,
+                    UserName = teacher.AspNetUser.UserName,
+                    IdUser = teacher.AspNetUsersId
+                };
+        }
+        showList = false;
+
+        //<CreateEditEducationalInstitutionComp EducationalInstitution="educationalInstitution"></CreateEditEducationalInstitutionComp>
+    }
+
+    private async Task Delete(AspNetUsers delUser)
+    {
+        shouldRender = false;
+        await _userManager.DeleteAsync(delUser);
+        shouldRender = true;
+    }
+
+    protected override bool ShouldRender()
+    {
+        return shouldRender;
+    }
+}

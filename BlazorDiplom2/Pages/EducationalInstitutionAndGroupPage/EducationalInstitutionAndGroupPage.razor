@@ -1,0 +1,37 @@
+﻿@page "/EducationalInstitutionandgroup"
+
+<h3>UniversityAndGroup</h3>
+<div>
+<div @onclick="(()=>activeTab = Enums.TabUniversityAndGroup.EducationalInstitutions)">Университеты</div>
+<div @onclick="(()=>activeTab = Enums.TabUniversityAndGroup.AddEducationalInstitution)">Добавить учебное заведение</div>
+<div @onclick="(()=>activeTab = Enums.TabUniversityAndGroup.Groups)">Группы</div>
+<div @onclick="(()=>activeTab = Enums.TabUniversityAndGroup.AddGroup)">Добавить группу</div>
+</div>
+
+@switch(activeTab)
+{
+    case Enums.TabUniversityAndGroup.EducationalInstitutions:
+  @*  <CascadingValue Value="activeTab">
+        <ListEducationalInstitutionComp></ListEducationalInstitutionComp>
+    </CascadingValue>*@
+     <ListEducationalInstitutionComp></ListEducationalInstitutionComp>
+    break;
+    case Enums.TabUniversityAndGroup.AddEducationalInstitution:
+    <CreateEditEducationalInstitutionComp EducationalInstitution="new EducationalInstitution()"></CreateEditEducationalInstitutionComp>
+    break;
+    case Enums.TabUniversityAndGroup.Groups: 
+    <NewStudent></NewStudent>
+    break;
+    case Enums.TabUniversityAndGroup.AddGroup: 
+    <NewStudent></NewStudent>
+    break;
+}
+
+
+
+@code {
+    [CascadingParameter]
+    public Enums.TabUniversityAndGroup activeTab { get; set; } = Enums.TabUniversityAndGroup.EducationalInstitutions;
+
+
+}

@@ -1,0 +1,9 @@
+﻿@page "/"
+@namespace BlazorDiplom2.Pages
+@using BlazorDiplom2.Data
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "_Layout";
+}
+
+<component param-Cookies="@HttpContext.Request.Cookies.Select(s => new Cookie{Key = s.Key, Value = s.Value}).ToList()" type="typeof(App)" render-mode="ServerPrerendered" />
