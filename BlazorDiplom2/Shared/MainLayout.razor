@@ -3,10 +3,26 @@
 <PageTitle>BlazorDiplom2</PageTitle>
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
+    <div class="header">
+        <div class="container">
+            <div class="header_inner">
+                <div class="logo">Koans</div>
+                <AuthorizeView Roles="Administrators">
+                    <Authorized>
+                        <div class="main_nav">
+                            <NavLink class="main_nav_link border" href="Users">Управление пользователями</NavLink>
+                            <NavLink class="main_nav_link" href="EducationalInstitutionandgroup">Управление учебными заведениями и группами</NavLink>
+                            <div class="account"><img src="img\account.png" alt=""></div>
+                        </div>
+                    </Authorized>
+                </AuthorizeView>
+            </div>
+        </div>
     </div>
-
+    @*    <div class="sidebar">
+        <NavMenu />
+        </div>
+    *@
     <main>
         <div class="top-row px-4">
             <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
@@ -16,4 +32,5 @@
             @Body
         </article>
     </main>
+    <div class="footer"></div>
 </div>

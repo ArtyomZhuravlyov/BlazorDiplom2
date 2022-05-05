@@ -5,8 +5,26 @@
     ViewData["Title"] = "Log in";
 }
 
-<h1>@ViewData["Title"]</h1>
-<div class="row">
+   
+   <div class="form" id="account" method="post">
+        <div class="container">
+            <div class="form_inner">
+                <div class="form_form">
+                    <div class="header_form">Вход</div>
+                    <form name="login" method="post" action="">
+                        <input asp-for="Input.SurName" class="form_info" type="text" size="20" placeholder="Введите логин" aria-required="true">
+                        <input  asp-for="Input.Password" class="form_info" type="password" size="20" placeholder="Введите пароль" aria-required="true">
+                        <input class="form_btn" type="submit" value="Войти">
+                    </form>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+  
+
+@*<div class="row">
     <div class="col-md-4">
         <section>
             <form id="account" method="post">
@@ -78,7 +96,7 @@
             }
         </section>
     </div>
-</div>
+</div>*@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
