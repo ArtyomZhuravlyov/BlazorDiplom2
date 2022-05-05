@@ -1,0 +1,92 @@
+﻿@inject DB _db;
+<h3>TestComp</h3>
+
+@if (_isInProressTest)
+{
+    <SlnKoanComp4 BackKoan="BackKoan" NextKoan="NextKoan" IsTest="true"></SlnKoanComp4>
+
+}
+else
+{
+    <div>
+        <div @onclick="(()=>_activeTab = Enums.TabTestStudent.Test)">Тест</div>
+        <div @onclick="(()=>_activeTab = Enums.TabTestStudent.ResultTest)">Результат</div>
+    </div>
+
+    @switch (_activeTab)
+    {
+        case Enums.TabTestStudent.Test:
+            <DescriptionTestComp4  StartTestAsync="StartTestAsync" ContinueTestAsync="ContinueTestAsync"></DescriptionTestComp4>
+            break;
+        case Enums.TabTestStudent.ResultTest:
+            <CreateEditEducationalInstitutionComp EducationalInstitution="new EducationalInstitution()"></CreateEditEducationalInstitutionComp>
+            break;
+    }
+}
+
+
+
+@code {
+    //[CascadingParameter]
+    private Enums.TabTestStudent _activeTab { get; set; } = Enums.TabTestStudent.Test;
+
+    [Parameter]
+    public EventCallback BackKoan { get; set; }
+    [Parameter]
+    public EventCallback NextKoan { get; set; }
+
+    //[CascadingParameter(Name = "CurTest")]
+    //public Test CurTest { get; set; }
+
+    [CascadingParameter(Name = "CurModule")]
+    public Module CurModule { get; set; }
+
+    [CascadingParameter(Name = "Student")]
+    public Student Student { get; set; }
+
+    [CascadingParameter(Name = "CurKoan")]
+    public Koan CurKoan { get; set; }
+
+    [CascadingParameter(Name = "ListTestKoans")]
+    public List<Koan> ListTestKoans { get; set; }
+
+    //int numberCurKoanTest
+    //{
+    //    get
+    //    {
+    //        return ListTestKoans.IndexOf(CurKoan);
+    //    }
+    //}
+
+
+    private bool _isInProressTest = false;
+
+    public async void StartTestAsync()
+    {
+
+        var locStorageTest = await LocStorage.GetTestLocalStorageAsync(_db, Student);
+        locStorageTest.StartTest(CurModule.Test);
+        await LocStorage.LocalStorage.SetItemAsync(Constants.LOC_STOR, Newtonsoft.Json.JsonConvert.SerializeObject(locStorageTest));
+        CurKoan = ListTestKoans.First();
+        _isInProressTest = true;
+        StateHasChanged();
+
+    }
+
+    private async void ContinueTestAsync()
+    {
+        var locStorageTest = await LocStorage.GetTestLocalStorageAsync(_db, Student);
+        var idKoanInTest =  locStorageTest.ListLocStoragesTestKoan.Last().IdKoanInTest;
+        var koanId = _db.KoanInTests.First(x => x.Id.Equals(idKoanInTest)).KoanId;
+
+        if (locStorageTest.ListLocStoragesTestKoan.Count > 0)
+            CurKoan = ListTestKoans.First(x => x.Id == koanId);
+        else
+            CurKoan = ListTestKoans.First();
+
+        _isInProressTest = true;
+        StateHasChanged();
+    }
+
+
+}

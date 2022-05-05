@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using BlazorDiplom2.Data;
 using Microsoft.Extensions.DependencyInjection;
 using BlazorDiplom2.Areas.Identity.Pages.Account;
+using Cloudcrate.AspNetCore.Blazor.Browser.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,11 +49,11 @@ builder.Services.AddDbContext<DB>(options => options.UseSqlServer(connection));/
 builder.Services.AddHttpClient(); //для инпутфаил
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+builder.Services.AddStorage();
 
 builder.Services.AddSingleton<CompileService>();
 //builder.Services.AddScoped<IRepository, SQLRepository>();
 
-builder.Services.AddSingleton<WeatherForecastService>();
 //builder.Services.AddSingleton<RegisterModel>();
 
 var app = builder.Build();

@@ -1,0 +1,77 @@
+﻿@inject DB _db;
+
+<h3>DescriptionTest</h3>
+<div>Количество Коанов @CurModule.Test.KoanInTests.Count</div>
+<div>Время @CurModule.Test.Time</div>
+<div>Проходной балл @CurModule.Test.MinScore</div>
+@if (locStorageTest != null)
+{
+    @switch (statusTest)
+    {
+        case Enums.StatusTest.NotStart:
+            @* <button @onclick="()=>StartTest.InvokeAsync(CurModule.Test)">Начать тест</button>*@
+            <button @onclick="StartTestAsync">Начать тест</button>
+            break;
+        case Enums.StatusTest.InProgress:
+            <button @onclick="ContinueTestAsync">Продолжить тест</button>
+            break;
+        case Enums.StatusTest.End:
+            <div>Тест завершён</div>
+            break;
+        case Enums.StatusTest.InProgressOtherTest:
+            <div>Вы не закончили предыдущий тест</div>
+            break;
+    }
+}
+
+@code {
+    [Parameter] 
+    public EventCallback StartTestAsync { get; set; }
+
+    [Parameter] 
+    public EventCallback ContinueTestAsync { get; set; }
+
+    [CascadingParameter(Name = "CurModule")]
+    public Module CurModule { get; set; }
+
+        [CascadingParameter(Name = "Student")]
+    public Student Student { get; set; }
+
+    LocStorageTest locStorageTest;
+
+    Enums.StatusTest statusTest;
+
+    //[CascadingParameter(Name = "CurKoan")]
+    //public Koan CurKoan { get; set; }
+
+    //[CascadingParameter(Name = "HttpContextAccessor")]
+    //public IHttpContextAccessor HttpContextAccessor { get; set; }
+
+    //[CascadingParameter(Name = "Cookies")]
+    //public List<Cookie> Cookies { get; set; }
+
+    //protected override async Task OnInitializedAsync()
+    //{
+
+    //    //  HttpContextAccessor.HttpContext.Response.Cookies.Append("TestK", Newtonsoft.Json.JsonConvert.SerializeObject(new CookieTest()));
+    //    //var test = Cookie.GetTestCookies();
+    //    //Cookie.HttpContextAccessor.HttpContext.Response.Cookies.Append("TestK", Newtonsoft.Json.JsonConvert.SerializeObject(test));
+    //}
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        //if(LocStorage.LocalStorage == null)
+        if (firstRender)
+        {
+            locStorageTest = await LocStorage.GetTestLocalStorageAsync(_db, Student);
+            statusTest = locStorageTest.GetStatus(_db, CurModule.Test.Id);
+            StateHasChanged();
+        }
+
+    }
+
+    //private void StartTest()
+    //{
+
+    //}
+}

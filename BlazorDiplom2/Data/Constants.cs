@@ -9,5 +9,7 @@
         public const string BTN_CHANGE = "Изменить";
 
         public const string BTN_ADD = "Добавить";
+
+        public const string LOC_STOR = "TestK";
     }
 }

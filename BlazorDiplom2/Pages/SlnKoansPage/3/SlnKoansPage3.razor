@@ -1,4 +1,4 @@
-﻿@page "/slnkoans2"
+﻿@page "/slnkoans3"
 
 @using Microsoft.EntityFrameworkCore
 @using System.Text
@@ -26,7 +26,7 @@
                 <div style=@GetVisibleClass(item)>
                     @foreach (var kInM in item.KoanInModules.OrderBy(x => x.Priority))
                     {
-                        <div>@kInM.Koan.Name</div>
+                        <div @onclick="()=>SelectKoan(item, kInM.Koan )">@kInM.Koan.Name</div>
                         @if (student.KoanInModules.Contains(kInM))
                         {
                             <div>выполнен</div>
@@ -40,44 +40,48 @@
 
     @if (isTest)
     {
-        <CascadingValue Value="@CurModule" Name="CurModule">
-            <TestComp></TestComp>
-        </CascadingValue>
-      @*  <div>
+        @if (inProgressTest)
+        {
+            <div>
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="10" @bind="@codeKoan"></textarea>
+                @if (listKoans.IndexOf(curKoan) > 0)
+                {
+                    <button type="button" class="btn btn-primary" @onclick="BackKoan">Назад</button>
+                }
+
+                <button type="button" class="btn btn-primary" @onclick="SendResultKoan">Следующий</button>
+                <button type="button" class="btn btn-primary" @onclick="ReadFileKoanAsync">Обновить</button>
+                @if (listKoans.IndexOf(curKoan) < listKoans.Count)
+                {
+                    <button type="button" class="btn btn-primary" @onclick="NextKoan">Вперёд</button>
+                }
+            </div>
+        }
+        else
+        {
+            <TestComp3></TestComp3>
+        }
+
+
+
+    }
+    else
+    {
+        <div>
             <textarea class="form-control" id="exampleFormControlTextarea1" rows="10" @bind="@codeKoan"></textarea>
             @if (listKoans.IndexOf(curKoan) > 0)
             {
                 <button type="button" class="btn btn-primary" @onclick="BackKoan">Назад</button>
             }
 
-            <button type="button" class="btn btn-primary" @onclick="SendResultKoan">Следующий</button>
-            <button type="button" class="btn btn-primary" @onclick="ReadFileKoanAsync">Обновить</button>
-            @if (listKoans.IndexOf(curKoan) < listKoans.Count)
-            {
-                <button type="button" class="btn btn-primary" @onclick="NextKoan">Вперёд</button>
-            }
-        </div>*@
-
-    }
-    else
-    {
-
-
-        <div>
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="10" @bind="@codeKoan"></textarea>
-            @if (listKoans.IndexOf(CurKoan) > 0)
-            {
-                <button type="button" class="btn btn-primary" @onclick="BackKoan">Назад</button>
-            }
-
             <button type="button" class="btn btn-primary" @onclick="CheckAsync">Проверить</button>
             <button type="button" class="btn btn-primary" @onclick="ReadFileKoanAsync">Обновить</button>
-            @if (listKoans.IndexOf(CurKoan) < listKoans.Count && student.KoanInModules.Contains(CurModule.KoanInModules.First(x => x.KoanId.Equals(CurKoan.Id))))
+            @if (listKoans.IndexOf(curKoan) < listKoans.Count && student.KoanInModules.Contains(curModule.KoanInModules.First(x => x.KoanId.Equals(curKoan.Id))))
             {
                 <button type="button" class="btn btn-primary" @onclick="NextKoan">Вперёд</button>
             }
         </div>
-        <div>@CurKoan.Description Описание</div>
+        <div>@curKoan.Description</div>
         <div>@message</div>
         <div>@log</div>
     }
@@ -88,8 +92,6 @@ else
     <div>Loading</div>
 }
 
-<div>@message</div>
-<div>@log</div>
 
 @code {
     string codeKoan;
@@ -98,26 +100,24 @@ else
     IEnumerable<Koan> koans;
 
     bool isTest = false;
+    bool inProgressTest = false;
 
     List<Koan> listKoans = new();
-
-    [Parameter]
-    public Koan CurKoan { get; set; }
+    Koan curKoan;
     int numberCurKoan
     {
         get
         {
-            return listKoans.IndexOf(CurKoan);
+            return listKoans.IndexOf(curKoan);
         }
     }
 
-    [Parameter]
-    public Module CurModule{ get; set; }
+    Module curModule;
     int numberCurModule
     {
         get
         {
-            return listModules.IndexOf(CurModule);
+            return listModules.IndexOf(curModule);
         }
     }
     //List<KoanInModule> CurKoansInModule = new();
@@ -161,28 +161,22 @@ else
         isLoaded = true;
     }
 
-    private void SendResultKoan()
-    {
-
-    }
-
     private void SelectModul(Module module)
     {
-        CurModule = module;
+        curModule = module;
         var koansInM = module.KoanInModules.OrderBy(x => x.Priority);
         listKoans = koansInM.Select(x => x.Koan).ToList();
 
-        CurKoan = koansInM.First().Koan;
+        curKoan = koansInM.First().Koan;
         foreach (var item in koansInM)
         {
             if (!student.KoanInModules.Contains(item))
             {
-                CurKoan = item.Koan;
+                curKoan = item.Koan;
                 break;
             }
         }
         ReadFileKoanAsync();
-           isTest = false;
 
     }
 
@@ -192,21 +186,21 @@ else
 
         var koansInM = module.KoanInModules.OrderBy(x => x.Priority);
 
-        if (CurModule != module)
+        if (curModule != module)
         {
-            CurModule = module;
+            curModule = module;
             listKoans = koansInM.Select(x => x.Koan).ToList();
         }
 
-        CurKoan = koansInM.First(x => x.KoanId.Equals(koan.Id)).Koan;
+        curKoan = koansInM.First(x => x.KoanId.Equals(koan.Id)).Koan;
 
         ReadFileKoanAsync();
-        isTest = false;
+
     }
 
     private async void ReadFileKoanAsync()
     {
-        using (FileStream fstream = File.OpenRead(CurKoan.Link))
+        using (FileStream fstream = File.OpenRead(curKoan.Link))
         {
             byte[] buffer = new byte[fstream.Length];
             await fstream.ReadAsync(buffer, 0, buffer.Length);
@@ -235,11 +229,16 @@ else
         this.StateHasChanged();
 
 
-        if (ValueTuple.Item2 && !student.KoanInModules.Contains(CurModule.KoanInModules.First(x => x.KoanId.Equals(CurKoan.Id))))
+        if (ValueTuple.Item2 && !student.KoanInModules.Contains(curModule.KoanInModules.First(x => x.KoanId.Equals(curKoan.Id))))
         {
-            student.KoanInModules.Add(CurModule.KoanInModules.First(x => x.KoanId.Equals(CurKoan.Id)));
+            student.KoanInModules.Add(curModule.KoanInModules.First(x => x.KoanId.Equals(curKoan.Id)));
             _db.SaveChanges();
         }
+
+    }
+
+    private void SendResultKoan()
+    {
 
     }
 
@@ -255,8 +254,8 @@ else
     {
         if (numberCurKoan + 1 <= listKoans.Count)
         {
-            CurKoan = listKoans.ElementAt(numberCurKoan + 1);
-            SelectKoan(CurModule, CurKoan);
+            curKoan = listKoans.ElementAt(numberCurKoan + 1);
+            SelectKoan(curModule, curKoan);
         }
         else
         {
@@ -269,7 +268,7 @@ else
     {
         if (numberCurModule + 1 <= listModules.Count)
         {
-            CurModule = listModules.ElementAt(numberCurModule + 1);
+            curModule = listModules.ElementAt(numberCurModule + 1);
         }
         else
         {
@@ -282,8 +281,8 @@ else
 
     private void BackKoan()
     {
-        CurKoan = listKoans.ElementAt(numberCurKoan - 1);
-        SelectKoan(CurModule, CurKoan);
+        curKoan = listKoans.ElementAt(numberCurKoan - 1);
+        SelectKoan(curModule, curKoan);
     }
 
     private void ShowList()

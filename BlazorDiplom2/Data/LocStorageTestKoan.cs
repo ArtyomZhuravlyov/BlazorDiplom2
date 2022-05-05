@@ -1,9 +1,11 @@
 ﻿namespace BlazorDiplom2.Data
 {
-    public class CookieTestKoan
+    public class LocStorageTestKoan
     {
-        public int Id { get; set; }
-        public int IdKoan { get; set; }
+        //public int Id { get; set; }
+        //public int IdKoan { get; set; }
+
+        public int IdKoanInTest { get; set; }
 
         public string AnswerStudent { get; set; }
         public string ErrorMessage { get; set; }

@@ -57,7 +57,8 @@
         {
             NotStart,
             InProgress,
-            End
+            End,
+            InProgressOtherTest
         }
 
 

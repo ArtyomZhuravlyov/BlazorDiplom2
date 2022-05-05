@@ -5,5 +5,9 @@
 @{
     Layout = "_Layout";
 }
+<component type="typeof(App)" render-mode="ServerPrerendered" />
+@*<component param-ReqCookies="@HttpContext.Request.Cookies" param-ResCookies="@HttpContext.Response.Cookies" type="typeof(App)"  render-mode="ServerPrerendered" />*@
 
-<component param-Cookies="@HttpContext.Request.Cookies.Select(s => new Cookie{Key = s.Key, Value = s.Value}).ToList()" type="typeof(App)" render-mode="ServerPrerendered" />
+@*<component param-Cookies="@HttpContext.Request.Cookies.Select(s => new Cookie{Key = s.Key, Value = s.Value}).ToList()" type="typeof(App)" render-mode="ServerPrerendered" />
+*@
+

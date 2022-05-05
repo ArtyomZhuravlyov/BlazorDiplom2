@@ -1,12 +1,5 @@
 ﻿<h3>TestComp</h3>
 
-@if (isInProressTest)
-{
-    <slnKoanComp Refresh="Refresh"></slnKoanComp>
-    
-}
-else
-{
       <div>
         <div @onclick="(()=>activeTab = Enums.TabTestStudent.Test)">Тест</div>
         <div @onclick="(()=>activeTab = Enums.TabTestStudent.ResultTest)">Результат</div>
@@ -15,13 +8,13 @@ else
     @switch (activeTab)
     {
         case Enums.TabTestStudent.Test:
-            <DescriptionTestComp StartTest="StartTest"></DescriptionTestComp>
+            <DescriptionTestComp3 StartTest="StartTest"></DescriptionTestComp3>
             break;
         case Enums.TabTestStudent.ResultTest:
             <CreateEditEducationalInstitutionComp EducationalInstitution="new EducationalInstitution()"></CreateEditEducationalInstitutionComp>
             break;
     }
-}
+
 
 
 
@@ -29,21 +22,28 @@ else
     //[CascadingParameter]
     public Enums.TabTestStudent activeTab { get; set; } = Enums.TabTestStudent.Test;
 
-    [Parameter] public EventCallback Refresh { get; set; }
+    [Parameter]
+    public EventCallback Refresh { get; set; }
 
-    bool isInProressTest = false;
+    //[CascadingParameter(Name = "CurTest")]
+    //public Test CurTest { get; set; }
+
+    //[CascadingParameter(Name = "CurModule")]
+    //public Module CurModule { get; set; }
+
+    private bool isInProressTest = false;
 
 
 
     protected override async Task OnInitializedAsync()
     {
-      
-        
+
+
     }
 
-    public void StartTest(Test test)
+    public void StartTest()
     {
-        
+        isInProressTest = true;
     }
 
 

@@ -2,6 +2,10 @@
 @attribute [Authorize]
 @inject DB _db
 @inject NavigationManager navigation
+
+@*@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor httpContextAccessor*@
+
 <PageTitle>Index</PageTitle>
 
 <h1>Hello, world!</h1>
@@ -12,8 +16,23 @@ Welcome to your new app.
 
 @code {
 
+
+
     protected override async Task OnInitializedAsync()
     {
+
+
+        //CookieTest cookiesTest = new CookieTest();
+
+        //if (Cookie.HttpContextAccessor == null)
+        //{
+        //    Cookie.HttpContextAccessor = httpContextAccessor;
+            
+        //    Cookie.HttpContextAccessor.HttpContext.Response.Cookies.Append("TestK", Newtonsoft.Json.JsonConvert.SerializeObject(cookiesTest));
+        //}
+
+        //Cookie.HttpContextAccessor.HttpContext.Response.Cookies.Append("TestK", Newtonsoft.Json.JsonConvert.SerializeObject(cookiesTest));
+
         if (DB.StatusStart)
         {
             DB.StatusStart = false;
@@ -22,5 +41,5 @@ Welcome to your new app.
 
         }
     }
-    
+
 }

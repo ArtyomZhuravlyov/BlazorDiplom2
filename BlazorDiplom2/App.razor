@@ -1,4 +1,10 @@
-﻿<CascadingValue Value="Cookies" Name="Cookies">
+﻿@*@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor httpContextAccessor
+<CascadingValue Value="httpContextAccessor" Name="HttpContextAccessor">*@
+
+@using Cloudcrate.AspNetCore.Blazor.Browser.Storage;
+@inject LocalStorage Storage;
+
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(Program).Assembly">
       <Found Context="routeData">
@@ -16,8 +22,61 @@
         </NotFound>
     </Router>
 </CascadingAuthenticationState>
-</CascadingValue>
-@code{
+@*</CascadingValue>*@
+@*@code{
     [Parameter]
     public List<Cookie> Cookies { get; set; }
+
+
+}*@
+
+@code{
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        //if(firstRender)
+        if(LocStorage.LocalStorage == null)
+        {
+            LocStorage.LocalStorage = Storage;
+            //LocStorage LocStorageTest = new LocStorage();
+            //await LocStorage.LocalStorage.SetItemAsync("TestK", Newtonsoft.Json.JsonConvert.SerializeObject(LocStorageTest));
+        }
+
+    }
+
+    //protected override async  Task OnInitializedAsync()
+    //{
+    //    if(LocStorage.LocalStorage == null)
+    //    {
+    //        LocStorage.LocalStorage = Storage;
+    //        LocStorage LocStorageTest = new LocStorage();
+    //        await LocStorage.LocalStorage.SetItemAsync("TestK", Newtonsoft.Json.JsonConvert.SerializeObject(LocStorageTest));
+    //    }
+
+    //}
+
+
+    //[Parameter]
+    //public IRequestCookieCollection ReqCookies { get; set; }
+
+    //[Parameter]
+    //public IResponseCookies ResCookies { get; set; }
+
+    //protected override  void OnInitialized()
+    //{
+    //    if(Cookie.HttpContextAccessor == null)
+    //    {
+    //        Cookie.HttpContextAccessor = httpContextAccessor;
+    //        CookieTest cookiesTest = new CookieTest();
+    //        Cookie.HttpContextAccessor.HttpContext.Response.Cookies.Append("TestK", Newtonsoft.Json.JsonConvert.SerializeObject(cookiesTest));
+    //    }
+
+    //    //Cookie.ReqCookies = ReqCookies;
+    //    //Cookie.ResCookies = ResCookies;
+    //}
+
+    //protected override void OnParametersSet()
+    //{
+    //    //Cookie.Cookies = Cookies;
+    //}
 }

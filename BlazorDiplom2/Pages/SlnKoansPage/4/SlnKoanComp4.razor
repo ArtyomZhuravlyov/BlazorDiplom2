@@ -1,0 +1,281 @@
+﻿@using System.Text
+@using System.Timers
+@inject CompileService compServive;
+@inject DB _db;
+<h3>slnKoanComp</h3>
+@if (IsTest)
+{
+    <div>
+
+            <div>@_timeOnly</div>
+        
+
+        <textarea class="form-control" id="exampleFormControlTextarea1" rows="10" @bind="@CodeKoan"></textarea>
+        @if (ListTestKoans.IndexOf(CurKoan) > 0)
+        {
+            <button type="button" class="btn btn-primary" @onclick="BackKoan">Назад</button>
+        }
+
+
+        <button type="button" class="btn btn-primary" @onclick="ReadFileKoanAsync">Обновить</button>
+        @if (ListTestKoans.IndexOf(CurKoan) < ListTestKoans.Count - 1)
+        {
+            <button type="button" class="btn btn-primary" @onclick="SendResultKoanAsync">Следующий</button>
+        }
+        else
+        {
+            <button type="button" class="btn btn-primary" @onclick="SendFinalResultAsync">Закончить</button>
+        }
+    </div>
+}
+else
+{
+    <div>
+        <textarea class="form-control" id="exampleFormControlTextarea1" rows="10" @bind="@CodeKoan"></textarea>
+        @if (ListKoans.IndexOf(CurKoan) > 0)
+        {
+            <button type="button" class="btn btn-primary" @onclick="BackKoan">Назад</button>
+        }
+
+        <button type="button" class="btn btn-primary" @onclick="CheckAsync">Проверить</button>
+        <button type="button" class="btn btn-primary" @onclick="ReadFileKoanAsync">Обновить</button>
+        @if (ListKoans.IndexOf(CurKoan) < ListKoans.Count && Student.KoanInModules.Contains(CurModule.KoanInModules.First(x => x.KoanId.Equals(CurKoan.Id))))
+        {
+            <button type="button" class="btn btn-primary" @onclick="NextKoan">Вперёд</button>
+        }
+    </div>
+    <div>@CurKoan.Description Описание</div>
+    <div>@message</div>
+    <div>@log</div>
+
+}
+
+
+
+@code {
+
+    [Parameter]
+    public bool IsTest { get; set; }
+
+    [CascadingParameter(Name = "Student")]
+    public Student Student { get; set; }
+
+    [CascadingParameter(Name = "CurKoan")]
+    public Koan CurKoan { get; set; }
+
+    [CascadingParameter(Name = "CurModule")]
+    public Module CurModule { get; set; }
+    //[CascadingParameter(Name = "CurTest")]
+    //public Test CurTest { get; set; }
+
+    [Parameter]
+    public EventCallback BackKoan { get; set; }
+    [Parameter]
+    public EventCallback NextKoan { get; set; }
+
+    public string CodeKoan { get; set; }
+
+    [CascadingParameter(Name = "ListTestKoans")]
+    public List<Koan> ListTestKoans { get; set; }
+
+    int numberCurKoanTest
+    {
+        get
+        {
+            return ListTestKoans.IndexOf(CurKoan);
+        }
+    }
+
+    [CascadingParameter(Name = "ListKoans")]
+    public List<Koan> ListKoans { get; set; }
+
+    int numberCurKoan
+    {
+        get
+        {
+            return ListKoans.IndexOf(CurKoan);
+        }
+    }
+
+    //string codeKoan;
+    string message = "";
+    string log = "";
+    IEnumerable<Koan> koans;
+    private Timer _timer;
+    private TimeOnly _timeOnly;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (IsTest)
+        {
+            _timer = new Timer(1000);
+            _timer.Elapsed += (sender, e) =>
+              {
+
+              };
+            _timer.Enabled = true;
+
+            //_timer.Interval = ;
+        }
+        //if (IsTest)
+        //{
+        //    //CurKoan = CurModule.Test.KoanInTests.OrderBy(x => x.Priority).First().Koan;
+        //    //await ReadFileKoanAsync.InvokeAsync();//ReadFileKoanAsync();//await ReadFileKoanAsync.InvokeAsync();
+        //}
+
+    }
+
+    /// <summary>
+    /// При вызовах BackKoan и других EventCallback, OnInitializedAsync не вызывается, поэтому вызываем OnParametersSet чтобы обновить код
+    /// </summary>
+    protected override void OnParametersSet()
+    {
+        ReadFileKoanAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        //if(LocStorage.LocalStorage == null)
+        if (firstRender && IsTest)
+        {
+            var locStorageTest = await LocStorage.GetTestLocalStorageAsync(_db, Student);
+            var t = DateTime.Now.Subtract(locStorageTest.DateTimeStartTest);
+            _timeOnly = new TimeOnly(0, t.Minutes, t.Seconds);
+            //_timeOnly = new TimeOnly(0, locStorageTest.DateTimeStartTest.Minute, locStorageTest.DateTimeStartTest.Second);
+            //DateTime.Now.Hour * 60 + DateTime.Now.Minute - (locStorageTest.DateTimeStartTest.Hour * 60 + locStorageTest.DateTimeStartTest.Minute)
+
+        }
+
+    }
+
+
+    //Module curModule;
+    int numberCurModule
+    {
+        get
+        {
+            return listModules.IndexOf(CurModule);
+        }
+    }
+    //List<KoanInModule> CurKoansInModule = new();
+    int countAllLessons;
+    int curLesson;
+    bool showList = true;
+
+    bool isLoaded;
+    List<Module> listModules;
+    List<Module> listIdModuleInvisible = new();
+
+    private async void ReadFileKoanAsync()
+    {
+        using (FileStream fstream = File.OpenRead(CurKoan.Link))
+        {
+            byte[] buffer = new byte[fstream.Length];
+            await fstream.ReadAsync(buffer, 0, buffer.Length);
+            CodeKoan = Encoding.Default.GetString(buffer);
+        }
+        this.StateHasChanged();
+    }
+
+    private async Task CheckAsync()
+    {
+        //(string, bool) ValueTuple = ("", false);
+        //compServive.CompileLog = new List<string>();
+        //try
+        //{
+        //    ValueTuple = await compServive.CompileAndRun(CodeKoan);
+        //    message = ValueTuple.Item1;
+        //}
+        //catch (Exception e)
+        //{
+        //    //message= $"{e.Message}\\r\n\\{e.StackTrace}";
+        //    compServive.CompileLog.Add(e.Message);
+        //    compServive.CompileLog.Add(e.StackTrace);
+        //    message = "Ошибка";
+        //}
+        //log = string.Join("\r\n", compServive.CompileLog);
+
+        bool isPassed = await CompileCodeAsync();
+
+        if (isPassed && !Student.KoanInModules.Contains(CurModule.KoanInModules.First(x => x.KoanId.Equals(CurKoan.Id))))
+        {
+            Student.KoanInModules.Add(CurModule.KoanInModules.First(x => x.KoanId.Equals(CurKoan.Id)));
+            _db.SaveChanges();
+        }
+        this.StateHasChanged();
+    }
+
+    private async Task<bool> CompileCodeAsync()
+    {
+        (string, bool) ValueTuple = ("", false);
+        compServive.CompileLog = new List<string>();
+        try
+        {
+            ValueTuple = await compServive.CompileAndRun(CodeKoan);
+            message = ValueTuple.Item1;
+        }
+        catch (Exception e)
+        {
+            //message= $"{e.Message}\\r\n\\{e.StackTrace}";
+            compServive.CompileLog.Add(e.Message);
+            compServive.CompileLog.Add(e.StackTrace);
+            message = "Ошибка";
+        }
+        log = string.Join("\r\n", compServive.CompileLog);
+
+        return ValueTuple.Item2;
+
+    }
+
+    private async Task SendResultKoanAsync()
+    {
+
+        bool isPassed = await CompileCodeAsync();
+
+        var locStorageTest = await LocStorage.GetTestLocalStorageAsync(_db, Student);
+        LocStorageTestKoan locStorageTestKoan = new()
+            {
+                IdKoanInTest = CurModule.Test.KoanInTests.First(x => x.KoanId.Equals(CurKoan.Id)).Id,// CurKoan.Id,
+                AnswerStudent = CodeKoan,
+                IsPassed = isPassed,
+                ErrorMessage = $"{message}\r\n{log}"
+            };
+
+        var chStorTestKoan = locStorageTest.ListLocStoragesTestKoan.FirstOrDefault(x => x.IdKoanInTest.Equals(locStorageTestKoan.IdKoanInTest));
+        if (chStorTestKoan == null)
+            locStorageTest.ListLocStoragesTestKoan.Add(locStorageTestKoan);
+        else //проверить заменит или нет
+            chStorTestKoan = locStorageTestKoan;
+
+        await LocStorage.LocalStorage.SetItemAsync(Constants.LOC_STOR, Newtonsoft.Json.JsonConvert.SerializeObject(locStorageTest));
+        //if(ListTestKoans.Count < numberCurKoanTest + 1) //проверка делается в странице
+        //    CurKoan = ListTestKoans.ElementAt(numberCurKoanTest + 1);
+
+        if (ListTestKoans.Count > numberCurKoanTest + 1)
+            CurKoan = ListTestKoans.ElementAt(numberCurKoanTest + 1);
+        this.StateHasChanged();
+        return;
+    }
+
+    private async void SendFinalResultAsync()
+    {
+        await SendResultKoanAsync();
+        var locStorageTest = await LocStorage.GetTestLocalStorageAsync(_db, Student);
+        locStorageTest.EndTestAsync(_db);
+
+    }
+
+
+    //protected override async Task OnAfterRenderAsync(bool firstRender)
+    //{
+    //    //if(LocStorage.LocalStorage == null)
+    //    if (firstRender)
+    //    {
+    //        locStorageTest = await LocStorage.GetTestLocalStorageAsync();
+    //        statusTest = locStorageTest.GetStatus();
+    //        StateHasChanged();
+    //    }
+
+    //}
+
+}

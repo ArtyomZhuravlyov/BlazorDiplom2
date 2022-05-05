@@ -1,0 +1,285 @@
+﻿@page "/slnkoans4"
+
+@using Microsoft.EntityFrameworkCore
+@using System.Text
+@inject DB _db;
+@inject UserManager<AspNetUsers> _userManager;
+@inject AuthenticationStateProvider _getAuthenticationStateAsync
+@inject CompileService _compServive;
+@*@inject Service _service*@
+<h3>SlnKoansPage</h3>
+@if (isLoaded)
+{
+    <div>
+        @foreach (var item in listModules)
+        {
+            <div @onclick="()=>SelectModul(item)">Модуль @(listModules.IndexOf(item)+1). @item.Name</div>
+            <div>
+                @if (listIdModuleInvisible.Contains(item))
+                {
+                    <button type="button" @onclick="(()=>ChangeVisibleModule(item))">раскрыть</button>
+                }
+                else
+                {
+                    <button type="button" @onclick="(()=>ChangeVisibleModule(item))">скрыть</button>
+                }
+                <div style=@GetVisibleClass(item)>
+                    @foreach (var kInM in item.KoanInModules.OrderBy(x => x.Priority))
+                    {
+                        <div @onclick="()=>SelectKoan(item, kInM.Koan )">@kInM.Koan.Name</div>
+                        @if (_student.KoanInModules.Contains(kInM))
+                        {
+                            <div>выполнен</div>
+                        }
+                    }
+                    <div @onclick="()=> _isTest = true">Тест по модулю @(listModules.IndexOf(item)+1)</div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (_isTest)
+    {
+      @*  <CascadingValue Value="@listKoans" Name="ListKoans">
+            <CascadingValue Value="@listTestKoans" Name="ListTestKoans">
+                <CascadingValue Value="@codeKoan" Name="CodeKoan">
+                        <CascadingValue Value="@BackKoan" Name="BackKoan">
+                            <CascadingValue Value="@NextKoan" Name="NextKoan">
+                                    <CascadingValue Value="@SendResultKoan" Name="SendResultKoan">
+                                        <CascadingValue Value="@SelectModul" Name="SelectModul">
+                                            <CascadingValue Value="@_curModule" Name="CurModule">
+                                                <TestComp4 ></TestComp4>
+                                            </CascadingValue>
+                                        </CascadingValue>
+                                    </CascadingValue>    
+                        </CascadingValue>
+                    </CascadingValue>
+                </CascadingValue>
+            </CascadingValue>
+        </CascadingValue>*@
+
+
+        <CascadingValue Value="@_listKoans" Name="ListKoans">
+            <CascadingValue Value="@_listTestKoans" Name="ListTestKoans">
+               
+                         <CascadingValue Value="@_student" Name="Student">
+                        <CascadingValue Value="@_curModule" Name="CurModule">
+                             <CascadingValue Value="@_curKoan" Name="CurKoan">
+                            <TestComp4 BackKoan="BackKoan" NextKoan="NextKoan"></TestComp4> 
+                              </CascadingValue>
+                       
+                    </CascadingValue>
+                </CascadingValue>
+            </CascadingValue>
+        </CascadingValue>
+    }
+    else
+    {
+
+        <CascadingValue Value="@_listKoans" Name="ListKoans">
+            <CascadingValue Value="@_listTestKoans" Name="ListTestKoans">
+               
+                         <CascadingValue Value="@_student" Name="Student">
+                        <CascadingValue Value="@_curModule" Name="CurModule">
+                             <CascadingValue Value="@_curKoan" Name="CurKoan">
+                            <SlnKoanComp4 BackKoan="BackKoan" NextKoan="NextKoan"></SlnKoanComp4>
+                              </CascadingValue>
+                       
+                    </CascadingValue>
+                </CascadingValue>
+            </CascadingValue>
+        </CascadingValue>
+
+
+    }
+
+}
+else
+{
+    <div>Loading</div>
+}
+
+@code {
+    private string _codeKoan;
+    private string _message = "";
+    private string _log = "";
+    private IEnumerable<Koan> _koans;
+
+    private bool _isTest = false;
+
+    private List<Koan> _listKoans = new();
+    private List<Koan> _listTestKoans = new();
+
+    private Koan _curKoan { get; set; }
+
+
+    private Module _curModule { get; set; }
+    private int _numberCurModule
+    {
+        get
+        {
+            return listModules.IndexOf(_curModule);
+        }
+    }
+
+    //int numberCurKoanTest
+    //{
+    //    get
+    //    {
+    //        return listTestKoans.IndexOf(curKoan);
+    //    }
+    //}
+    int _numberCurKoan
+    {
+        get
+        {
+            return _listKoans.IndexOf(_curKoan);
+        }
+    }
+
+    //int countAllLessons;
+    //int curLesson;
+    //bool showList = true;
+    private Student _student;
+    bool isLoaded;
+    List<Module> listModules;
+    List<Module> listIdModuleInvisible = new();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authstate = await _getAuthenticationStateAsync.GetAuthenticationStateAsync();
+        var user = authstate.User;
+        var aspUser = await _userManager.GetUserAsync(user);
+        //student = _db.Students.First(x => x.AspNetUsersId.Equals(aspUser.Id));
+        //_db.Entry(student).Reference(x => x.Group).Load();// .Collection
+        //aspUser.Student = _db.Students.First();// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        //_db.SaveChanges();
+        _student = _db.Students.Include(x => x.AspNetUser)
+            .Include(x => x.Group)
+                .ThenInclude(x => x.Courses)
+                    .ThenInclude(x => x.Modules)
+                        .ThenInclude(x => x.KoanInModules)
+                            .ThenInclude(x => x.Koan)
+            .Include(x => x.Group)
+                .ThenInclude(x => x.Courses)
+                    .ThenInclude(x => x.Modules)
+                        .ThenInclude(x => x.Test)
+                            .ThenInclude(x => x.KoanInTests)
+                                .ThenInclude(x => x.Koan)
+            .Include(x => x.KoanInModules)
+            .First(x => x.AspNetUser == aspUser);
+        //student.Group.Courses.Add(_db.Courses.First(x => x.Id == 10));
+        //_db.SaveChanges();
+        listModules = _student.Group.Courses.First().Modules.OrderBy(x => x.Priority).ToList(); //!!!!!!!!!!!
+        SelectModul(listModules.First());//!!!!!!!!!!!!!!!!!!
+        await _compServive.InitAsync();
+        isLoaded = true;
+    }
+
+
+    private void SelectModul(Module module)
+    {
+        _curModule = module;
+        var koansInM = module.KoanInModules.OrderBy(x => x.Priority);
+        _listKoans = koansInM.Select(x => x.Koan).ToList();
+
+        var koansInT = module.Test.KoanInTests.OrderBy(x => x.Priority);
+        _listTestKoans = koansInT.Select(x => x.Koan).ToList();
+
+        _curKoan = koansInM.First().Koan;
+        foreach (var item in koansInM)
+        {
+            if (!_student.KoanInModules.Contains(item))
+            {
+                _curKoan = item.Koan;
+                break;
+            }
+        }
+        _isTest = false;
+    }
+
+    private void SelectKoan(Module module, Koan koan)
+    {
+        //туду проверка на возможность открывать этот коан
+
+        var koansInM = module.KoanInModules.OrderBy(x => x.Priority);
+
+        if (_curModule != module)
+        {
+            _curModule = module;
+            _listKoans = koansInM.Select(x => x.Koan).ToList();
+        }
+
+        _curKoan = koansInM.First(x => x.KoanId.Equals(koan.Id)).Koan;
+
+        StateHasChanged();
+        _isTest = false;
+    }
+
+
+
+
+
+    //private void Delete(Koan delKoan)
+    //{
+    //    //thisTeacher.Koans.Remove(delKoan);
+    //    //_db.Koans.Remove(delKoan);//если нет каскадного удаления и проверить для модуля
+
+    //    _db.SaveChanges();
+    //}
+
+    private void NextKoan()
+    {
+        if (_numberCurKoan + 1 <= _listKoans.Count)
+        {
+            _curKoan = _listKoans.ElementAt(_numberCurKoan + 1);
+            SelectKoan(_curModule, _curKoan);
+        }
+        else
+        {
+            NextModule();
+        }
+        
+    }
+
+    private void NextModule()
+    {
+        if (_numberCurModule + 1 <= listModules.Count)
+        {
+            _curModule = listModules.ElementAt(_numberCurModule + 1);
+        }
+        else
+        {
+            //все модули пройдены
+        }
+
+    }
+
+
+
+    private void BackKoan()
+    {
+        _curKoan = _listKoans.ElementAt(_numberCurKoan - 1);
+        SelectKoan(_curModule, _curKoan);
+       
+    }
+
+
+    private void ChangeVisibleModule(Module module)
+    {
+        if (listIdModuleInvisible.Contains(module))
+            listIdModuleInvisible.Remove(module);
+        else
+            listIdModuleInvisible.Add(module);
+    }
+
+    private string GetVisibleClass(Module module)
+    {
+        if (listIdModuleInvisible.Contains(module))
+            return "display: none;";
+        else
+            return "";
+    }
+
+}
