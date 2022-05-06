@@ -144,10 +144,11 @@
         messageBtn = edit ? "Изменить" : "Добавить";
         if (!edit)
         {
-            var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
-            var user = authstate.User;
-            var aspUser = await _userManager.GetUserAsync(user);
-            Teacher = _db.Teachers.Include(x => x.AspNetUser).Include(x => x.Koans).First(x => x.AspNetUser == aspUser);
+            //var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+            //var user = authstate.User;
+            //var aspUser = await _userManager.GetUserAsync(user);
+            //Teacher = _db.Teachers.Include(x => x.AspNetUser).Include(x => x.Koans).First(x => x.AspNetUser == aspUser);
+            Teacher = _db.Teachers.Include(x => x.AspNetUser).Include(x => x.Koans).First(x => x.AspNetUser == CurrentUser.User);
         }
         modules = Course.Modules.ToList();
 

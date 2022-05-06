@@ -1,9 +1,8 @@
 ﻿@using Microsoft.EntityFrameworkCore
 @inject DB _db;
 @inject UserManager<AspNetUsers> _userManager;
-@inject AuthenticationStateProvider GetAuthenticationStateAsync;
+@*@inject AuthenticationStateProvider GetAuthenticationStateAsync;*@
 
-<h3>CreateEditCourse</h3>
 @if (edit)
 {
     <button @onclick="ShowList">Назад</button>
@@ -11,101 +10,134 @@
 <div>@mesError</div>
 
 
-<EditForm Model="Course" OnValidSubmit="OnValidSubmit">
-     <ObjectGraphDataAnnotationsValidator />
+<EditForm class="new_course" Model="Course" OnValidSubmit="OnValidSubmit">
+    <ObjectGraphDataAnnotationsValidator />
     @* <ValidationSummary />*@
     @* <DataAnnotationsValidator />*@
-    <label>Название</label>
-    <InputText type="text" @bind-Value="Course.Name" />
-    <label>Описание</label>
-    <InputText type="text" @bind-Value="Course.Description" />
 
+    <div class="course_item">
+        <div class="main_name">Название</div>
+        <InputText @bind-Value="Course.Name" />
+    </div>
+    <div class="course_item">
+        <div class="main_name">Описание</div>
+        <InputText @bind-Value="Course.Description" />
+    </div>
 
     @foreach (var modul in Course.Modules)
     {
-        <label>Модуль @Course.Modules.IndexOf(modul)</label>
-        <button @onclick="(()=>Course.Modules.Remove(modul))">X</button>
-        if (listIdModuleInvisible.Contains(modul))
-        {
-            <button type="button" @onclick="(()=>ChangeVisibleModule(modul))">раскрыть</button>
-        }
-        else
-        {
-            <button type="button" @onclick="(()=>ChangeVisibleModule(modul))">скрыть</button>
-        }
+        <div class="course_item">
 
-        <div style="@GetVisibleClass(modul)">
-            <label>Название модуля</label>
-            <InputText type="text" @bind-Value="modul.Name" />
+            <div class="module_item_name">
+                @if (listIdModuleInvisible.Contains(modul))
+                {
+                <div class="arrow_item" @onclick="(()=>ChangeVisibleModule(modul))"><img src="img\arrow.png" alt=""></div>
+                @*<button type="button" >раскрыть</button>*@
+                }
+                else
+                {
+                <div class="arrow_item" @onclick="(()=>ChangeVisibleModule(modul))"><img src="img\arrow.png" alt=""></div>
+                @*скрыть сделать*@
+                }
+                <div class="main_name">Модуль @Course.Modules.IndexOf(modul)</div>
+                <div class="del_item" @onclick="(()=>Course.Modules.Remove(modul))"><img src="img\del.png" alt=""></div>
+            </div>
 
-            @foreach (var koanInModule in modul.KoanInModules)
-            {
-                <label>Коан</label>
-                <InputSelect @bind-Value="koanInModule.Koan.Name">
 
-                    @if (koanInModule.Koan.Name == null)
-                    {
+            <div style="@GetVisibleClass(modul)">
+                <div class="module_item">
+                    <div class="adding_name">Название</div>
+                    <InputText @bind-Value="modul.Name" />
+                </div>
+
+
+
+                @foreach (var koanInModule in modul.KoanInModules)
+                {
+                    <div class="module_item">
+                        <div class="adding_name">Коан</div>
+                        <InputSelect @bind-Value="koanInModule.Koan.Name">
+
+                            @if (koanInModule.Koan.Name == null)
+                            {
                         <option selected value="-1">Выберите коан</option>
-                    }
+                            }
 
                     @foreach (var item in koansName)
-                    {
+                            {
                         @if (String.Equals(item, koanInModule.Koan.Name,
                        StringComparison.OrdinalIgnoreCase))
-                        {
+                                {
                             <option selected value="@koanInModule.Koan.Name">@koanInModule.Koan.Name</option>
-                        }
-                        else
-                        {
+                                }
+                                else
+                                {
                             <option value="@item">@item</option>
-                        }
+                                }
 
-                    }
+                            }
 
                 </InputSelect>
-                <InputText type="text" @bind-Value="koanInModule.Koan.Description" />
-                <button type="button" @onclick="()=>modul.KoanInModules.Remove(koanInModule)">X</button>
-            }
-            <button type="button" @onclick="()=>AddEmptyKoanInModule(modul)">Добавить ещё один коан в модуль</button>
-        </div>
-        <div>
-            <label>Тест</label>
-            <label>Время</label>
-            <InputDate Type="InputDateType.Time" @bind-Value="modul.Test.Time" />
-            <label>Проходной балл</label>
-            <InputNumber @bind-Value="modul.Test.MinScore" />
-            @foreach (var koanInTest in modul.Test.KoanInTests)
-            {
-                <label>Коан</label>
-                <InputSelect @bind-Value="koanInTest.Koan.Name">
-                    @if (koanInTest.Koan.Name == null)
-                    {
+                <InputText hidden type="text" @bind-Value="koanInModule.Koan.Description" />
+                <div class="delete" @onclick="()=>modul.KoanInModules.Remove(koanInModule)"><img src="img\del.png" alt=""></div>
+            </div>
+
+                }
+                <div class="add_new_koan" @onclick="()=>AddEmptyKoanInModule(modul)">Добавить ещё один коан в модуль</div>
+
+            </div>
+            <div class="module_item">
+
+                <div class="main_name margin">Тест</div>
+                <div class="time_score">
+                    <div class="test_item">
+                        <div class="adding_name">Время</div>
+                        <InputDate Type="InputDateType.Time" @bind-Value="modul.Test.Time" />
+                    </div>
+                    <div class="test_item">
+                        <InputNumber @bind-Value="modul.Test.MinScore" />
+                        <input type="text">
+                    </div>
+                </div>
+
+                @foreach (var koanInTest in modul.Test.KoanInTests)
+                {
+                    <div class="test_item">
+                        <div class="adding_name">Коан</div>
+                        <InputSelect @bind-Value="koanInTest.Koan.Name">
+                            @if (koanInTest.Koan.Name == null)
+                            {
                         <option selected value="-1">Выберите коан</option>
-                    }
+                            }
 
                     @foreach (var item in koansName)
-                    {
+                            {
                         @if (String.Equals(item, koanInTest.Koan.Name,
                        StringComparison.OrdinalIgnoreCase))
-                        {
+                                {
                             <option selected value="@koanInTest.Koan.Name">@koanInTest.Koan.Name</option>
-                        }
-                        else
-                        {
+                                }
+                                else
+                                {
                             <option value="@item">@item</option>
-                        }
+                                }
 
-                    }
+                            }
                 </InputSelect>
-                <InputText  type="text" @bind-Value="koanInTest.Koan.Description" />
-                <button type="button" @onclick="()=>modul.Test.KoanInTests.Remove(koanInTest)">X</button>
-            }
-            <button type="button" @onclick="()=>AddEmptyKoanInTest(modul)">Добавить ещё один коан в тест</button>
+                <InputText hidden @bind-Value="koanInTest.Koan.Description" />
+                <div class="delete" @onclick="()=>modul.Test.KoanInTests.Remove(koanInTest)"><img src="img\del.png" alt=""></div>
+            </div>
+
+                }
+                <div class="add_new_koan" @onclick="()=>AddEmptyKoanInTest(modul)">Добавить ещё один коан в тест</div>
+
+            </div>
         </div>
     }
-    <button type="button" @onclick="AddEmptyModul">Добавить модуль</button>
 
-    <button >@messageBtn</button>
+    <div class="add_new_module" @onclick="AddEmptyModul">Добавить ещё один модуль в курс</div>
+    <button class="save_btn">Сохранить курс</button>
+   @* <button class="save_btn">@messageBtn</button>*@
 </EditForm>
 
 
@@ -136,31 +168,32 @@
     protected override async Task OnInitializedAsync()
     {
         edit = Course.Id != 0;
-        messageBtn = edit ? "Изменить" : "Добавить";
+        messageBtn = edit ? Constants.BTN_CHANGE : Constants.BTN_ADD;
         if (!edit)
         {
-            var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
-            var user = authstate.User;
-            var aspUser = await _userManager.GetUserAsync(user);
-            Teacher = _db.Teachers.Include(x => x.AspNetUser).Include(x => x.Koans).First(x => x.AspNetUser == aspUser);
+            //var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+            //var user = authstate.User;
+            //var aspUser = await _userManager.GetUserAsync(user);
+            //Teacher = _db.Teachers.Include(x => x.AspNetUser).Include(x => x.Koans).First(x => x.AspNetUser == aspUser);
+            Teacher = _db.Teachers.Include(x => x.AspNetUser).Include(x => x.Koans).First(x => x.AspNetUser == CurrentUser.User);
         }
 
-        foreach(var m in Course.Modules)
+        foreach (var m in Course.Modules)
         {
-            foreach(var km in m.KoanInModules)
+            foreach (var km in m.KoanInModules)
             {
                 km.Koan = km.Koan.Copy();
                 km.Koan.Id = 0;
             }
 
-            foreach(var kt in m.Test.KoanInTests)
+            foreach (var kt in m.Test.KoanInTests)
             {
                 kt.Koan = kt.Koan.Copy();
                 kt.Koan.Id = 0;
             }
         }
 
-        koansName = _db.Koans.Where(x => x.TeacherId == Teacher.Id).Select(x=>x.Name).ToList();
+        koansName = _db.Koans.Where(x => x.TeacherId == Teacher.Id).Select(x => x.Name).ToList();
 
     }
 
@@ -248,7 +281,7 @@
     {
         KoanInTest koanInTest = new()
             {
-                Koan = new Koan(){Description = "4"}
+                Koan = new Koan() { Description = "4" }
             };
 
         Test test = new();
@@ -261,7 +294,7 @@
 
         KoanInModule koanInModule = new()
             {
-                Koan = new Koan() {Description = "4"}
+                Koan = new Koan() { Description = "4" }
             };
         module.KoanInModules.Add(koanInModule);
 
@@ -273,7 +306,7 @@
     {
         KoanInModule koanInModule = new()
             {
-                Koan = new Koan() {Description = "4"}
+                Koan = new Koan() { Description = "4" }
             };
         module.KoanInModules.Add(koanInModule);
         //StateHasChanged();
@@ -283,7 +316,7 @@
     {
         KoanInTest koanInTest = new()
             {
-                Koan = new Koan() {Description = "4"}
+                Koan = new Koan() { Description = "4" }
             };
         module.Test.KoanInTests.Add(koanInTest);
         //StateHasChanged();

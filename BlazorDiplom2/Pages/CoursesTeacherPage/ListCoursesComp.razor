@@ -1,72 +1,87 @@
 ﻿@using Microsoft.EntityFrameworkCore
 @inject DB _db;
 @inject UserManager<AspNetUsers> _userManager;
-@inject AuthenticationStateProvider GetAuthenticationStateAsync
-<h3>ListCourses</h3>
-@if(isLoaded)
+@*@inject AuthenticationStateProvider GetAuthenticationStateAsync*@
+
+@if (isLoaded)
 {
-    @if(showList)
-{
-    @if(courses!=null)
+    @if (showList)
     {
-        
-    
-    <div>
-    @foreach(var item in courses)
-    {
-          <div>@item.Name</div>
-          <button @onclick="(()=>OpenChanged(item))">Изменить</button>
-          <button class="btn btn-danger" @onclick="(()=>Delete(item))">Удалить</button>
-    }
-  
-        </div>
+        @foreach (var item in courses)
+        {
+            <div class="element">
+                <div class="element_title">@item.Name</div>
+                <div class="element_item">
+                    <div class="element_item_title">
+                        <img src="img\description.png" alt=""> Описание
+                    </div>
+                    <div class="element_item_info">
+                        @item.Description
+                    </div>
+                </div>
+                <div class="element_item">
+                    <div class="element_item_title">
+                        <img src="img\group.png" alt="">Группы
+                    </div>
+                    <div class="element_item_info">
+                      @string.Join(", ", item.Groups) 
+                    </div>
+                </div>
+                <div class="edit_delete">
+                    <div class="edit_delete_item" @onclick="(()=>OpenChanged(item))"><img src="img\edit.png" alt=""></div>
+                    <div class="edit_delete_item" @onclick="(()=>Delete(item))"><img src="img\delete.png" alt=""></div>
+                </div>
+            </div> 
+        }
+
     }
     else
     {
-       <div> Loading   </div>
+        <CreateEditCoursesComp ShowList="ShowList" Course="editCourse" Teacher="thisTeacher"></CreateEditCoursesComp>
     }
 }
 else
 {
-    <CreateEditCoursesComp ShowList="ShowList" Course="editCourse" Teacher="thisTeacher"></CreateEditCoursesComp>
-}
+
+
 }
 
 
 @code {
-    IEnumerable<Course> courses;
-    Course editCourse;
-    bool showList = true;
-    Teacher thisTeacher;
-        bool isLoaded;
+    private IEnumerable<Course> courses;
+    private Course editCourse;
+    private bool showList = true;
+    private Teacher thisTeacher;
+    private bool isLoaded;
 
 
     protected override async Task OnInitializedAsync()
     {
-        var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
-        var user = authstate.User;
-        var aspUser = await _userManager.GetUserAsync(user);
+        //var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        //var user = authstate.User;
+        //var aspUser = await _userManager.GetUserAsync(user);
         thisTeacher = _db.Teachers.Include(x => x.AspNetUser)
-        .Include(x=>x.Courses)
-            .ThenInclude(x=>x.Modules.OrderBy(p=>p.Priority))
-                .ThenInclude(x=>x.KoanInModules.OrderBy(p=>p.Priority))
-                    //.ThenInclude(x=>x.Koan)  //здесь скорее всего для названия
-        .Include(x=>x.Courses)
-            .ThenInclude(x=>x.Modules.OrderBy(p=>p.Priority))
-                .ThenInclude(x=>x.Test)
-                    .ThenInclude(x=>x.KoanInTests.OrderBy(p=>p.Priority))
-                        //.ThenInclude(x=>x.Koan) //нужны ли коаны?
-        .Include(x=>x.Koans)
-        .First(x => x.AspNetUser == aspUser);
+        .Include(x => x.Courses)
+            .ThenInclude(x => x.Modules.OrderBy(p => p.Priority))
+                .ThenInclude(x => x.KoanInModules.OrderBy(p => p.Priority))
+        //.ThenInclude(x=>x.Koan)  //здесь скорее всего для названия
+        .Include(x => x.Courses)
+            .ThenInclude(x => x.Modules.OrderBy(p => p.Priority))
+                .ThenInclude(x => x.Test)
+                    .ThenInclude(x => x.KoanInTests.OrderBy(p => p.Priority))
+        //.ThenInclude(x=>x.Koan) //нужны ли коаны?
+        .Include(x => x.Koans)
+         //.First(x => x.AspNetUser == aspUser);
+         .First(x => x.AspNetUser == CurrentUser.User);
         courses = thisTeacher.Courses;
-                isLoaded = true;
+        isLoaded = true;
     }
 
     private void Delete(Course delCourse)
     {
         thisTeacher.Courses.Remove(delCourse);
         //_db.Koans.Remove(delKoan);//если нет каскадного удаления и проверить для модуля
-        
+
         _db.SaveChanges();
     }
 
@@ -79,7 +94,7 @@ else
     {
         editCourse = eCourse;
         showList = false;
-       
+
     }
 
 

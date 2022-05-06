@@ -3,7 +3,9 @@
 <CascadingValue Value="httpContextAccessor" Name="HttpContextAccessor">*@
 
 @using Cloudcrate.AspNetCore.Blazor.Browser.Storage;
-@inject LocalStorage Storage;
+@inject LocalStorage _storage;
+@inject AuthenticationStateProvider _getAuthenticationStateAsync;
+@inject UserManager<AspNetUsers> _userManager;
 
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(Program).Assembly">
@@ -37,10 +39,13 @@
         //if(firstRender)
         if(LocStorage.LocalStorage == null)
         {
-            LocStorage.LocalStorage = Storage;
+            LocStorage.LocalStorage = _storage;
             //LocStorage LocStorageTest = new LocStorage();
             //await LocStorage.LocalStorage.SetItemAsync("TestK", Newtonsoft.Json.JsonConvert.SerializeObject(LocStorageTest));
         }
+
+        if (CurrentUser.User == null)
+             CurrentUser.SetUserAsync(_getAuthenticationStateAsync, _userManager);
 
     }
 

@@ -1,6 +1,5 @@
 ﻿@using BlazorDiplom2.ModelForm
 @using Microsoft.EntityFrameworkCore
-@inject RoleManager<IdentityRole> _RoleManager;
 @inject UserManager<AspNetUsers> _userManager;
 @inject IUserStore<AspNetUsers> _userStore;
 @inject DB _db;
@@ -342,9 +341,9 @@ else if (UserModelForm is StudentModelForm StudentModelForm)
 
         if (UserModelForm is StudentModelForm studentModelForm1)
         {
-            editUser.Student.FirstName = studentModelForm1.FirstName;
-            editUser.Student.LastName = studentModelForm1.LastName;
-            editUser.Student.FatherName = studentModelForm1.FatherName;
+            editUser.Student.FirstName = UserModelForm.FirstName;
+            editUser.Student.LastName = UserModelForm.LastName;
+            editUser.Student.FatherName = UserModelForm.FatherName;
             //editUser.Student.Group = groups.First(x => x.Id.ToString() == studentModelForm1.Group);
             editUser.Student.Group = groups.First(x => x.Name == studentModelForm1.Group);
             UserModelForm = new StudentModelForm();
@@ -352,9 +351,16 @@ else if (UserModelForm is StudentModelForm StudentModelForm)
         }
         else
         {
+            var grs = new List<Group>();
+            foreach (var item in ((TeacherModelForm)UserModelForm).Groups)
+            {
+                grs.Add(groups.First(x => x.Name.Equals(item)));
+            }
+
             editUser.Teacher.FirstName = UserModelForm.FirstName;
             editUser.Teacher.LastName = UserModelForm.LastName;
             editUser.Teacher.FatherName = UserModelForm.FatherName;
+            editUser.Teacher.Groups = grs;
             UserModelForm = new TeacherModelForm();
         }
 

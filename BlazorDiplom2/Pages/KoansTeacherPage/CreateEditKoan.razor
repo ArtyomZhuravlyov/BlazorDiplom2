@@ -79,10 +79,11 @@
                     return;
                 }
 
-                var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
-                var user = authstate.User;
-                var aspUser = await _userManager.GetUserAsync(user);
-                Teacher = _db.Teachers.Include(x => x.AspNetUser).First(x => x.AspNetUser == aspUser);
+                //var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+                //var user = authstate.User;
+                //var aspUser = await _userManager.GetUserAsync(user);
+                //Teacher = _db.Teachers.Include(x => x.AspNetUser).First(x => x.AspNetUser == aspUser);
+                Teacher = _db.Teachers.Include(x => x.AspNetUser).First(x => x.AspNetUser == CurrentUser.User);
                 await SaveFileAsync2();
                 _db.Koans.Add(Koan);
                 Koan.Teacher = Teacher;

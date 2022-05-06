@@ -7,15 +7,21 @@
         <div class="container">
             <div class="header_inner">
                 <div class="logo">Koans</div>
-                <AuthorizeView Roles="Administrators">
-                    <Authorized>
-                        <div class="main_nav">
+                <div class="main_nav">
+                    <AuthorizeView Roles="Administrators">
+                        <Authorized>
                             <NavLink class="main_nav_link border" href="Users">Управление пользователями</NavLink>
                             <NavLink class="main_nav_link" href="EducationalInstitutionandgroup">Управление учебными заведениями и группами</NavLink>
                             <div class="account"><img src="img\account.png" alt=""></div>
-                        </div>
-                    </Authorized>
-                </AuthorizeView>
+                        </Authorized>
+                    </AuthorizeView>
+                    <AuthorizeView Roles="Teachers">
+                        <Authorized>
+                            <NavLink class="main_nav_link border" href="Users">Результаты студентов</NavLink> @*исправить ссылки*@
+                            <div class="account"><img src="img\account.png" alt=""></div>
+                        </Authorized>
+                    </AuthorizeView>
+                </div>
             </div>
         </div>
     </div>

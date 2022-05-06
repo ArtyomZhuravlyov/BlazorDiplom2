@@ -148,9 +148,12 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var authstate = await _getAuthenticationStateAsync.GetAuthenticationStateAsync();
-        var user = authstate.User;
-        var aspUser = await _userManager.GetUserAsync(user);
+        //var authstate = await _getAuthenticationStateAsync.GetAuthenticationStateAsync();
+        //var user = authstate.User;
+        //var aspUser = await _userManager.GetUserAsync(user);
+
+
+
         //student = _db.Students.First(x => x.AspNetUsersId.Equals(aspUser.Id));
         //_db.Entry(student).Reference(x => x.Group).Load();// .Collection
         //aspUser.Student = _db.Students.First();// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -168,7 +171,8 @@ else
                             .ThenInclude(x => x.KoanInTests)
                                 .ThenInclude(x => x.Koan)
             .Include(x => x.KoanInModules)
-            .First(x => x.AspNetUser == aspUser);
+            //.First(x => x.AspNetUser == aspUser);\
+            .First(x => x.AspNetUser == CurrentUser.User);
         //student.Group.Courses.Add(_db.Courses.First(x => x.Id == 10));
         //_db.SaveChanges();
         listModules = _student.Group.Courses.First().Modules.OrderBy(x => x.Priority).ToList(); //!!!!!!!!!!!

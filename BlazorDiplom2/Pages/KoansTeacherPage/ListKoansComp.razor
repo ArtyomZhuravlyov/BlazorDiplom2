@@ -44,10 +44,11 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
-        var user = authstate.User;
-        var aspUser = await _userManager.GetUserAsync(user);
-        thisTeacher = _db.Teachers.Include(x => x.AspNetUser).Include(x=>x.Koans).First(x => x.AspNetUser == aspUser);
+        //var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
+        //var user = authstate.User;
+        //var aspUser = await _userManager.GetUserAsync(user);
+        //thisTeacher = _db.Teachers.Include(x => x.AspNetUser).Include(x=>x.Koans).First(x => x.AspNetUser == aspUser);
+        thisTeacher = _db.Teachers.Include(x => x.AspNetUser).Include(x=>x.Koans).First(x => x.AspNetUser == CurrentUser.User);
         koans = thisTeacher.Koans;
         isLoaded = true;
     }

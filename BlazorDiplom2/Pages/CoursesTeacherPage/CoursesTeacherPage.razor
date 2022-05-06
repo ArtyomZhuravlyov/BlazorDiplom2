@@ -1,30 +1,41 @@
 ﻿@page "/coursesteacher"
 
-<div>
-<div @onclick="(()=>activeTab = Enums.TabCoursesTeacher.Courses)">Мои курсы</div>
-<div @onclick="(()=>activeTab = Enums.TabCoursesTeacher.AddCourse)">Добавить курс</div>
-<div @onclick="(()=>activeTab = Enums.TabCoursesTeacher.AddGroupsToCourse)">Записать группы на курс</div>
+<div class="menu_info">
+    <div class="menu">
+        <div class="name">Калимуллина Адиля</div>
+        <div class="username">kalimullina-adilya</div>
+        <div class="menu_items">Курсы</div>
+        <div class="menu_items">Коаны</div>
+        <div class="menu_items">О пользователе</div>
+        <div class="menu_items"><img src="img\exit.png" alt="">Выйти</div>
+    </div>
+
+    @*вставить левую панель сюда*@
+    <div class="info">
+        <div class="nav_top">
+            <div class="nav_top_link border" @onclick="(()=>_activeTab = Enums.TabCoursesTeacher.Courses)">Мои курсы</div>
+            <div class="nav_top_link border" @onclick="(()=>_activeTab = Enums.TabCoursesTeacher.AddCourse)">Добавить курс</div>
+            <div class="nav_top_link" @onclick="(()=>_activeTab = Enums.TabCoursesTeacher.AddGroupsToCourse)">Записать группы на курс</div>
+        </div>
+        @switch (_activeTab)
+        {
+            case Enums.TabCoursesTeacher.Courses:
+                <ListCoursesComp></ListCoursesComp>
+                break;
+            case Enums.TabCoursesTeacher.AddCourse:
+                <CreateEditCoursesComp Course="new Course()"></CreateEditCoursesComp>
+                break;
+            case Enums.TabCoursesTeacher.AddGroupsToCourse:
+                <NewStudent></NewStudent>
+                break;
+
+        }
+    </div>
 </div>
-
-@switch(activeTab)
-{
-    case Enums.TabCoursesTeacher.Courses:
-     <ListCoursesComp></ListCoursesComp>
-    break;
-    case Enums.TabCoursesTeacher.AddCourse:
-    <CreateEditCoursesComp Course="new Course()"></CreateEditCoursesComp>
-    break;
-    case Enums.TabCoursesTeacher.AddGroupsToCourse: 
-    <NewStudent></NewStudent>
-    break;
-
-}
-
-
 
 @code {
     //[CascadingParameter]
-    public Enums.TabCoursesTeacher activeTab { get; set; } = Enums.TabCoursesTeacher.Courses;
+    private Enums.TabCoursesTeacher _activeTab = Enums.TabCoursesTeacher.Courses;
 
 
 }
