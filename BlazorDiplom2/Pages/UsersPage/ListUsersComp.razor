@@ -1,89 +1,140 @@
 ﻿@using Microsoft.EntityFrameworkCore
 @inject DB _db;
-@*@inject RoleManager<IdentityRole> _roleManager;
-    @inject IUserStore<AspNetUsers> _userStore;*@
 @inject UserManager<AspNetUsers> _userManager;
 
-<h3>ListUsersComp</h3>
-@if (showList)
+
+@if (_showList)
 {
-    <div>
-       @* <select class="form-control" @bind-value="selectRol" @bind-value:event="ChangeRole">
-            <option selected value="Студент">Студент</option>
-            <option value="Преподаватель">Преподаватель</option>
-        </select>*@
-         <select class="form-control" @bind="selectRol">
-            <option selected value="@Constants.ROLE_STUDENT">@Constants.ROLE_STUDENT</option>
-            <option value="@Constants.ROLE_TEACHER">@Constants.ROLE_TEACHER</option>
-        </select>
-        @if (teachers == null)
-        {
-            <p><em>Loading...</em></p>
-        }
-        else
-        {
-            @if (selectRol.Equals(Constants.ROLE_STUDENT))
-            {
-                @foreach (var item in students)
-                {
-                    <div>@($"{item.LastName } {item.FirstName} {item.FatherName}")</div>
-                    <div>@item.AspNetUser.UserName</div>
-                    <div>@item.AspNetUser.Email</div>
-                    <div>@item.Group.EducationalInstitution.ShortName</div>
-                    <div>@item.Group.Name</div>
-                    <button @onclick="(()=>OpenChanged(item))">Изменить</button>
-                    <button class="btn btn-danger" @onclick="(()=>Delete(item.AspNetUser))">Удалить</button>
-                }
-            }
-            else
-            {
-                @foreach (var item in teachers)
-                {
-                    <div>@($"{item.LastName } {item.FirstName} {item.FatherName}")</div>
-                    <div>@item.AspNetUser.UserName</div>
-                    <div>@item.AspNetUser.Email</div>
-                    <button @onclick="(()=>OpenChanged(item))">Изменить</button>
-                    <button class="btn btn-danger" @onclick="(()=>Delete(item.AspNetUser))">Удалить</button>
-                }
-            }
-        }
-
-
-
+    <div class="filtr">
+        <div class="filtr_item short_select">
+            <div class="main_name">Роль пользователя</div>
+            <select @bind="_selectRol">
+                <option selected value="@Constants.ROLE_STUDENT">@Constants.ROLE_STUDENT</option>
+                <option value="@Constants.ROLE_TEACHER">@Constants.ROLE_TEACHER</option>
+            </select>
+        </div>
     </div>
+
+    @if (_teachers == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <div class="table_admin">
+            <table border="1">
+
+                @if (_selectRol.Equals(Constants.ROLE_STUDENT))
+                {
+                    <tr>
+                        <th>ФИО</th>
+                        <th>Имя пользователя</th>
+                        <th>Email</th>
+                        <th>Учебное заведение</th>
+                        <th>Группа</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+
+                    @foreach (var item in _students)
+                    {
+                        <tr>
+                            <td class="nowrap">@($"{item.LastName } {item.FirstName} {item.FatherName}")</td>
+                            <td class="nowrap">@item.AspNetUser.UserName</td>
+                            <td class="nowrap">@item.AspNetUser.Email</td>
+                            <td class="nowrap">@item.Group.EducationalInstitution.ShortName</td>
+                            <td class="nowrap">@item.Group.Name</td>
+                            <td>
+                                <div class="edit_delete_item" @onclick="(()=>OpenChanged(item))"><img src="img\edit.png" alt=""></div>
+                            </td>
+                            <td>
+                                <div class="edit_delete_item" @onclick="(()=>Delete(item.AspNetUser))"><img src="img\delete.png" alt=""></div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <th>ФИО</th>
+                        <th>Имя пользователя</th>
+                        <th>Email</th>
+                        <th>Учебное заведение</th>
+                        <th>Группы</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+
+                    @foreach (var item in _teachers)
+                    {
+
+                        <tr>
+                            <td class="nowrap">@($"{item.LastName } {item.FirstName} {item.FatherName}")</td>
+                            <td class="nowrap">@item.AspNetUser.UserName</td>
+                            <td class="nowrap">@item.AspNetUser.Email</td>
+                            @if (item.Groups.Count > 0)
+                            {
+                                <td class="nowrap">@item.Groups[0].EducationalInstitution.ShortName</td>
+                            }
+                            else
+                            {
+                                <td class="nowrap">@string.Empty</td>
+                            }
+                            <td class="nowrap">
+                                @foreach (var gr in item.Groups)
+                                {
+                                    @(gr.Name + " ")
+                                }
+                            </td>
+                            <td>
+                                <div class="edit_delete_item" @onclick="(()=>OpenChanged(item))"><img src="img\edit.png" alt=""></div>
+                            </td>
+                            <td>
+                                <div class="edit_delete_item" @onclick="(()=>Delete(item.AspNetUser))"><img src="img\delete.png" alt=""></div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    }
 }
 else
 {
-    <CreateEditUsersComp ShowList="ShowList" UserModelForm="userModelForm"></CreateEditUsersComp>
+    <CreateEditUsersComp ShowList="ShowList" UserModelForm="_userModelForm"></CreateEditUsersComp>
 }
 
 @code {
-    IEnumerable<Student> students;
-    IEnumerable<Teacher> teachers;
-
-    UserModelForm userModelForm;
-    bool shouldRender = true;
-    bool showList = true;
-    string selectRol = Constants.ROLE_STUDENT;
+    private IEnumerable<Student> _students;
+    private IEnumerable<Teacher> _teachers;
+     
+    private UserModelForm _userModelForm;
+    private bool _shouldRender = true;
+    private bool _showList = true;
+    private string _selectRol = Constants.ROLE_STUDENT;
 
     //protected override async Task OnInitializedAsync() =>  students2 = await _db.GetStudentsAsync();
 
     protected override async Task OnInitializedAsync()
     {
 
-        students = await Task.FromResult(_db.Students
+        _students = await Task.FromResult(_db.Students
         .Include(x => x.AspNetUser)
         .Include(x => x.Group)
             .ThenInclude(x => x.EducationalInstitution));
 
-        teachers = await _db.GetTeachersAsync();
+        _teachers = await Task.FromResult(_db.Teachers
+        .Include(x => x.AspNetUser)
+        .Include(x => x.Groups)
+            .ThenInclude(x => x.EducationalInstitution));
+        //teachers = await _db.GetTeachersAsync();
     }
 
 
-    private void ChangeRole()
-    {
+    //private void ChangeRole()
+    //{
 
-    }
+    //}
 
     private void Delete(EducationalInstitution educationalInstitution)
     {
@@ -95,7 +146,7 @@ else
 
     private void ShowList()
     {
-        showList = true;
+        _showList = true;
     }
 
     private void OpenChanged(Object user)
@@ -105,7 +156,7 @@ else
 
         if (user is Student student)
         {
-            userModelForm = new StudentModelForm()
+            _userModelForm = new StudentModelForm()
                 {
                     FirstName = student.FirstName,
                     LastName = student.LastName,
@@ -120,30 +171,32 @@ else
         else
         {
             var teacher = user as Teacher;
-            userModelForm = new TeacherModelForm()
+            _userModelForm = new TeacherModelForm()
                 {
                     FirstName = teacher.FirstName,
                     LastName = teacher.LastName,
                     FatherName = teacher.FatherName,
                     Email = teacher.AspNetUser.Email,
                     UserName = teacher.AspNetUser.UserName,
-                    IdUser = teacher.AspNetUsersId
+                    IdUser = teacher.AspNetUsersId,
+                    Groups = teacher.Groups.Select(x=>x.Name).ToList(),
+                    EducationalInstitution = teacher.Groups.Count>0 ? teacher.Groups[0].EducationalInstitution.FullName : null
                 };
         }
-        showList = false;
+        _showList = false;
 
         //<CreateEditEducationalInstitutionComp EducationalInstitution="educationalInstitution"></CreateEditEducationalInstitutionComp>
     }
 
     private async Task Delete(AspNetUsers delUser)
     {
-        shouldRender = false;
+        _shouldRender = false;
         await _userManager.DeleteAsync(delUser);
-        shouldRender = true;
+        _shouldRender = true;
     }
 
     protected override bool ShouldRender()
     {
-        return shouldRender;
+        return _shouldRender;
     }
 }

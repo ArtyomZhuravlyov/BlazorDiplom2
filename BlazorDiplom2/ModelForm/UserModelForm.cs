@@ -12,7 +12,7 @@ namespace BlazorDiplom2.ModelForm
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
-        public string Email { get; set; } //сделаем равным UserName 
+        public string Email { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
@@ -29,6 +29,9 @@ namespace BlazorDiplom2.ModelForm
         public string FatherName { get; set; }
 
         public string IdUser { get; set; }
+
+        //[Required]
+        public string EducationalInstitution { get; set; }
 
     }
 }

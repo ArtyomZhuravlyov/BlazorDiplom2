@@ -8,8 +8,7 @@ namespace BlazorDiplom2.ModelForm
         [Required]
         public string Group { get; set; }
 
-        [Required]
-        public string EducationalInstitution { get; set; }
+
 
     }
 }

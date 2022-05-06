@@ -4,115 +4,209 @@
 @inject UserManager<AspNetUsers> _userManager;
 @inject IUserStore<AspNetUsers> _userStore;
 @inject DB _db;
+<div class="item long_item">
+    <div class="main_name">Роль пользователя</div>
+    @if (_edit)
+    {
+        <button @onclick="ShowList">Назад</button>
+        <select disabled @onchange="@ChangeRole">
+            @if (UserModelForm is StudentModelForm)
+            {
+                <option selected value="@Constants.ROLE_STUDENT">@Constants.ROLE_STUDENT</option>
+            }
+            else
+            {
+                <option selected value="@Constants.ROLE_TEACHER">@Constants.ROLE_TEACHER</option>
+            }
+        </select>
+    }
+    else
+    {
+        <select @onchange="@ChangeRole">
+            <option selected value="@Constants.ROLE_STUDENT">@Constants.ROLE_STUDENT</option>
+            <option value="@Constants.ROLE_TEACHER">@Constants.ROLE_TEACHER</option>
+        </select>
+    }
+  
+</div>
 
-@if (edit)
-{
-    <button @onclick="ShowList">Назад</button>
-    <select disabled class="form-control" @onchange="@ChangeRole">
-        <option selected value="@Constants.ROLE_STUDENT">@Constants.ROLE_STUDENT</option>
-        <option value="@Constants.ROLE_TEACHER">@Constants.ROLE_TEACHER</option>
-    </select>
-}
-else
-{
-    <select class="form-control" @onchange="@ChangeRole">
-        <option selected value="@Constants.ROLE_STUDENT">@Constants.ROLE_STUDENT</option>
-        <option value="@Constants.ROLE_TEACHER">@Constants.ROLE_TEACHER</option>
-    </select>
-}
-
-
-<div>@mes</div>
+<div>@_mes</div>
 @if (UserModelForm is TeacherModelForm TeacherModelForm)
 {
-
-    <EditForm Model="TeacherModelForm" OnValidSubmit="OnValidSubmitAsync">
+    <EditForm class="new" Model="TeacherModelForm" OnValidSubmit="OnValidSubmitAsync">
         <DataAnnotationsValidator />
-        <label>teacherModelForm.UserName</label>
-        <InputText class="form-control" @bind-Value="TeacherModelForm.UserName"></InputText>
-        <label>teacherModelForm.Email</label>
-        <InputText class="form-control" @bind-Value="TeacherModelForm.Email"></InputText>
+        <div class="item">
+            <div class="main_name">Фамилия</div>
+            <InputText @bind-Value="TeacherModelForm.LastName"></InputText>
+        </div>
+        <div class="item">
+            <div class="main_name">Имя</div>
+            <InputText @bind-Value="TeacherModelForm.FirstName"></InputText>
+        </div>
+        <div class="item">
+            <div class="main_name">Отчество</div>
+            <InputText @bind-Value="TeacherModelForm.FatherName"></InputText>
+        </div>
+        <div class="item">
+            <div class="main_name">Email</div>
+            <InputText @bind-Value="TeacherModelForm.Email"></InputText>
+        </div>
+        <div class="item">
+            <div class="main_name">Имя пользователя</div>
+            <InputText @bind-Value="TeacherModelForm.UserName"></InputText>
+        </div>
+        <div class="item">
+            <div class="main_name">Пароль</div>
+            <InputText @bind-Value="TeacherModelForm.Password"></InputText>
+        </div>
 
-        <label>teacherModelForm.Password</label>
-        <InputText class="form-control" @bind-Value="TeacherModelForm.Password"></InputText>
+        <div class="item long_item long_select">
+            <div class="main_name">Учебное заведение</div>
+            <InputSelect ValueExpression="@(()=>TeacherModelForm.EducationalInstitution)"
+                     Value="@TeacherModelForm.EducationalInstitution"
+                     ValueChanged="@((string value) => ChangedEduc(value))">
 
-        <label>teacherModelForm.FirstName</label>
-        <InputText class="form-control" @bind-Value="TeacherModelForm.FirstName"></InputText>
+                @if (TeacherModelForm.EducationalInstitution == null)
+            {
+                <option selected value="-1">Выберите учебное заведение</option>
+            }
 
-        <label>teacherModelForm.LastName</label>
-        <InputText class="form-control" @bind-Value="TeacherModelForm.LastName"></InputText>
-        <label>teacherModelForm.FatherName</label>
-        <InputText class="form-control" @bind-Value="TeacherModelForm.FatherName"></InputText>
-        <button class="btn btn-primary">@messageBtn</button>
+            @foreach (var item in educationalInstitutions)
+            {
+                @if (String.Equals(item.FullName, TeacherModelForm.EducationalInstitution,
+               StringComparison.OrdinalIgnoreCase))
+                {
+                    <option selected value="@TeacherModelForm.EducationalInstitution">@TeacherModelForm.EducationalInstitution</option>
+                }
+                else
+                {
+                    <option value="@item.FullName">@item.FullName</option>
+                }
+
+            }
+        </InputSelect>
+    </div>
+
+
+
+    <div class="item long_item short_select">
+        <div class="main_name">Добавить группу</div>
+        @* <select  @onchange="@SelectAndAddGroup"> *@ @*value="-1"*@
+        <select @onchange="@SelectAndAddGroup">
+            <option selected value="-1">Выберите группу</option>
+            @foreach (var item in _groupsTeacher)
+                {
+                    <option value="@item.Name">@item.Name</option>
+                }
+
+            </select>
+        </div>
+        @if(TeacherModelForm.Groups.Count > 0)
+        {
+            <div class="item long_item">
+            <div class="groups_with_teacher">
+                <div class="main_name">Привязанные группы</div>
+                @foreach (var item in TeacherModelForm.Groups)
+                {
+                    <div class="group_with_teacher">
+                        <div class="group_with_teacher_name">
+                            @item
+                        </div>
+                        <div @onclick="()=>DelGroupTeacher(item)" class="del_group_with_teacher"><img src="img\del.png" alt=""></div>
+                    </div>
+                }
+            </div>
+        </div>
+        }
+        
+
+        <button class="save_btn">@_messageBtn</button>
     </EditForm>
 }
 else if (UserModelForm is StudentModelForm StudentModelForm)
 {
-    <EditForm Model="StudentModelForm" OnValidSubmit="OnValidSubmitAsync">
+    <EditForm class="new" Model="StudentModelForm" OnValidSubmit="OnValidSubmitAsync">
         <DataAnnotationsValidator />
-        <label>studentModelForm.UserName</label>
-        <InputText class="form-control" @bind-Value="StudentModelForm.UserName"></InputText>
-        <label>studentModelForm.Email</label>
-        <InputText class="form-control" @bind-Value="StudentModelForm.Email"></InputText>
+        <div class="item">
+            <div class="main_name">Фамилия</div>
+            <InputText @bind-Value="StudentModelForm.LastName"></InputText>
+        </div>
+        <div class="item">
+            <div class="main_name">Имя</div>
+            <InputText @bind-Value="StudentModelForm.FirstName"></InputText>
+        </div>
+        <div class="item">
+            <div class="main_name">Отчество</div>
+            <InputText @bind-Value="StudentModelForm.FatherName"></InputText>
+        </div>
+        <div class="item">
+            <div class="main_name">Email</div>
+            <InputText @bind-Value="StudentModelForm.Email"></InputText>
+        </div>
+        <div class="item">
+            <div class="main_name">Имя пользователя</div>
+            <InputText @bind-Value="StudentModelForm.UserName"></InputText>
+        </div>
+        <div class="item">
+            <div class="main_name">Пароль</div>
+            <InputText @bind-Value="StudentModelForm.Password"></InputText>
+        </div>
 
-        <label>studentModelForm.Password</label>
-        <InputText class="form-control" @bind-Value="StudentModelForm.Password"></InputText>
+        @*<option selected value="@StudentModelForm.EducationalInstitution">@StudentModelForm.EducationalInstitution</option>*@
 
-        <label>studentModelForm.FirstName</label>
-        <InputText class="form-control" @bind-Value="StudentModelForm.FirstName"></InputText>
+        <div class="item long_select">
+            <div class="main_name">Учебное заведение</div>
+            <InputSelect ValueExpression="@(()=>StudentModelForm.EducationalInstitution)"
+                     Value="@StudentModelForm.EducationalInstitution"
+                     ValueChanged="@((string value) => ChangedEduc(value))">
 
-        <label>studentModelForm.LastName</label>
-        <InputText class="form-control" @bind-Value="StudentModelForm.LastName"></InputText>
-        <label>studentModelForm.FatherName</label>
-        <InputText class="form-control" @bind-Value="StudentModelForm.FatherName"></InputText>
-
-        <label>studentModelForm.EducationalInstitution</label>
-        <InputSelect class="form-control"
-                 ValueExpression="@(()=>StudentModelForm.EducationalInstitution)"
-                 Value="@StudentModelForm.EducationalInstitution"
-                 ValueChanged="@((string value) => OnChangedEduc(value))">
-            @*<option selected value="@StudentModelForm.EducationalInstitution">@StudentModelForm.EducationalInstitution</option>*@
-            @if (StudentModelForm.EducationalInstitution == null)
-        {
-            <option selected value="-1">Выберите учебное заведение</option>
-        }
-
-        @foreach (var item in educationalInstitutions)
-        {
-            @if (String.Equals(item.FullName, StudentModelForm.EducationalInstitution,
-           StringComparison.OrdinalIgnoreCase))
+                @if (StudentModelForm.EducationalInstitution == null)
             {
-                <option selected value="@StudentModelForm.EducationalInstitution">@StudentModelForm.EducationalInstitution</option>
+                <option selected value="-1">Выберите учебное заведение</option>
             }
-            else
-            {
-                <option value="@item.FullName">@item.FullName</option>
-            }
 
-        }
-    </InputSelect>
-
-    <InputSelect class="form-control" @bind-Value="StudentModelForm.Group">
-        @if (StudentModelForm.Group == null)
+            @foreach (var item in educationalInstitutions)
             {
-            <option selected value="-1">Выберите группу</option>
-            }
-    
-        @foreach (var item in groups)
-            {
-            @if (String.Equals(item.Name, StudentModelForm.Group,
-           StringComparison.OrdinalIgnoreCase))
+                @if (String.Equals(item.FullName, StudentModelForm.EducationalInstitution,
+               StringComparison.OrdinalIgnoreCase))
                 {
-                <option selected value="@StudentModelForm.Group">@StudentModelForm.Group</option>
+                    <option selected value="@StudentModelForm.EducationalInstitution">@StudentModelForm.EducationalInstitution</option>
                 }
                 else
                 {
-                <option value="@item.Name">@item.Name</option>
+                    <option value="@item.FullName">@item.FullName</option>
                 }
-         
+
             }
-    </InputSelect>
-    <button class="btn btn-primary">@messageBtn</button>
+        </InputSelect>
+    </div>
+
+
+    <div class="item short_select">
+        <div class="main_name">Группа</div>
+        <InputSelect @bind-Value="StudentModelForm.Group">
+            @if (StudentModelForm.Group == null)
+                {
+                <option selected value="-1">Выберите группу</option>
+                }
+
+            @foreach (var item in groups)
+                {
+                @if (String.Equals(item.Name, StudentModelForm.Group,
+               StringComparison.OrdinalIgnoreCase))
+                    {
+                    <option selected value="@StudentModelForm.Group">@StudentModelForm.Group</option>
+                    }
+                    else
+                    {
+                    <option value="@item.Name">@item.Name</option>
+                    }
+
+                }
+        </InputSelect>
+    </div>
+
+    <button class="save_btn">@_messageBtn</button>
 </EditForm>
 }
 
@@ -124,30 +218,47 @@ else if (UserModelForm is StudentModelForm StudentModelForm)
 
     [Parameter] public EventCallback Refresh { get; set; }
 
-    private string selectRol { get; set; } = Constants.ROLE_STUDENT;
+    private string _selectRol = Constants.ROLE_STUDENT;
 
-    private bool edit;
+    private bool _edit;
 
-    private string messageBtn;
+    private string _messageBtn;
 
 
+    string _mes = "";
 
-    string mes = "";
 
-    //IEnumerable<EducationalInstitution> educationalInstitutions;
-    //IEnumerable<Group> groups;
-    List<EducationalInstitution> educationalInstitutions;
+    List<EducationalInstitution> educationalInstitutions = new();
     List<Group> groups = new();
+    List<Group> _groupsTeacher = new(); // здесь группы удаляются и добавляются в зависимости от выбора
 
     protected override void OnInitialized()
     {
-        edit = UserModelForm.IdUser != null; //!= "0";
-        messageBtn = edit ? Constants.BTN_CHANGE : Constants.BTN_ADD;
+        _edit = UserModelForm.IdUser != null; //!= "0";
+        _messageBtn = _edit ? Constants.BTN_CHANGE : Constants.BTN_ADD;
         educationalInstitutions = _db.EducationalInstitutions.Include(x => x.Groups).ToList();
 
-        if (UserModelForm is StudentModelForm studentModelForm && studentModelForm.Group != null)
-            groups = educationalInstitutions.First(x => x.FullName == studentModelForm.EducationalInstitution).Groups.ToList();
-        //groups = _db.Groups.ToList();
+        //if (UserModelForm is StudentModelForm studentModelForm /*&& studentModelForm.Group != null*/)
+        //    groups = educationalInstitutions.First(x => x.FullName == studentModelForm.EducationalInstitution).Groups.ToList();
+        //else if (UserModelForm is TeacherModelForm teacherModelForm1)
+        //    ;
+        if (_edit)
+        {
+            groups = educationalInstitutions.FirstOrDefault(x => x.FullName.Equals(UserModelForm.EducationalInstitution)).Groups.ToList();
+            _groupsTeacher = new(groups);
+
+            if (UserModelForm is TeacherModelForm teacherModelForm && teacherModelForm.Groups?.Count > 0)
+            {
+                foreach (var item in teacherModelForm.Groups)
+                    _groupsTeacher.RemoveAll(x => x.Name.Equals(item));
+            }
+        }
+
+
+
+
+
+
     }
 
     private void ChangeRole(ChangeEventArgs eventArgs)
@@ -158,13 +269,36 @@ else if (UserModelForm is StudentModelForm StudentModelForm)
             UserModelForm = new TeacherModelForm();
     }
 
-    private Task OnChangedEduc(string value)
+    private void DelGroupTeacher(string groupName)
+    {
+        var teacherModelForm = UserModelForm as TeacherModelForm;
+        teacherModelForm.Groups.Remove(groupName);
+        _groupsTeacher.Add(groups.First(x => x.Name.Equals(groupName)));
+    }
+
+    private void SelectAndAddGroup(ChangeEventArgs eventArgs/*Group group*/)
+    {
+        string groupName = eventArgs.Value.ToString();
+        if (groupName.Equals("-1"))
+            return;
+        var teacherModelForm = UserModelForm as TeacherModelForm;
+        teacherModelForm.Groups.Add(groupName);
+        _groupsTeacher.Remove(groups.First(x => x.Name.Equals(groupName)));
+
+        //var teacherModelForm = UserModelForm as TeacherModelForm;
+        //teacherModelForm.Groups.Add(group.Name);
+        //_groupsTeacher.Remove(group);
+    }
+
+    private void ChangedEduc(string education)
     {
         // Assign the selected value to the Model
-        ((StudentModelForm)UserModelForm).EducationalInstitution = value;
+        UserModelForm.EducationalInstitution = education;
         //groups = _db.Groups.Include(x => x.EducationalInstitution).Where(x => x.EducationalInstitution.Id.ToString() == value).ToList();
-        groups = educationalInstitutions.First(x => x.FullName == ((StudentModelForm)UserModelForm).EducationalInstitution).Groups.ToList();
-        return Task.CompletedTask;
+        groups = educationalInstitutions.First(x => x.FullName == UserModelForm.EducationalInstitution).Groups.ToList();
+        _groupsTeacher = new(groups);
+        if (UserModelForm is TeacherModelForm teacherModelForm)
+            teacherModelForm.Groups.Clear();
     }
 
     private async Task OnValidSubmitAsync()
@@ -174,7 +308,7 @@ else if (UserModelForm is StudentModelForm StudentModelForm)
 
         if (userRepeat != null && userRepeat.Id != UserModelForm.IdUser) // userRepeat.Id != UserModelForm.IdUser это важно при редактированнии пользователя
         {
-            mes = "Пользователь с таким именем уже существует";
+            _mes = "Пользователь с таким именем уже существует";
             return;
         }
 
@@ -182,13 +316,13 @@ else if (UserModelForm is StudentModelForm StudentModelForm)
 
         if (userRepeat != null && userRepeat.Id != UserModelForm.IdUser)
         {
-            mes = "Пользователь с такой почтой уже существует";
+            _mes = "Пользователь с такой почтой уже существует";
             return;
         }
 
-        mes = "";
+        _mes = "";
 
-        if (edit)
+        if (_edit)
             await EditUserAsync();
         else
             await CreateUserAsync();
@@ -228,9 +362,9 @@ else if (UserModelForm is StudentModelForm StudentModelForm)
         var r = await _userManager.UpdateAsync(editUser);
         if (r.Errors.Count() > 0)
         {
-            mes = r.Errors.ElementAt(0).Description;
-            //transaction.Rollback();
-            return;
+            _mes = r.Errors.ElementAt(0).Description;
+            ////transaction.Rollback();
+            //return;
         }
     }
 
@@ -246,7 +380,7 @@ else if (UserModelForm is StudentModelForm StudentModelForm)
         var r = await _userManager.CreateAsync(user, UserModelForm.Password);
         if (r.Errors.Count() > 0)
         {
-            mes = r.Errors.ElementAt(0).Description;
+            _mes = r.Errors.ElementAt(0).Description;
             //transaction.Rollback();
             return;
         }
@@ -276,20 +410,31 @@ else if (UserModelForm is StudentModelForm StudentModelForm)
         else
         {
             var teacherModelForm = UserModelForm as TeacherModelForm;
+
+            var grs = new List<Group>();
+            foreach (var item in teacherModelForm.Groups)
+            {
+                grs.Add(groups.First(x => x.Name.Equals(item)));
+            }
+
             Teacher teacher = new()
                 {
                     FirstName = teacherModelForm.FirstName,
                     LastName = teacherModelForm.LastName,
-                    FatherName = teacherModelForm.FatherName
+                    FatherName = teacherModelForm.FatherName,
+                    Groups = grs
                 };
 
             _db.Teachers.Add(teacher);
             user.Teacher = teacher;
 
-            await _userManager.CreateAsync(user, UserModelForm.Password);
+            
             await _userManager.AddToRoleAsync(user, "Teachers" /*Enums.Roles.Student.ToString()*/);
             //transaction.Commit();
+            groups.Clear();
+            _groupsTeacher.Clear();
             UserModelForm = new TeacherModelForm();
+
         }
     }
 

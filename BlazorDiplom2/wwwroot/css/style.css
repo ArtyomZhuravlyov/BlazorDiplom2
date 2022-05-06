@@ -869,3 +869,39 @@ hr {
 .block{
     display: block;
 }
+
+.long_item{
+    width: 100%;
+}
+
+.long_item select{
+    width: 150px;
+}
+
+.long_select select{
+    width: 50%;
+}
+
+/*
+.groups_with_teacher{
+    margin: 20px 0;
+}
+*/
+.group_with_teacher{
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+}
+
+.group_with_teacher select{
+    min-width: 300px;
+}
+
+.del_group_with_teacher{
+    width: 20px;
+}
+
+.del_group_with_teacher img{
+    display: block;
+    width: 100%;
+}
