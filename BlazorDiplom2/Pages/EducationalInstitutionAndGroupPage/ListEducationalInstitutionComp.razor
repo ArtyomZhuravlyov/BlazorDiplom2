@@ -1,17 +1,35 @@
 ﻿@using Microsoft.EntityFrameworkCore
 @inject DB _db;
-<h3>Universities</h3>
-@if(showList)
+
+
+
+
+
+@if (showList)
 {
-    <div>
-    @foreach(var item in educationalInstitutions)
-    {
-          <div>@item.FullName</div>
-          <div>@item.ShortName</div>
-          <button @onclick="(()=>OpenChanged(item))">Изменить</button>
-          <button class="btn btn-danger" @onclick="(()=>Delete(item))">Удалить</button>
-    }
-  
+    <div class="table_admin">
+        <table border="1">
+            <tr>
+                <th>Полное название</th>
+                <th>Сокращённое название</th>
+                <th></th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in educationalInstitutions)
+            {
+                <tr>
+                    <td class="nowrap">@item.FullName</td>
+                    <td class="nowrap">@item.ShortName</td>
+                    <td>
+                        <div class="edit_delete_item" @onclick="(()=>OpenChanged(item))"><img src="img\edit.png" alt=""></div>
+                    </td>
+                    <td>
+                        <div class="edit_delete_item" @onclick="(()=>Delete(item))"><img src="img\delete.png" alt=""></div>
+                    </td>
+                </tr>
+            }
+        </table>
     </div>
 }
 else
@@ -27,13 +45,14 @@ else
 
     //protected override async Task OnInitializedAsync() =>  students2 = await _db.GetStudentsAsync();
 
-    protected override void OnInitialized() =>  educationalInstitutions =  _db.EducationalInstitutions;
+    protected override void OnInitialized() => educationalInstitutions = _db.EducationalInstitutions;
 
     private void Delete(EducationalInstitution educationalInstitution)
     {
         _db.EducationalInstitutions.Remove(educationalInstitution);
         _db.Groups.RemoveRange(_db.Groups.Include(x => x.EducationalInstitution)
         .Where(x => x.EducationalInstitutionId == educationalInstitution.Id));//если нет каскадного удаления
+        // и проверить удаление учеников, преподавателей, соответвенно результатов и коан
         _db.SaveChanges();
     }
 

@@ -1,0 +1,77 @@
+﻿@inject DB _db;
+
+@if (edit)
+{
+    <button @onclick="ShowList">Назад</button>
+}
+
+<EditForm class="new block" Model="Group" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="item">
+        <div class="main_name">Название</div>
+        <InputText @bind-Value="Group.Name"></InputText>
+    </div>
+    <div class="item long_select">
+        <div class="main_name">Учебное заведение</div>
+       <InputSelect @bind-Value="Group.EducationalInstitutionId">
+            @if (Group.EducationalInstitution == null)
+                {
+                <option selected value="-1">Выберите учебное заведение</option>
+                }
+
+            @foreach (var item in _educationalInstitutions)
+                {
+                @if (item.Id.Equals( Group.EducationalInstitutionId))
+                    {
+                    <option selected value="@Group.EducationalInstitutionId">@_educationalInstitutions.First(x=>x.Id.Equals(Group.EducationalInstitutionId)).FullName</option>
+                    }
+                    else
+                    {
+                    <option value="@item.Id">@item.FullName</option>
+                    }
+
+                }
+        </InputSelect>
+    </div>
+    <button class="save_btn">@messageBtn</button>
+</EditForm>
+@code {
+
+    [Parameter] public Group Group { get; set; }
+
+    [Parameter] public EventCallback ShowList { get; set; }
+
+    private List<EducationalInstitution> _educationalInstitutions = new();
+
+    private bool edit;
+
+    private string messageBtn;
+
+    protected override void OnInitialized()
+    {
+        edit = Group.Id != 0;
+        messageBtn = edit ? Constants.BTN_CHANGE : Constants.BTN_ADD;
+        _educationalInstitutions = _db.EducationalInstitutions.ToList();
+    }
+
+    private void OnValidSubmit()
+    {
+        //if (edit) //если изменяем
+        //{
+        //    //var changeE = _db.Groups.First(x => x.Id.Equals(EducationalInstitution.Id));
+        //    //changeE.FullName = EducationalInstitution.FullName;
+        //    //changeE.ShortName = EducationalInstitution.ShortName;
+        //}
+        //else //если добавляем
+        //{
+        //    _db.Groups.Add(Group);
+
+        //}
+        if(!edit)
+            _db.Groups.Add(Group);
+        _db.SaveChanges();
+        Group = new();
+    }
+
+    //  [Parameter] public EventCallback<TeacherModelForm> AddTeacher { get; set; }
+}

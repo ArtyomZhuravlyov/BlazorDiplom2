@@ -1,0 +1,72 @@
+﻿@using Microsoft.EntityFrameworkCore
+@inject DB _db;
+
+
+@if (showList)
+{
+    <div class="table_admin">
+        <table border="1">
+            <tr>
+                <th>Название</th>
+                <th>Учебное заведение</th>
+
+                <th></th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in _groups)
+            {
+                <tr>
+                    <td class="nowrap">@item.Name</td>
+                    <td class="nowrap">@item.EducationalInstitution.ShortName</td>
+                    <td>
+                        <div class="edit_delete_item" @onclick="(()=>OpenChanged(item))"><img src="img\edit.png" alt=""></div>
+                    </td>
+                    <td>
+                        <div class="edit_delete_item" @onclick="(()=>Delete(item))"><img src="img\delete.png" alt=""></div>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+}
+else
+{
+    <CreateEditGroupComp ShowList="ShowList" Group="_group"></CreateEditGroupComp>
+}
+
+@code {
+    private IEnumerable<Group> _groups;
+    private Group _group;
+    private bool showList = true;
+
+
+    //protected override async Task OnInitializedAsync() =>  students2 = await _db.GetStudentsAsync();
+
+    protected override void OnInitialized() => _groups = _db.Groups;
+
+    private void Delete(Group group)
+    {
+
+        _db.Groups.Remove(group);
+        //проверить каскадное удаление учеников, их результатов и т.д.
+
+        //_db.Groups.RemoveRange(_db.Groups.Include(x => x.EducationalInstitution)
+        //.Where(x => x.EducationalInstitutionId == educationalInstitution.Id));//если нет каскадного удаления
+        _db.SaveChanges();
+    }
+
+    private void ShowList()
+    {
+        showList = true;
+    }
+
+    private void OpenChanged(Group group)
+    {
+        _group = group;
+        showList = false;
+        //<CreateEditEducationalInstitutionComp EducationalInstitution="educationalInstitution"></CreateEditEducationalInstitutionComp>
+    }
+
+
+}
