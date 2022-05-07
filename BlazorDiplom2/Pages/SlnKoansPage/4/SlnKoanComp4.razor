@@ -238,7 +238,7 @@ else
                 IdKoanInTest = CurModule.Test.KoanInTests.First(x => x.KoanId.Equals(CurKoan.Id)).Id,// CurKoan.Id,
                 AnswerStudent = CodeKoan,
                 IsPassed = isPassed,
-                ErrorMessage = $"{message}\r\n{log}"
+                Message = $"{message}\r\n{log}"
             };
 
         var chStorTestKoan = locStorageTest.ListLocStoragesTestKoan.FirstOrDefault(x => x.IdKoanInTest.Equals(locStorageTestKoan.IdKoanInTest));

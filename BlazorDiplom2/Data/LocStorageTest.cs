@@ -83,7 +83,7 @@
                     KoanInTestId = item.IdKoanInTest,
                     Answer = item.AnswerStudent,
                     IsError = !item.IsPassed,
-                    Message = item.ErrorMessage
+                    Message = item.Message
                 };
                 resultKoanTests.Add(resultKoanTest);
             }

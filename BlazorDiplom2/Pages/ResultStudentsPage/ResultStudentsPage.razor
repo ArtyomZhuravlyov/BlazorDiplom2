@@ -4,284 +4,206 @@
 @inject DB _db;
 
 
-    @if (_teacher == null)
-    {
-        <p><em>Loading...</em></p>
-    }
-    else
-    {
+@if (_teacher == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
 
-        <div class="menu_info">
-                    <div class="results_student">
-                        <div class="nav_top">
-                            <div class="nav_top_link">Результаты студентов</div>
-                        </div>
-                        <div class="filtr">
-                            <div class="filtr_item">
-                                <div class="main_name">Курс</div>
-                                <select name="course">
-                                    <option value="1">C# для начинающих</option>
-                                    <option value="2">C# для начинающих</option>
-                                    <option value="3">C# для начинающих</option>
-                                </select>
-                            </div>
-                            <div class="filtr_item short_select">
-                                <div class="main_name">Группа</div>
-                                <select name="group">
-                                    <option value="1">3530903/80302</option>
-                                    <option value="2">3530903/80302</option>
-                                    <option value="3">3530903/80302</option>
-                                </select>
-                            </div>
-                            <div class="filtr_item">
-                                <div class="main_name">Студент группы</div>
-                                <select name="student">
-                                    <option value="1">Все суденты</option>
-                                    <option value="2">Все суденты</option>
-                                    <option value="3">Все суденты</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="table_result">
-                            <table border="1">
-                                <tr>
-                                    <th rowspan="2">ФИО</th>
-                                    <th colspan="7">Модуль 1</th>
-                                    <th colspan="7">Модуль 2</th>
-                                    <th colspan="7">Модуль 3</th>
-                                    <th colspan="7">Модуль 4</th>
-                                </tr>
-                                <tr>
-                                    <th>1</th>
-                                    <th>2</th>
-                                    <th>3</th>
-                                    <th>4</th>
-                                    <th>5</th>
-                                    <th colspan="2">Тест</th>
-                                    <th>1</th>
-                                    <th>2</th>
-                                    <th>3</th>
-                                    <th>4</th>
-                                    <th>5</th>
-                                    <th colspan="2">Тест</th>
-                                    <th>1</th>
-                                    <th>2</th>
-                                    <th>3</th>
-                                    <th>4</th>
-                                    <th>5</th>
-                                    <th colspan="2">Тест</th>
-                                    <th>1</th>
-                                    <th>2</th>
-                                    <th>3</th>
-                                    <th>4</th>
-                                    <th>5</th>
-                                    <th colspan="2">Тест</th>
-                                </tr>
-                                <tr>
-                                    <td class="nowrap">Калимуллина Адиля Рамилевна</td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td>80%</td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td>80%</td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td>80%</td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td class="name_student">Калимуллина Адиля Рамилевна</td>
-                                    <td class="opacity"><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td>80%</td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td>80%</td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td>80%</td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
+    <div class="menu_info">
+        <div class="results_student">
+            <div class="nav_top">
+                <div class="nav_top_link">Результаты студентов</div>
+            </div>
+            <div class="filtr">
+                <div class="filtr_item">
+                    <div class="main_name">Курс</div>
+                    <select @onchange="@ChangeCourse">
+                        <option selected value="-1">Выберите курс</option>
+                        @foreach (var item in _teacher.Courses)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="filtr_item short_select">
+                    <div class="main_name">Группа</div>
+                    <select @onchange="@ChangeGroup">
+                        <option selected value="-1">Выберите группу</option>
+                        @foreach (var item in _groupsForSelect)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    </select>
+                </div>
+                <div class="filtr_item">
+                    <div class="main_name">Студент группы</div>
+                    <select @onchange="@ChangeStudent">
+                        <option selected value="-1">Выберите студента</option>
+                        <option value="0">Все студенты</option>
+                        @foreach (var item in _studentsForSelect)
+                        {
+                            <option value="@item.Id">@($"{item.LastName} {item.FirstName}")</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            @if (_students.Count > 0)
+            {
+                <div class="table_result">
+                    <table border="1">
+                        <tr>
+                            <th rowspan="2">ФИО</th>
+                            @for (int i = 1; i <= _modules.Count; i++)
+                            {
+                                int locI = i;
+                                <th colspan="@locI">Модуль @locI</th>
+                            }
+                        </tr>
+                        <tr>
+                            @foreach (var m in _modules)
+                            {
+                                @for (int i = 1; i <= m.KoanInModules.Count; i++)
+                                {
+                                    int locI = i;
+                                    <th>locI</th>
+                                }
+                                <th colspan="2">Тест</th>
+                            }
+                        </tr>
+                        @foreach (var st in _students)
+                        {
+                            <tr>
+                                <td class="nowrap">@($"{st.LastName} {st.FirstName} {st.FatherName}")</td>
+                                @foreach (var m in _modules)
+                                {
+                                    @foreach (var kInM in m.KoanInModules)
+                                    {
+                                        @if (st.KoanInModules.Contains(kInM))
+                                        {
+                                            <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                        }
+                                        else
+                                        {
+                                            <td>   </td>
+                                        }
+                                    }
 
-                                <tr>
-                                    <td class="name_student">Калимуллина Адиля Рамилевна</td>
-                                    <td class="opacity"><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td>80%</td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td>80%</td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td>80%</td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                            </table>
-                        </div>
-                    </div>
+                                    ResultTest resultTest = st.ResultTests.FirstOrDefault(x => x.Id.Equals(m.Test.Id));
+                                    @if (resultTest != null)
+                                    {
+                                        @if (resultTest.IsPassed)
+                                        {
+                                            <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                        }
+                                        else
+                                        {
+                                            <td>X</td>
+                                        }
+                                        <td>@(resultTest.ResultKoanTests.Count(x=>x.IsError.Equals(false))/resultTest.ResultKoanTests.Count())%</td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                        <td></td>
+                                    }
+
+                                }
+
+                            </tr>
+                        }
+                    </table>
                 </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        <div class="table_admin">
-            <table border="1">
-
-                @if (_selectRol.Equals(Constants.ROLE_STUDENT))
+                @if (_students.Count.Equals(1))
                 {
-                    <tr>
-                        <th>ФИО</th>
-                        <th>Имя пользователя</th>
-                        <th>Email</th>
-                        <th>Учебное заведение</th>
-                        <th>Группа</th>
-                        <th></th>
-                        <th></th>
-                    </tr>
 
-                    @foreach (var item in _studentsForSelect)
-                    {
-                        <tr>
-                            <td class="nowrap">@($"{item.LastName } {item.FirstName} {item.FatherName}")</td>
-                            <td class="nowrap">@item.AspNetUser.UserName</td>
-                            <td class="nowrap">@item.AspNetUser.Email</td>
-                            <td class="nowrap">@item.Group.EducationalInstitution.ShortName</td>
-                            <td class="nowrap">@item.Group.Name</td>
-                            <td>
-                                <div class="edit_delete_item" @onclick="(()=>OpenChanged(item))"><img src="img\edit.png" alt=""></div>
-                            </td>
-                            <td>
-                                <div class="edit_delete_item" @onclick="(()=>Delete(item.AspNetUser))"><img src="img\delete.png" alt=""></div>
-                            </td>
-                        </tr>
-                    }
+                     <div class="filtr_item">
+                            <div class="main_name">Тест</div>
+                            <select name="test">
+                                <option value="1">Тест по модулю 1</option>
+                                <option value="2">Тест по модулю 1</option>
+                                <option value="3">Тест по модулю 1</option>
+                            </select>
+                        </div>
+                        <div class="result_every_test">
+                            <div class="info_items ">
+                                <div class="info_item short ">
+                                    <div class="info_item_title">
+                                        <img src="\wwwroot\img\time.png" alt=""> Время:
+                                    </div>
+                                    <div class="info_item_info">
+                                        9 мин. 50 сек.
+                                    </div>
+                                </div>
+                            </div>
+                            <table border="1">
+                                <tr>
+                                    <th>1</th>
+                                    <th>2</th>
+                                    <th>3</th>
+                                    <th>4</th>
+                                    <th>5</th>
+                                    <th>6</th>
+                                    <th>7</th>
+                                    <th>8</th>
+                                    <th>9</th>
+                                    <th>10</th>
+                                </tr>
+                                <tr>
+                                    <td><img src="\wwwroot\img\error.svg" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                </tr>
+                            </table>
+                            <div class="results">
+                                <div class="label">Коан</div>
+                                <select name="koan">
+                                    <option value="1">Коан 1</option>
+                                    <option value="2">Коан 2</option>
+                                    <option value="3">Коан 3</option>
+                                </select>
+                                <div class="result_texts">
+                                    <div class="result_text">
+                                        <div class="result_text_title">Ваш ответ:</div>
+                                        <div class="result_text_info">namespace BlazorApp1.Demo
+                                            {
+                                            public class RunClass
+                                            {
+                                            public bool Run(string name, int count)
+                                            {
+
+                                            return true.Equals(false); //This should be true
+                                            }
+                                            }
+                                            }</div>
+                                    </div>
+                                    <hr />
+                                    <div class="result_text">
+                                        <div class="result_text_title">Ответ компилятора:</div>
+                                        <div class="result_text_info">Parse SyntaxTree Success
+                                            (10,26): error CS1501: No overload for method 'Equals' takes 0 arguments
+                                            Compilation error</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                 }
-                else
-                {
-                    <tr>
-                        <th>ФИО</th>
-                        <th>Имя пользователя</th>
-                        <th>Email</th>
-                        <th>Учебное заведение</th>
-                        <th>Группы</th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-
-                    @foreach (var item in _teachers)
-                    {
-
-                        <tr>
-                            <td class="nowrap">@($"{item.LastName } {item.FirstName} {item.FatherName}")</td>
-                            <td class="nowrap">@item.AspNetUser.UserName</td>
-                            <td class="nowrap">@item.AspNetUser.Email</td>
-                            @if (item.Groups.Count > 0)
-                            {
-                                <td class="nowrap">@item.Groups[0].EducationalInstitution.ShortName</td>
-                            }
-                            else
-                            {
-                                <td class="nowrap">@string.Empty</td>
-                            }
-                            <td class="nowrap">
-                                @foreach (var gr in item.Groups)
-                                {
-                                    @(gr.Name + " ")
-                                }
-                            </td>
-                            <td>
-                                <div class="edit_delete_item" @onclick="(()=>OpenChanged(item))"><img src="img\edit.png" alt=""></div>
-                            </td>
-                            <td>
-                                <div class="edit_delete_item" @onclick="(()=>Delete(item.AspNetUser))"><img src="img\delete.png" alt=""></div>
-                            </td>
-                        </tr>
-                    }
-                }
-            </table>
+            }
         </div>
-    }
+    </div>
+
+
+}
 
 
 @code {
@@ -297,7 +219,11 @@
     private List<Student> _studentsForSelect = new();
     private List<Group> _groupsForSelect = new();
     private Teacher _teacher;
+
+    // Для таблицы
     private List<Student> _students = new();
+    private List<Module> _modules = new();
+    //private Dictionary<int, bool> _ = new();
 
     //protected override async Task OnInitializedAsync() =>  students2 = await _db.GetStudentsAsync();
 
@@ -306,19 +232,18 @@
 
         _teacher = await Task.FromResult(_db.Teachers
             .Include(x => x.AspNetUser)
-            .Include(x=>x.Courses)
-                .ThenInclude(x=>x.Groups)
-                    .ThenInclude(x=>x.Students)
-                        .ThenInclude(x=>x.ResultTests)
-            .Include(x=>x.Courses)
-                .ThenInclude(x=>x.Modules)
-                    .ThenInclude(x=>x.KoanInModules)
-            .Include(x=>x.Courses)
-                .ThenInclude(x=>x.Modules)
-                    .ThenInclude(x=>x.Test)
-                         .ThenInclude(x=>x.KoanInTests)
+            .Include(x => x.Courses)
+                .ThenInclude(x => x.Groups)
+                    .ThenInclude(x => x.Students)
+                        .ThenInclude(x => x.ResultTests)
+            .Include(x => x.Courses)
+                .ThenInclude(x => x.Modules.OrderBy(x => x.Priority))
+                    .ThenInclude(x => x.KoanInModules.OrderBy(x => x.Priority))
+            .Include(x => x.Courses)
+                .ThenInclude(x => x.Modules.OrderBy(x => x.Priority))
+                    .ThenInclude(x => x.Test)
+                         .ThenInclude(x => x.KoanInTests.OrderBy(x => x.Priority))
             .First(x => x.AspNetUser == CurrentUser.User));
-
 
     }
 
@@ -327,6 +252,7 @@
     {
         _groupsForSelect.Clear();
         _studentsForSelect.Clear();
+        _modules.Clear();
 
         var selCourseInt = Convert.ToInt32(eventArgs.Value);
         if (selCourseInt.Equals(-1))
@@ -334,10 +260,11 @@
         else
         {
             //_selCourse = _teacher.Courses.First(x => x.Id.Equals(selCourseInt));
-            foreach(var item in _teacher.Groups)
+            foreach (var item in _teacher.Groups)
             {
-                var gr = item.Courses.FirstOrDefault(x => x.Id.Equals(selCourseInt));
-                if (gr != null)
+                var course = item.Courses.FirstOrDefault(x => x.Id.Equals(selCourseInt));
+                _modules = course.Modules;
+                if (course != null)
                     _groupsForSelect.Add(item);
             }
 
@@ -347,7 +274,7 @@
 
     private void ChangeGroup(ChangeEventArgs eventArgs)
     {
-        //_students.Clear();
+        _studentsForSelect.Clear();
 
         var selGroupInt = Convert.ToInt32(eventArgs.Value);
         if (selGroupInt.Equals(-1))
@@ -357,7 +284,7 @@
 
     }
 
-    private void ChangeStudents(ChangeEventArgs eventArgs)
+    private void ChangeStudent(ChangeEventArgs eventArgs)
     {
 
         var selStudentInt = Convert.ToInt32(eventArgs.Value);
@@ -370,7 +297,7 @@
             _students.Clear();
             _students.Add(_studentsForSelect.First(x => x.Id.Equals(selStudentInt)));
         }
-        
+
 
     }
 

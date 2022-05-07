@@ -8,7 +8,7 @@
         public int IdKoanInTest { get; set; }
 
         public string AnswerStudent { get; set; }
-        public string ErrorMessage { get; set; }
+        public string Message { get; set; }
 
         public bool IsPassed { get; set; }
     }
