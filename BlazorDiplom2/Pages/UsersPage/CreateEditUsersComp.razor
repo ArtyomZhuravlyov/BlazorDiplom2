@@ -8,7 +8,7 @@
     @if (_edit)
     {
         <button @onclick="ShowList">Назад</button>
-        <select disabled @onchange="@ChangeRole">
+        <select disabled > @*@onchange="@ChangeRole"*@
             @if (UserModelForm is StudentModelForm)
             {
                 <option selected value="@Constants.ROLE_STUDENT">@Constants.ROLE_STUDENT</option>

@@ -175,7 +175,9 @@
             //var user = authstate.User;
             //var aspUser = await _userManager.GetUserAsync(user);
             //Teacher = _db.Teachers.Include(x => x.AspNetUser).Include(x => x.Koans).First(x => x.AspNetUser == aspUser);
-            Teacher = _db.Teachers.Include(x => x.AspNetUser).Include(x => x.Koans).First(x => x.AspNetUser == CurrentUser.User);
+            Teacher = _db.Teachers
+            .Include(x => x.AspNetUser)
+            .Include(x => x.Koans).First(x => x.AspNetUser == CurrentUser.User);
         }
 
         foreach (var m in Course.Modules)

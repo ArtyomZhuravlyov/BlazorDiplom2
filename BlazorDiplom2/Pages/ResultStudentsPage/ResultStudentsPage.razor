@@ -1,0 +1,379 @@
+﻿@page "/ResultStudentsPage"
+
+@using Microsoft.EntityFrameworkCore
+@inject DB _db;
+
+
+    @if (_teacher == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+
+        <div class="menu_info">
+                    <div class="results_student">
+                        <div class="nav_top">
+                            <div class="nav_top_link">Результаты студентов</div>
+                        </div>
+                        <div class="filtr">
+                            <div class="filtr_item">
+                                <div class="main_name">Курс</div>
+                                <select name="course">
+                                    <option value="1">C# для начинающих</option>
+                                    <option value="2">C# для начинающих</option>
+                                    <option value="3">C# для начинающих</option>
+                                </select>
+                            </div>
+                            <div class="filtr_item short_select">
+                                <div class="main_name">Группа</div>
+                                <select name="group">
+                                    <option value="1">3530903/80302</option>
+                                    <option value="2">3530903/80302</option>
+                                    <option value="3">3530903/80302</option>
+                                </select>
+                            </div>
+                            <div class="filtr_item">
+                                <div class="main_name">Студент группы</div>
+                                <select name="student">
+                                    <option value="1">Все суденты</option>
+                                    <option value="2">Все суденты</option>
+                                    <option value="3">Все суденты</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="table_result">
+                            <table border="1">
+                                <tr>
+                                    <th rowspan="2">ФИО</th>
+                                    <th colspan="7">Модуль 1</th>
+                                    <th colspan="7">Модуль 2</th>
+                                    <th colspan="7">Модуль 3</th>
+                                    <th colspan="7">Модуль 4</th>
+                                </tr>
+                                <tr>
+                                    <th>1</th>
+                                    <th>2</th>
+                                    <th>3</th>
+                                    <th>4</th>
+                                    <th>5</th>
+                                    <th colspan="2">Тест</th>
+                                    <th>1</th>
+                                    <th>2</th>
+                                    <th>3</th>
+                                    <th>4</th>
+                                    <th>5</th>
+                                    <th colspan="2">Тест</th>
+                                    <th>1</th>
+                                    <th>2</th>
+                                    <th>3</th>
+                                    <th>4</th>
+                                    <th>5</th>
+                                    <th colspan="2">Тест</th>
+                                    <th>1</th>
+                                    <th>2</th>
+                                    <th>3</th>
+                                    <th>4</th>
+                                    <th>5</th>
+                                    <th colspan="2">Тест</th>
+                                </tr>
+                                <tr>
+                                    <td class="nowrap">Калимуллина Адиля Рамилевна</td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td>80%</td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td>80%</td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td>80%</td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="name_student">Калимуллина Адиля Рамилевна</td>
+                                    <td class="opacity"><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td>80%</td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td>80%</td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td>80%</td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+
+                                <tr>
+                                    <td class="name_student">Калимуллина Адиля Рамилевна</td>
+                                    <td class="opacity"><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td>80%</td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td>80%</td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td>80%</td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <div class="table_admin">
+            <table border="1">
+
+                @if (_selectRol.Equals(Constants.ROLE_STUDENT))
+                {
+                    <tr>
+                        <th>ФИО</th>
+                        <th>Имя пользователя</th>
+                        <th>Email</th>
+                        <th>Учебное заведение</th>
+                        <th>Группа</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+
+                    @foreach (var item in _studentsForSelect)
+                    {
+                        <tr>
+                            <td class="nowrap">@($"{item.LastName } {item.FirstName} {item.FatherName}")</td>
+                            <td class="nowrap">@item.AspNetUser.UserName</td>
+                            <td class="nowrap">@item.AspNetUser.Email</td>
+                            <td class="nowrap">@item.Group.EducationalInstitution.ShortName</td>
+                            <td class="nowrap">@item.Group.Name</td>
+                            <td>
+                                <div class="edit_delete_item" @onclick="(()=>OpenChanged(item))"><img src="img\edit.png" alt=""></div>
+                            </td>
+                            <td>
+                                <div class="edit_delete_item" @onclick="(()=>Delete(item.AspNetUser))"><img src="img\delete.png" alt=""></div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <th>ФИО</th>
+                        <th>Имя пользователя</th>
+                        <th>Email</th>
+                        <th>Учебное заведение</th>
+                        <th>Группы</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+
+                    @foreach (var item in _teachers)
+                    {
+
+                        <tr>
+                            <td class="nowrap">@($"{item.LastName } {item.FirstName} {item.FatherName}")</td>
+                            <td class="nowrap">@item.AspNetUser.UserName</td>
+                            <td class="nowrap">@item.AspNetUser.Email</td>
+                            @if (item.Groups.Count > 0)
+                            {
+                                <td class="nowrap">@item.Groups[0].EducationalInstitution.ShortName</td>
+                            }
+                            else
+                            {
+                                <td class="nowrap">@string.Empty</td>
+                            }
+                            <td class="nowrap">
+                                @foreach (var gr in item.Groups)
+                                {
+                                    @(gr.Name + " ")
+                                }
+                            </td>
+                            <td>
+                                <div class="edit_delete_item" @onclick="(()=>OpenChanged(item))"><img src="img\edit.png" alt=""></div>
+                            </td>
+                            <td>
+                                <div class="edit_delete_item" @onclick="(()=>Delete(item.AspNetUser))"><img src="img\delete.png" alt=""></div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        </div>
+    }
+
+
+@code {
+    //private IEnumerable<Student> _students;
+    //private IEnumerable<Teacher> _teachers;
+
+    private UserModelForm _userModelForm;
+    private bool _shouldRender = true;
+    private bool _showList = true;
+    private string _selectRol = Constants.ROLE_STUDENT;
+
+
+    private List<Student> _studentsForSelect = new();
+    private List<Group> _groupsForSelect = new();
+    private Teacher _teacher;
+    private List<Student> _students = new();
+
+    //protected override async Task OnInitializedAsync() =>  students2 = await _db.GetStudentsAsync();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        _teacher = await Task.FromResult(_db.Teachers
+            .Include(x => x.AspNetUser)
+            .Include(x=>x.Courses)
+                .ThenInclude(x=>x.Groups)
+                    .ThenInclude(x=>x.Students)
+                        .ThenInclude(x=>x.ResultTests)
+            .Include(x=>x.Courses)
+                .ThenInclude(x=>x.Modules)
+                    .ThenInclude(x=>x.KoanInModules)
+            .Include(x=>x.Courses)
+                .ThenInclude(x=>x.Modules)
+                    .ThenInclude(x=>x.Test)
+                         .ThenInclude(x=>x.KoanInTests)
+            .First(x => x.AspNetUser == CurrentUser.User));
+
+
+    }
+
+
+    private void ChangeCourse(ChangeEventArgs eventArgs)
+    {
+        _groupsForSelect.Clear();
+        _studentsForSelect.Clear();
+
+        var selCourseInt = Convert.ToInt32(eventArgs.Value);
+        if (selCourseInt.Equals(-1))
+            return;
+        else
+        {
+            //_selCourse = _teacher.Courses.First(x => x.Id.Equals(selCourseInt));
+            foreach(var item in _teacher.Groups)
+            {
+                var gr = item.Courses.FirstOrDefault(x => x.Id.Equals(selCourseInt));
+                if (gr != null)
+                    _groupsForSelect.Add(item);
+            }
+
+        }
+
+    }
+
+    private void ChangeGroup(ChangeEventArgs eventArgs)
+    {
+        //_students.Clear();
+
+        var selGroupInt = Convert.ToInt32(eventArgs.Value);
+        if (selGroupInt.Equals(-1))
+            return;
+        else
+            _studentsForSelect = _teacher.Groups.First(x => x.Id.Equals(selGroupInt)).Students.ToList();
+
+    }
+
+    private void ChangeStudents(ChangeEventArgs eventArgs)
+    {
+
+        var selStudentInt = Convert.ToInt32(eventArgs.Value);
+        if (selStudentInt.Equals(-1))
+            return;
+        else if (selStudentInt.Equals(0))
+            _students = new(_studentsForSelect);
+        else
+        {
+            _students.Clear();
+            _students.Add(_studentsForSelect.First(x => x.Id.Equals(selStudentInt)));
+        }
+        
+
+    }
+
+
+}
+

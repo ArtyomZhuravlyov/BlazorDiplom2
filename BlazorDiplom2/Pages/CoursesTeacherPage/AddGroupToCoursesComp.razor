@@ -1,5 +1,156 @@
-﻿<h3>AddGroupToCoursesComp</h3>
+﻿@using Microsoft.EntityFrameworkCore
+@inject DB _db;
+
+<div class="group_course">
+    <div class="main_name">Курс</div>
+    <select @onchange="@ChangeCourse">
+        <option selected value="-1">Выберите курс</option>
+        @foreach (var item in _teacher.Courses)
+        {
+            <option value="@item.Id">@item.Name</option>
+        }
+    </select>
+    <div class="groups_in_course">
+        <div class="main_name">Записанные группы</div>
+        @foreach (var item in _groupsWriteToCourse)
+        {
+            <div class="group_in_course">
+                <div class="group_in_course_name">
+                    @item.Name
+                </div>
+                <div class="del_group_in_course" @onclick="()=>DelGroupTeacher(item)"><img src="img\del.png" alt=""></div>
+            </div>
+        }
+
+
+    </div>
+    <div class="new_group">
+        <div class="main_name">Группа</div>
+        <select @bind="_selGroupId">
+            @if (_selGroupId.Equals("-1"))
+            {
+                <option selected value="-1">Выберите группу</option>
+            }
+            @foreach (var item in _groupsDontWriteToCourse)
+            {
+                <option value="@item.Id">@item.Name</option>
+
+            }
+        </select>
+    </div>
+    <button class="save_btn" @onclick="AddGroup">Записать группу</button>
+
+</div>
+
+
+
+
 
 @code {
 
+
+
+    private List<Group> _groupsDontWriteToCourse = new();
+    private List<Group> _groupsWriteToCourse = new();
+
+
+    private string _selGroupId = "-1";
+    private Course _selCourse;
+    //private int _idCurEducationalInstitution = -1;
+    private Teacher _teacher;
+
+    private string messageBtn;
+
+    protected override void OnInitialized()
+    {
+        //var Teacher = _db.Teachers
+        //    .First(x => x.AspNetUser == CurrentUser.User);
+
+        _teacher = _db.Teachers
+            .Include(x => x.AspNetUser)
+            .Include(x => x.Groups)
+                .ThenInclude(x=>x.Courses)
+            .Include(x=>x.Courses)
+                .ThenInclude(x=>x.Groups)
+            .First(x => x.AspNetUser == CurrentUser.User);
+
+
+        //_courses = //_db.Courses.Where(x => x.TeacherId.Equals(_teacher.Id)).ToList();
+        //_groupsTeacher = _db.Groups.Where(x=>x.)
+    }
+
+    private void AddGroup()
+    {
+        if (_selGroupId.Equals( "-1"))
+            return;
+        int idGroup = Convert.ToInt32(_selGroupId);
+        var gr = _teacher.Groups.First(x => x.Id.Equals(idGroup));
+
+        _groupsWriteToCourse.Add(gr);
+        _groupsDontWriteToCourse.Remove(gr);
+        _selCourse.Groups.Add(gr);
+        _db.SaveChanges();
+
+        _selGroupId = "-1";
+
+        //if (edit) //если изменяем
+        //{
+        //    //var changeE = _db.Groups.First(x => x.Id.Equals(EducationalInstitution.Id));
+        //    //changeE.FullName = EducationalInstitution.FullName;
+        //    //changeE.ShortName = EducationalInstitution.ShortName;
+        //}
+        //else //если добавляем
+        //{
+        //    _db.Groups.Add(Group);
+
+        //}
+        //if (!edit)
+        //    _db.Groups.Add(Group);
+        //_db.SaveChanges();
+        //Group = new();
+    }
+
+    private void ChangeCourse(ChangeEventArgs eventArgs)
+    {
+        _groupsWriteToCourse.Clear();
+        _groupsDontWriteToCourse.Clear();
+
+        var selCourseInt = Convert.ToInt32(eventArgs.Value);
+        if (selCourseInt.Equals(-1))
+            return;
+        else
+        {
+            _selCourse = _teacher.Courses.First(x => x.Id.Equals(selCourseInt));
+            foreach(var item in _teacher.Groups)
+            {
+                var gr = item.Courses.FirstOrDefault(x => x.Id.Equals(selCourseInt));
+                if (gr != null)
+                    _groupsWriteToCourse.Add(item);
+                else
+                    _groupsDontWriteToCourse.Add(item);
+            }
+            //_groupsWriteToCourse = //_teacher.Groups..Where(x => x.Courses.Where(x => x.Id.Equals(selCourseInt)));
+            //foreach(var item in selCourse.Groups)
+            //{
+            //    item.
+            //}
+            // _groupsTeacher = .Groups.Where(x=>x.) // _teacher.Groups.Where(x=>x.);
+            //_groups = _courses.Where()
+        }
+
+        //if (eventArgs.Value.ToString().Equals(Constants.ROLE_STUDENT))
+        //    UserModelForm = new StudentModelForm();
+        //else
+        //    UserModelForm = new TeacherModelForm();
+    }
+
+    private void DelGroupTeacher(Group group)
+    {
+        _groupsWriteToCourse.Remove(group);
+        _groupsDontWriteToCourse.Add(group);
+        _teacher.Groups.Remove(group);
+        _db.SaveChanges();
+    }
+
+    //  [Parameter] public EventCallback<TeacherModelForm> AddTeacher { get; set; }
 }
