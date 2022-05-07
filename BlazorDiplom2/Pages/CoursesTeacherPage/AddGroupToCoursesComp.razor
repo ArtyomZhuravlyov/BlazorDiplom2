@@ -10,20 +10,22 @@
             <option value="@item.Id">@item.Name</option>
         }
     </select>
-    <div class="groups_in_course">
-        <div class="main_name">Записанные группы</div>
-        @foreach (var item in _groupsWriteToCourse)
-        {
-            <div class="group_in_course">
-                <div class="group_in_course_name">
-                    @item.Name
+    @if (_groupsWriteToCourse.Count > 0)
+    {
+        <div class="groups_in_course">
+            <div class="main_name">Записанные группы</div>
+            @foreach (var item in _groupsWriteToCourse)
+            {
+                <div class="group_in_course">
+                    <div class="group_in_course_name">
+                        @item.Name
+                    </div>
+                    <div class="del_group_in_course" @onclick="()=>DelGroupTeacher(item)"><img src="img\del.png" alt=""></div>
                 </div>
-                <div class="del_group_in_course" @onclick="()=>DelGroupTeacher(item)"><img src="img\del.png" alt=""></div>
-            </div>
-        }
+            }
+        </div>
+    }
 
-
-    </div>
     <div class="new_group">
         <div class="main_name">Группа</div>
         <select @bind="_selGroupId">
@@ -69,9 +71,9 @@
         _teacher = _db.Teachers
             .Include(x => x.AspNetUser)
             .Include(x => x.Groups)
-                .ThenInclude(x=>x.Courses)
-            .Include(x=>x.Courses)
-                .ThenInclude(x=>x.Groups)
+                .ThenInclude(x => x.Courses)
+            .Include(x => x.Courses)
+                .ThenInclude(x => x.Groups)
             .First(x => x.AspNetUser == CurrentUser.User);
 
 
@@ -81,7 +83,7 @@
 
     private void AddGroup()
     {
-        if (_selGroupId.Equals( "-1"))
+        if (_selGroupId.Equals("-1"))
             return;
         int idGroup = Convert.ToInt32(_selGroupId);
         var gr = _teacher.Groups.First(x => x.Id.Equals(idGroup));
@@ -121,7 +123,7 @@
         else
         {
             _selCourse = _teacher.Courses.First(x => x.Id.Equals(selCourseInt));
-            foreach(var item in _teacher.Groups)
+            foreach (var item in _teacher.Groups)
             {
                 var gr = item.Courses.FirstOrDefault(x => x.Id.Equals(selCourseInt));
                 if (gr != null)

@@ -58,7 +58,7 @@ else
                             @for (int i = 1; i <= _modules.Count; i++)
                             {
                                 int locI = i;
-                                <th colspan="@locI">Модуль @locI</th>
+                                <th colspan="@(_modules[locI-1].KoanInModules.Count + 2)">Модуль @locI</th>
                             }
                         </tr>
                         <tr>
@@ -67,7 +67,7 @@ else
                                 @for (int i = 1; i <= m.KoanInModules.Count; i++)
                                 {
                                     int locI = i;
-                                    <th>locI</th>
+                                    <th>@locI</th>
                                 }
                                 <th colspan="2">Тест</th>
                             }
@@ -82,11 +82,11 @@ else
                                     {
                                         @if (st.KoanInModules.Contains(kInM))
                                         {
-                                            <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                            <td><img src="img\done.png" alt=""></td>
                                         }
                                         else
                                         {
-                                            <td>   </td>
+                                            <td></td>
                                         }
                                     }
 
@@ -95,11 +95,11 @@ else
                                     {
                                         @if (resultTest.IsPassed)
                                         {
-                                            <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                            <td><img src="img\done.png" alt=""></td>
                                         }
                                         else
                                         {
-                                            <td>X</td>
+                                            <td><img src="img\error.svg" alt=""></td>
                                         }
                                         <td>@(resultTest.ResultKoanTests.Count(x=>x.IsError.Equals(false))/resultTest.ResultKoanTests.Count())%</td>
                                     }
@@ -119,83 +119,89 @@ else
                 @if (_students.Count.Equals(1))
                 {
 
-                     <div class="filtr_item">
-                            <div class="main_name">Тест</div>
-                            <select name="test">
-                                <option value="1">Тест по модулю 1</option>
-                                <option value="2">Тест по модулю 1</option>
-                                <option value="3">Тест по модулю 1</option>
-                            </select>
-                        </div>
+                    <div class="filtr_item">
+                        <div class="main_name">Тест</div>
+                        @*<select @onchange="@ChangeTestModule">
+                            @foreach (var m in _modules)
+                            {
+                            <option value="@m.Id">Тест по модулю @_modules.IndexOf(m)</option>
+                            }
+                            </select>*@
+                        <select @onchange="@ChangeTestModule">
+                            @foreach (var rt in _resultTestForSelect)
+                            {
+                                <option value="@rt.Id">Тест по модулю @_modules.IndexOf(rt.Test.Module)</option>
+                            }
+                        </select>
+
+                    </div>
+                    @if (_test != null)
+                    {
                         <div class="result_every_test">
                             <div class="info_items ">
                                 <div class="info_item short ">
                                     <div class="info_item_title">
-                                        <img src="\wwwroot\img\time.png" alt=""> Время:
+                                        <img src="img\time.png" alt=""> Время:
                                     </div>
                                     <div class="info_item_info">
-                                        9 мин. 50 сек.
+                                        @($"{_test.Time.Minute} мин. {_test.Time.Second}") @*9 мин. 50 сек.*@
                                     </div>
                                 </div>
                             </div>
                             <table border="1">
                                 <tr>
-                                    <th>1</th>
-                                    <th>2</th>
-                                    <th>3</th>
-                                    <th>4</th>
-                                    <th>5</th>
-                                    <th>6</th>
-                                    <th>7</th>
-                                    <th>8</th>
-                                    <th>9</th>
-                                    <th>10</th>
+                                    @* @for(int i=1;i<=_test.KoanInTests.Count;i++)
+                                        {
+                                        int locI = i;
+                                        <th>@locI</th>
+                                        }*@
+                                    @for (int i = 1; i <= _resultTest.ResultKoanTests.Count; i++)
+                                    {
+                                        int locI = i;
+                                        <th>@locI</th>
+                                    }
                                 </tr>
                                 <tr>
-                                    <td><img src="\wwwroot\img\error.svg" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
-                                    <td><img src="\wwwroot\img\done.png" alt=""></td>
+                                    @foreach (var rKT in _resultTest.ResultKoanTests)
+                                    {
+                                        if (rKT.IsError)
+                                        {
+                                            <td><img src="img\error.svg" alt=""></td>
+                                        }
+                                        else
+                                        {
+                                            <td><img src="img\done.png" alt=""></td>
+                                        }
+                                    }
                                 </tr>
                             </table>
                             <div class="results">
                                 <div class="label">Коан</div>
-                                <select name="koan">
-                                    <option value="1">Коан 1</option>
-                                    <option value="2">Коан 2</option>
-                                    <option value="3">Коан 3</option>
+                                <select @onchange="@ChangeResultTestKoan">
+                                    @foreach (var rKT in _resultTest.ResultKoanTests)
+                                    {
+                                        <option value="@rKT.Id">Коан @(_resultTest.ResultKoanTests.IndexOf(rKT)+1)</option>
+                                    }
                                 </select>
                                 <div class="result_texts">
                                     <div class="result_text">
-                                        <div class="result_text_title">Ваш ответ:</div>
-                                        <div class="result_text_info">namespace BlazorApp1.Demo
-                                            {
-                                            public class RunClass
-                                            {
-                                            public bool Run(string name, int count)
-                                            {
-
-                                            return true.Equals(false); //This should be true
-                                            }
-                                            }
-                                            }</div>
+                                        <div class="result_text_title">Ответ студента:</div>
+                                        <div class="result_text_info">
+                                            @_curResultKoanTest.Answer
+                                        </div>
                                     </div>
                                     <hr />
                                     <div class="result_text">
                                         <div class="result_text_title">Ответ компилятора:</div>
-                                        <div class="result_text_info">Parse SyntaxTree Success
-                                            (10,26): error CS1501: No overload for method 'Equals' takes 0 arguments
-                                            Compilation error</div>
+                                        <div class="result_text_info">
+                                            @_curResultKoanTest.Message
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    }
+
 
                 }
             }
@@ -207,14 +213,6 @@ else
 
 
 @code {
-    //private IEnumerable<Student> _students;
-    //private IEnumerable<Teacher> _teachers;
-
-    private UserModelForm _userModelForm;
-    private bool _shouldRender = true;
-    private bool _showList = true;
-    private string _selectRol = Constants.ROLE_STUDENT;
-
 
     private List<Student> _studentsForSelect = new();
     private List<Group> _groupsForSelect = new();
@@ -223,9 +221,17 @@ else
     // Для таблицы
     private List<Student> _students = new();
     private List<Module> _modules = new();
-    //private Dictionary<int, bool> _ = new();
 
-    //protected override async Task OnInitializedAsync() =>  students2 = await _db.GetStudentsAsync();
+
+    // Для теста
+    private List<ResultTest> _resultTestForSelect = new();
+    private Test _test;
+    private Koan _koan;
+    //private Student _curStudent;
+    private Course _course;
+    //private List<ResultKoanTest> _resultKoanTests = new();
+    private ResultTest _resultTest;
+    private ResultKoanTest _curResultKoanTest;
 
     protected override async Task OnInitializedAsync()
     {
@@ -236,6 +242,15 @@ else
                 .ThenInclude(x => x.Groups)
                     .ThenInclude(x => x.Students)
                         .ThenInclude(x => x.ResultTests)
+                            .ThenInclude(x => x.Test) // проверить потом нужно или нет
+                                .ThenInclude(x => x.Module) // проверить потом нужно или нет
+            .Include(x => x.Courses) // проверить потом нужно или нет или использовать только в ChangeStudent load
+               .ThenInclude(x => x.Groups) // проверить потом нужно или нет
+                   .ThenInclude(x => x.Students) // проверить потом нужно или нет
+                       .ThenInclude(x => x.ResultTests) // проверить потом нужно или нет
+                            .ThenInclude(x => x.ResultKoanTests) // проверить потом нужно или нет
+                                .ThenInclude(x => x.KoanInTest) // проверить потом нужно или нет
+                                    .ThenInclude(x => x.Koan) // проверить потом нужно или нет
             .Include(x => x.Courses)
                 .ThenInclude(x => x.Modules.OrderBy(x => x.Priority))
                     .ThenInclude(x => x.KoanInModules.OrderBy(x => x.Priority))
@@ -243,6 +258,7 @@ else
                 .ThenInclude(x => x.Modules.OrderBy(x => x.Priority))
                     .ThenInclude(x => x.Test)
                          .ThenInclude(x => x.KoanInTests.OrderBy(x => x.Priority))
+            .Include(x => x.Groups)
             .First(x => x.AspNetUser == CurrentUser.User));
 
     }
@@ -253,6 +269,7 @@ else
         _groupsForSelect.Clear();
         _studentsForSelect.Clear();
         _modules.Clear();
+        _students.Clear();
 
         var selCourseInt = Convert.ToInt32(eventArgs.Value);
         if (selCourseInt.Equals(-1))
@@ -262,9 +279,9 @@ else
             //_selCourse = _teacher.Courses.First(x => x.Id.Equals(selCourseInt));
             foreach (var item in _teacher.Groups)
             {
-                var course = item.Courses.FirstOrDefault(x => x.Id.Equals(selCourseInt));
-                _modules = course.Modules;
-                if (course != null)
+                _course = item.Courses.FirstOrDefault(x => x.Id.Equals(selCourseInt));
+                _modules = _course.Modules;
+                if (_course != null)
                     _groupsForSelect.Add(item);
             }
 
@@ -275,6 +292,7 @@ else
     private void ChangeGroup(ChangeEventArgs eventArgs)
     {
         _studentsForSelect.Clear();
+        _students.Clear();
 
         var selGroupInt = Convert.ToInt32(eventArgs.Value);
         if (selGroupInt.Equals(-1))
@@ -286,7 +304,6 @@ else
 
     private void ChangeStudent(ChangeEventArgs eventArgs)
     {
-
         var selStudentInt = Convert.ToInt32(eventArgs.Value);
         if (selStudentInt.Equals(-1))
             return;
@@ -295,11 +312,50 @@ else
         else
         {
             _students.Clear();
-            _students.Add(_studentsForSelect.First(x => x.Id.Equals(selStudentInt)));
+            var curStudent = _studentsForSelect.First(x => x.Id.Equals(selStudentInt));
+            _students.Add(curStudent);
+            _resultTestForSelect = curStudent.ResultTests.Where(x => x.Test.Module.Course.Id.Equals(_course.Id)).ToList();
+            //_resultKoanTests.Clear();
+            if (_resultTestForSelect.Count > 0)
+            {
+                _resultTest = _resultTestForSelect.First();
+                _test = _resultTest.Test;
+                _curResultKoanTest = _resultTest.ResultKoanTests.First();
+                //_resultTest.ResultKoanTests
+                //_test = _resultTestForSelect.First();
+                //foreach(var item in _test.KoanInTests)
+                //{
+                //    item.ResultKoanTests.Where(x=>x.ResultTestId.Equals())
+                //    _resultKoanTests.Add();
+                //}
+                //_resultKoanTests = _test.KoanInTests.Where(x=>x.ResultKoanTests.Where(x=>x.))
+                //_koan = _test.KoanInTests.First().Koan;
+
+            }
+            else
+            {
+                _test = null; //возможно потом это всё убрать, проверив на реальных значениях
+                _resultTest = null;
+                _curResultKoanTest = null;
+                //_koan = null;
+            }
         }
-
-
     }
+
+    private void ChangeTestModule(ChangeEventArgs eventArgs)
+    {
+        var selResultTestInt = Convert.ToInt32(eventArgs.Value);
+        _resultTest = _resultTestForSelect.First(x => x.Id.Equals(selResultTestInt));
+        _test = _resultTest.Test;
+        _curResultKoanTest = _resultTest.ResultKoanTests.First();
+    }
+
+    private void ChangeResultTestKoan(ChangeEventArgs eventArgs)
+    {
+        var selResultKoanTestInt = Convert.ToInt32(eventArgs.Value);
+        _curResultKoanTest = _resultTest.ResultKoanTests.First(x => x.Id.Equals(selResultKoanTestInt));
+    }
+
 
 
 }
