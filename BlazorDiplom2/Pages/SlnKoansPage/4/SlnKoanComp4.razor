@@ -2,6 +2,7 @@
 @using System.Timers
 @inject CompileService compServive;
 @inject DB _db;
+@implements IDisposable
 <h3>slnKoanComp</h3>
 @if (IsTest)
 {
@@ -73,6 +74,9 @@ else
     [Parameter]
     public EventCallback NextKoan { get; set; }
 
+    [Parameter]
+    public EventCallback NavToResultTest { get; set; }
+
     public string CodeKoan { get; set; }
 
     [CascadingParameter(Name = "ListTestKoans")]
@@ -104,6 +108,11 @@ else
     private Timer _timer;
     private TimeOnly _timeOnly;
 
+    /// <summary>
+    /// Время начала теста
+    /// </summary>
+    private DateTime _dateTimeSrartTest;
+
     protected override async Task OnInitializedAsync()
     {
         if (IsTest)
@@ -111,11 +120,15 @@ else
             _timer = new Timer(1000);
             _timer.Elapsed += (sender, e) =>
               {
-
+                  //if(_dateTimeSrartTest != new DateTime())
+                  //{
+                        var t = DateTime.Now.Subtract(_dateTimeSrartTest);
+                        _timeOnly = new TimeOnly(0, t.Minutes, t.Seconds);
+                        StateHasChanged();
+                  //}
+                  
               };
-            _timer.Enabled = true;
-
-            //_timer.Interval = ;
+            //_timer.Enabled = true;
         }
         //if (IsTest)
         //{
@@ -123,6 +136,11 @@ else
         //    //await ReadFileKoanAsync.InvokeAsync();//ReadFileKoanAsync();//await ReadFileKoanAsync.InvokeAsync();
         //}
 
+    }
+
+    public void Dispose()
+    {
+        _timer.Dispose();
     }
 
     /// <summary>
@@ -140,7 +158,9 @@ else
         {
             var locStorageTest = await LocStorage.GetTestLocalStorageAsync(_db, Student);
             var t = DateTime.Now.Subtract(locStorageTest.DateTimeStartTest);
+            _dateTimeSrartTest = locStorageTest.DateTimeStartTest;
             _timeOnly = new TimeOnly(0, t.Minutes, t.Seconds);
+            _timer.Start();
             //_timeOnly = new TimeOnly(0, locStorageTest.DateTimeStartTest.Minute, locStorageTest.DateTimeStartTest.Second);
             //DateTime.Now.Hour * 60 + DateTime.Now.Minute - (locStorageTest.DateTimeStartTest.Hour * 60 + locStorageTest.DateTimeStartTest.Minute)
 
@@ -262,7 +282,7 @@ else
         await SendResultKoanAsync();
         var locStorageTest = await LocStorage.GetTestLocalStorageAsync(_db, Student);
         locStorageTest.EndTestAsync(_db);
-
+        await NavToResultTest.InvokeAsync();
     }
 
 

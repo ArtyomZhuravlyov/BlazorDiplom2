@@ -1,35 +1,41 @@
 ﻿@using Microsoft.EntityFrameworkCore
 @inject DB _db;
-@inject UserManager<AspNetUsers> _userManager;
-@inject AuthenticationStateProvider GetAuthenticationStateAsync
-<h3>ListKoansComp</h3>
-@if(isLoaded)
+
+
+@if (isLoaded)
 {
-    @if(showList)
-{
-    @if(koans!=null)
+    @if (showList)
     {
-        
-    
-    <div>
-    @foreach(var item in koans)
-    {
-          <div>@item.Name</div>
-          <button @onclick="(()=>OpenChanged(item))">Изменить</button>
-          <button class="btn btn-danger" @onclick="(()=>Delete(item))">Удалить</button>
-    }
-  
-        </div>
+        @if (koans != null)
+        {
+            @foreach (var item in koans)
+            {
+
+                <div class="element">
+                    <div class="element_item">
+                        <div class="element_item_title">
+                            <img src="img\description.png" alt=""> Название
+                        </div>
+                        <div class="element_item_info">
+                            @item.Name
+                        </div>
+                    </div>
+                    <div class="edit_delete">
+                        <div class="edit_delete_item" @onclick="(()=>OpenChanged(item))"><img src="img\edit.png" alt=""></div>
+                        <div class="edit_delete_item" @onclick="(()=>Delete(item))"><img src="img\delete.png" alt=""></div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div> Loading   </div>
+        }
     }
     else
     {
-       <div> Loading   </div>
+        <CreateEditKoan ShowList="ShowList" Koan="editKoan" Teacher="thisTeacher"></CreateEditKoan>
     }
-}
-else
-{
-    <CreateEditKoan ShowList="ShowList" Koan="editKoan" Teacher="thisTeacher"></CreateEditKoan>
-}
 }
 
 
@@ -48,7 +54,7 @@ else
         //var user = authstate.User;
         //var aspUser = await _userManager.GetUserAsync(user);
         //thisTeacher = _db.Teachers.Include(x => x.AspNetUser).Include(x=>x.Koans).First(x => x.AspNetUser == aspUser);
-        thisTeacher = _db.Teachers.Include(x => x.AspNetUser).Include(x=>x.Koans).First(x => x.AspNetUser == CurrentUser.User);
+        thisTeacher = await Task.FromResult(_db.Teachers.Include(x => x.AspNetUser).Include(x => x.Koans).First(x => x.AspNetUser == CurrentUser.User));
         koans = thisTeacher.Koans;
         isLoaded = true;
     }
@@ -57,7 +63,7 @@ else
     {
         thisTeacher.Koans.Remove(delKoan);
         //_db.Koans.Remove(delKoan);//если нет каскадного удаления и проверить для модуля
-        
+
         _db.SaveChanges();
     }
 
@@ -70,7 +76,7 @@ else
     {
         editKoan = eKoan;
         showList = false;
-       
+
     }
 
 

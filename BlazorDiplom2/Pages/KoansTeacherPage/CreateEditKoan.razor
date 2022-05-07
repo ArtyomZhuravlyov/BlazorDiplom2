@@ -1,24 +1,36 @@
 ﻿@using Microsoft.EntityFrameworkCore
 @inject DB _db;
-@inject UserManager<AspNetUsers> _userManager;
-@inject AuthenticationStateProvider GetAuthenticationStateAsync
-<h3>CreateEditKoan</h3>
+
+
 @if (edit)
 {
     <button @onclick="ShowList">Назад</button>
 }
 <div>@mesError</div>
+
 <EditForm Model="Koan" OnValidSubmit="OnValidSubmitAsync">
     <DataAnnotationsValidator />
-    <InputText class="form-control" @bind-Value="Koan.Name"></InputText>
-    <InputText class="form-control" @bind-Value="Koan.Description"></InputText>
-    <InputFile OnChange="@LoadFiles" />
-    @if (isLoading)
-    {
-        <p>Uploading...</p>
-    }
-    <button>@messageBtn</button>
+    <div class="koan_item">
+        <div class="main_name">Название</div>
+        <InputText @bind-Value="Koan.Name"></InputText>
+    </div>
+    <div class="koan_item">
+        <div class="main_name">Описание</div>
+        <InputText @bind-Value="Koan.Description"></InputText>
+    </div>
+    <div class="koan_item">
+        <div class="main_name">Коан</div>
+        <InputFile OnChange="@LoadFiles" />
+     @*   @if (isLoading)
+        {
+            <p>Uploading...</p>
+        }*@
+        @*<textarea name="description"></textarea>*@
+    </div>
+
+    <button class="save_btn">@messageBtn</button>
 </EditForm>
+
 @code {
 
     [Parameter] public Koan Koan { get; set; }
@@ -32,16 +44,16 @@
     private string messageBtn;
     private string mesError = "";
     private string link;
-    string oldKoanName;
+    private string oldKoanName;
 
 
     private IBrowserFile loadedFile;
-    private bool isLoading;
+    //private bool isLoading;
 
     protected override void OnInitialized()
     {
         edit = Koan.Id != 0;
-        messageBtn = edit ? "Изменить" : "Добавить";
+        messageBtn = edit ? Constants.BTN_CHANGE : Constants.BTN_ADD;
     }
 
     private async Task OnValidSubmitAsync()
@@ -67,7 +79,7 @@
                 //else
                 //    await SaveFileAsync2(changeK.Link);
 
-                
+
                 changeK.Name = Koan.Name;
                 changeK.Description = Koan.Description;
             }
@@ -88,7 +100,7 @@
                 _db.Koans.Add(Koan);
                 Koan.Teacher = Teacher;
                 Koan.Link = link;
-                
+
                 //Teacher.Koans.Add(Koan);
             }
             _db.SaveChanges();

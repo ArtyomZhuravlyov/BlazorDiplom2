@@ -28,7 +28,7 @@ else
 
 @code {
     //[CascadingParameter]
-    private Enums.TabTestStudent _activeTab { get; set; } = Enums.TabTestStudent.Test;
+    private Enums.TabTestStudent _activeTab = Enums.TabTestStudent.Test;
 
     [Parameter]
     public EventCallback BackKoan { get; set; }
@@ -86,6 +86,12 @@ else
 
         _isInProressTest = true;
         StateHasChanged();
+    }
+
+    private void NavToResultTest()
+    {
+        _isInProressTest = false;
+        _activeTab = Enums.TabTestStudent.ResultTest;
     }
 
 
