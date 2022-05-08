@@ -104,8 +104,8 @@
 
             };
             db.ResultTests.Add(resultTest);
-            db.SaveChanges();
-            
+            await db.SaveChangesAsync();
+
             await LocStorage.LocalStorage.SetItemAsync(Constants.LOC_STOR, Newtonsoft.Json.JsonConvert.SerializeObject(new LocStorageTest(IdStudent)));
         }
 

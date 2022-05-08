@@ -311,7 +311,7 @@ namespace BlazorDiplom2.Areas.Identity.Pages.Account
                     {
                         Name = "Test"
                     });
-                    _db.SaveChanges();
+                    await _db.SaveChangesAsync();
                 }
 
                 var user = CreateUser();

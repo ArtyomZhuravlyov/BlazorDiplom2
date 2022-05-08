@@ -4,95 +4,88 @@
 @using System.Text
 @inject DB _db;
 @*@inject UserManager<AspNetUsers> _userManager;
-@inject AuthenticationStateProvider _getAuthenticationStateAsync*@
+    @inject AuthenticationStateProvider _getAuthenticationStateAsync*@
 @inject CompileService _compServive;
-@*@inject Service _service*@
-<h3>SlnKoansPage</h3>
+
+@*   @if (listIdModuleInvisible.Contains(item))
+    {
+    <div class="module_arrow" @onclick="(()=>ChangeVisibleModule(item))"><img src="img\arrow2.svg" alt=""></div>
+    }
+    else
+    {
+    <div class="module_arrow" @onclick="(()=>ChangeVisibleModule(item))"><img src="img\arrow.svg" alt=""></div>
+    }*@
+
 @if (isLoaded)
 {
-    <div>
-        @foreach (var item in listModules)
-        {
-            <div @onclick="()=>SelectModul(item)">Модуль @(listModules.IndexOf(item)+1). @item.Name</div>
-            <div>
-                @if (listIdModuleInvisible.Contains(item))
-                {
-                    <button type="button" @onclick="(()=>ChangeVisibleModule(item))">раскрыть</button>
-                }
-                else
-                {
-                    <button type="button" @onclick="(()=>ChangeVisibleModule(item))">скрыть</button>
-                }
-                <div style=@GetVisibleClass(item)>
-                    @foreach (var kInM in item.KoanInModules.OrderBy(x => x.Priority))
-                    {
-                        <div @onclick="()=>SelectKoan(item, kInM.Koan )">@kInM.Koan.Name</div>
-                        @if (_student.KoanInModules.Contains(kInM))
-                        {
-                            <div>выполнен</div>
-                        }
-                    }
-                    <div @onclick="()=> _isTest = true">Тест по модулю @(listModules.IndexOf(item)+1)</div>
-                </div>
-            </div>
-        }
-    </div>
+    <div class="education_process">
+        <div class="nav">
+            @foreach (var item in listModules)
+            {
+                <div class="module">
+                    <div class="module_name_arrow">
 
-    @if (_isTest)
-    {
-      @*  <CascadingValue Value="@listKoans" Name="ListKoans">
-            <CascadingValue Value="@listTestKoans" Name="ListTestKoans">
-                <CascadingValue Value="@codeKoan" Name="CodeKoan">
-                        <CascadingValue Value="@BackKoan" Name="BackKoan">
-                            <CascadingValue Value="@NextKoan" Name="NextKoan">
-                                    <CascadingValue Value="@SendResultKoan" Name="SendResultKoan">
-                                        <CascadingValue Value="@SelectModul" Name="SelectModul">
-                                            <CascadingValue Value="@_curModule" Name="CurModule">
-                                                <TestComp4 ></TestComp4>
-                                            </CascadingValue>
-                                        </CascadingValue>
-                                    </CascadingValue>    
+                        <div class="module_arrow" @onclick="(()=>ChangeVisibleModule(item))"><img src="@GetStatusOpenModel(item)" alt=""></div>
+                        <div class="module_name @GetAccessObj(item)" @onclick="()=>SelectModul(item)">Модуль @(listModules.IndexOf(item)+1). @item.Name</div>
+                    </div>
+                    <div class="koans" style=@GetVisibleClass(item)>
+                        @foreach (var kInM in item.KoanInModules@*.OrderBy(x => x.Priority)*@)
+                        {
+                            <div class="koan">
+                                <div class="koan_done @GetStatusDoneKoan(kInM)"><img src="img\done.png" alt=""></div>
+                                <div class="koan_name @GetAccessObj(item, kInM)" @onclick="()=>SelectKoan(item, kInM.Koan)">@kInM.Koan.Name</div>  @*kInM.Koan*@
+                            </div>
+                        }
+
+
+                        <div class="koan test">
+                            <div class="koan_done @GetStatusDoneTest(item)"><img src="@GetStatusIsPassedTest(item)" alt=""></div>
+                            <div class="koan_name @GetAccessObj(item, null, true)" @onclick="()=>SelectTest(item)">Тест по модулю @(listModules.IndexOf(item)+1)</div>
+                        </div>
+                    </div>
+                </div>
+
+            }
+        </div>
+
+        @if (_isTest)
+        {
+
+
+            <CascadingValue Value="@_listKoans" Name="ListKoans">
+                <CascadingValue Value="@_listTestKoans" Name="ListTestKoans">
+
+                    <CascadingValue Value="@_student" Name="Student">
+                        <CascadingValue Value="@_curModule" Name="CurModule">
+                            <CascadingValue Value="@_curKoan" Name="CurKoan">
+                                <TestComp4 BackKoan="BackKoan" NextKoan="NextKoan"></TestComp4>
+                            </CascadingValue>
+
                         </CascadingValue>
                     </CascadingValue>
                 </CascadingValue>
             </CascadingValue>
-        </CascadingValue>*@
+        }
+        else
+        {
 
+            <CascadingValue Value="@_listKoans" Name="ListKoans">
+                <CascadingValue Value="@_listTestKoans" Name="ListTestKoans">
 
-        <CascadingValue Value="@_listKoans" Name="ListKoans">
-            <CascadingValue Value="@_listTestKoans" Name="ListTestKoans">
-               
-                         <CascadingValue Value="@_student" Name="Student">
+                    <CascadingValue Value="@_student" Name="Student">
                         <CascadingValue Value="@_curModule" Name="CurModule">
-                             <CascadingValue Value="@_curKoan" Name="CurKoan">
-                            <TestComp4 BackKoan="BackKoan" NextKoan="NextKoan"></TestComp4> 
-                              </CascadingValue>
-                       
+                            <CascadingValue Value="@_curKoan" Name="CurKoan">
+                                <SlnKoanComp4 BackKoan="BackKoan" NextKoan="NextKoan"></SlnKoanComp4>
+                            </CascadingValue>
+
+                        </CascadingValue>
                     </CascadingValue>
                 </CascadingValue>
             </CascadingValue>
-        </CascadingValue>
-    }
-    else
-    {
-
-        <CascadingValue Value="@_listKoans" Name="ListKoans">
-            <CascadingValue Value="@_listTestKoans" Name="ListTestKoans">
-               
-                         <CascadingValue Value="@_student" Name="Student">
-                        <CascadingValue Value="@_curModule" Name="CurModule">
-                             <CascadingValue Value="@_curKoan" Name="CurKoan">
-                            <SlnKoanComp4 BackKoan="BackKoan" NextKoan="NextKoan"></SlnKoanComp4>
-                              </CascadingValue>
-                       
-                    </CascadingValue>
-                </CascadingValue>
-            </CascadingValue>
-        </CascadingValue>
 
 
-    }
-
+        }
+    </div>
 }
 else
 {
@@ -142,7 +135,7 @@ else
     //bool showList = true;
     private Student _student;
     bool isLoaded;
-    List<Module> listModules;
+    List<Module> listModules = new();
     List<Module> listIdModuleInvisible = new();
 
 
@@ -161,21 +154,21 @@ else
         _student = _db.Students.Include(x => x.AspNetUser)
             .Include(x => x.Group)
                 .ThenInclude(x => x.Courses)
-                    .ThenInclude(x => x.Modules)
-                        .ThenInclude(x => x.KoanInModules)
+                    .ThenInclude(x => x.Modules.OrderBy(x => x.Priority))
+                        .ThenInclude(x => x.KoanInModules.OrderBy(x => x.Priority))
                             .ThenInclude(x => x.Koan)
             .Include(x => x.Group)
                 .ThenInclude(x => x.Courses)
-                    .ThenInclude(x => x.Modules)
+                    .ThenInclude(x => x.Modules.OrderBy(x => x.Priority))
                         .ThenInclude(x => x.Test)
-                            .ThenInclude(x => x.KoanInTests)
+                            .ThenInclude(x => x.KoanInTests.OrderBy(x => x.Priority))
                                 .ThenInclude(x => x.Koan)
-            .Include(x => x.KoanInModules)
+            .Include(x => x.KoanInModules.OrderBy(x => x.Priority))
             //.First(x => x.AspNetUser == aspUser);\
             .First(x => x.AspNetUser == CurrentUser.User);
         //student.Group.Courses.Add(_db.Courses.First(x => x.Id == 10));
         //_db.SaveChanges();
-        listModules = _student.Group.Courses.First().Modules.OrderBy(x => x.Priority).ToList(); //!!!!!!!!!!!
+        listModules = _student.Group.Courses.First().Modules.ToList(); //!!!!!!!!!!!
         SelectModul(listModules.First());//!!!!!!!!!!!!!!!!!!
         await _compServive.InitAsync();
         isLoaded = true;
@@ -184,11 +177,14 @@ else
 
     private void SelectModul(Module module)
     {
+        if (!CheckAccessModule(module))
+            return;
+
         _curModule = module;
-        var koansInM = module.KoanInModules.OrderBy(x => x.Priority);
+        var koansInM = module.KoanInModules;//.OrderBy(x => x.Priority);
         _listKoans = koansInM.Select(x => x.Koan).ToList();
 
-        var koansInT = module.Test.KoanInTests.OrderBy(x => x.Priority);
+        var koansInT = module.Test.KoanInTests;//.OrderBy(x => x.Priority);
         _listTestKoans = koansInT.Select(x => x.Koan).ToList();
 
         _curKoan = koansInM.First().Koan;
@@ -203,11 +199,15 @@ else
         _isTest = false;
     }
 
-    private void SelectKoan(Module module, Koan koan)
+    private void SelectKoan(Module module, /*KoanInModule koanInModule */Koan koan)
     {
+
         //туду проверка на возможность открывать этот коан
 
-        var koansInM = module.KoanInModules.OrderBy(x => x.Priority);
+        var koansInM = module.KoanInModules;//.OrderBy(x => x.Priority);
+        var kInM = koansInM.First(x => x.KoanId.Equals(koan.Id));
+        if (!CheckAccessKoan(module, kInM))
+            return;
 
         if (_curModule != module)
         {
@@ -215,11 +215,184 @@ else
             _listKoans = koansInM.Select(x => x.Koan).ToList();
         }
 
-        _curKoan = koansInM.First(x => x.KoanId.Equals(koan.Id)).Koan;
+        _curKoan = kInM.Koan;
+        //_curKoan = koansInM.First(x => x.KoanId.Equals(koan.Id)).Koan;
 
-        StateHasChanged();
+        StateHasChanged(); // возможно перенести в Back and next
         _isTest = false;
     }
+
+
+    private void SelectTest(Module module)
+    {
+
+        //туду проверка на возможность открывать этот тест
+        if (!CheckAccessTest(module))
+            return;
+
+
+
+        //var koansInM = module.KoanInModules;//.OrderBy(x => x.Priority);
+        //var kInM = koansInM.First(x => x.KoanId.Equals(koan.Id));
+        //if (!CheckAccessKoan(module, kInM))
+        //    return;
+
+        //if (_curModule != module)
+        //{
+        //    _curModule = module;
+        //    _listKoans = koansInM.Select(x => x.Koan).ToList();
+        //}
+
+        //_curKoan = kInM.Koan;
+        ////_curKoan = koansInM.First(x => x.KoanId.Equals(koan.Id)).Koan;
+
+
+        _isTest = true;
+    }
+
+    private bool CheckAccessModule(Module module)
+    {
+        //посмотреть как будет работать, если запрашивать каждый раз, а не записать один раз в отдельный список
+
+        var indexM = listModules.IndexOf(module);
+        if (!indexM.Equals(0))
+        {
+            // Смотрим по тесту из пред. модуля
+            var res = listModules[indexM - 1].Test.ResultTests.FirstOrDefault();
+            if (res != null && res.IsPassed)//.First(x => x.StudentId.Equals(_student.Id)).IsPassed)
+                return true;
+            else
+                return false;
+        }
+        return true;
+    }
+
+    private bool CheckAccessKoan(Module module, KoanInModule koanInModule /* Koan koan*/)
+    {
+        if (CheckAccessModule(module))
+        {
+            var listKoan = module.KoanInModules.ToList();
+            var indexK = listKoan.IndexOf(koanInModule);
+            if (indexK.Equals(0))
+                return true;
+
+            //var listKoan = module.KoanInModules.Select(x => x.Koan).ToList();
+            //var indexK = listKoan.IndexOf(koan);
+            //if (indexK.Equals(0))
+            //    return true;
+            if (_student.KoanInModules.Contains(listKoan[indexK - 1]))
+                return true;
+            else
+                return false;
+
+        }
+        return false;
+
+    }
+
+    private bool CheckAccessTest(Module module/*Test test*/)
+    {
+        // смотреть по последнему коану в модуле
+        if (!CheckAccessModule(module))
+            return false;
+
+        var kInM = module.KoanInModules.Last();//.OrderBy(x => x.Priority);
+                                               // .First(x => x.KoanId.Equals(koan.Id));
+        if (_student.KoanInModules.Contains(kInM))
+            return true;
+        else
+            return false;
+    }
+
+    private string GetAccessObj(Module module, KoanInModule koanInModule = null, bool isTest = false /*Koan koan = null*/)
+    {
+
+        if (isTest)
+        {
+            if (CheckAccessTest(module))
+                return "color";
+        }
+        else if (koanInModule == null)
+        {
+            if (CheckAccessModule(module))
+                return "color";
+
+        }
+        else /*if (obj is Koan koan)*/
+        {
+            if (CheckAccessKoan(module, koanInModule))
+                return "color";
+        }
+
+        //if (koan == null)
+        //{
+        //    if (CheckAccessModule(module))
+        //        return "Color";
+
+        //}
+        //else /*if (obj is Koan koan)*/
+        //{
+        //    if (CheckAccessKoan(module, koan))
+        //        return "Color";
+        //}
+        //с тестом подумать
+        return "";
+    }
+
+    private string GetStatusDoneKoan(KoanInModule kInM)
+    {
+        if (_student.KoanInModules.Contains(kInM))
+            return "opacity";
+        else
+            return "";
+    }
+
+    private string GetStatusOpenModel(Module module)
+    {
+        if (listIdModuleInvisible.Contains(module))
+            return @"img\arrow2.svg";
+        else
+            return @"img\arrow.svg";
+    }
+
+    private string GetStatusDoneTest(Module module)
+    {
+        var res = listModules.First(x => x.Id.Equals(module.Id)).Test.ResultTests.FirstOrDefault();// ElementAt(module). .Test.ResultTests.FirstOrDefault();
+        if (res != null)//.First(x => x.StudentId.Equals(_student.Id)).IsPassed)
+            return "opacity";
+        else
+            return "";
+
+    }
+
+    private string GetStatusIsPassedTest(Module module)
+    {
+        var res = listModules.First(x => x.Id.Equals(module.Id)).Test.ResultTests.FirstOrDefault();// ElementAt(module). .Test.ResultTests.FirstOrDefault();
+        if (res == null)//.First(x => x.StudentId.Equals(_student.Id)).IsPassed)
+            return "";
+        else if (res.IsPassed)
+            return @"img\done.png";
+        else
+           return @"img\error.svg";
+
+    }
+
+    //private string GetAccessObj(Object obj)
+    //{
+    //    if(obj is Module module)
+    //    {
+    //        if (CheckAccessModule(module))
+    //            return "Color";
+
+    //    }
+    //    else if(obj is Koan koan)
+    //    {
+    //        if (CheckAccessKoan(koan))
+    //            return "Color";
+    //    }
+    //    //с тестом подумать
+    //    return "";
+    //}
 
 
 
@@ -244,7 +417,7 @@ else
         {
             NextModule();
         }
-        
+
     }
 
     private void NextModule()
@@ -252,6 +425,7 @@ else
         if (_numberCurModule + 1 <= listModules.Count)
         {
             _curModule = listModules.ElementAt(_numberCurModule + 1);
+            ChangeVisibleModule(_curModule);
         }
         else
         {
@@ -266,7 +440,7 @@ else
     {
         _curKoan = _listKoans.ElementAt(_numberCurKoan - 1);
         SelectKoan(_curModule, _curKoan);
-       
+
     }
 
 

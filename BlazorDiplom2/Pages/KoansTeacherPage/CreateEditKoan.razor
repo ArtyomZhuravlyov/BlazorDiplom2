@@ -103,7 +103,7 @@
 
                 //Teacher.Koans.Add(Koan);
             }
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             Koan = new();
         }

@@ -26,7 +26,7 @@ namespace Compile
 
                 references.Add(MetadataReference.CreateFromFile(typeof(object).Assembly.Location));
                 references.Add(MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location));
-                references.Add(MetadataReference.CreateFromFile(@"C:\Program Files\dotnet\shared\Microsoft.NETCore.App\6.0.1\System.Runtime.dll"));
+                references.Add(MetadataReference.CreateFromFile(@"C:\Program Files\dotnet\shared\Microsoft.NETCore.App\6.0.4\System.Runtime.dll"));
 
                 references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.BaseDirectory + "//xunit.abstractions.dll"));
                 references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.BaseDirectory + "//xunit.assert.dll"));

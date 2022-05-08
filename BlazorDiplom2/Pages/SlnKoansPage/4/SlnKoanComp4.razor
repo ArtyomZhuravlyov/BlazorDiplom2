@@ -140,7 +140,7 @@ else
 
     public void Dispose()
     {
-        _timer.Dispose();
+        _timer?.Dispose();
     }
 
     /// <summary>
@@ -220,7 +220,7 @@ else
         if (isPassed && !Student.KoanInModules.Contains(CurModule.KoanInModules.First(x => x.KoanId.Equals(CurKoan.Id))))
         {
             Student.KoanInModules.Add(CurModule.KoanInModules.First(x => x.KoanId.Equals(CurKoan.Id)));
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
         }
         this.StateHasChanged();
     }
