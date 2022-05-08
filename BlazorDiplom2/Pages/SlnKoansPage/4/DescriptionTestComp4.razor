@@ -1,19 +1,41 @@
 ﻿@inject DB _db;
 
-<h3>DescriptionTest</h3>
-<div>Количество Коанов @CurModule.Test.KoanInTests.Count</div>
-<div>Время @CurModule.Test.Time</div>
-<div>Проходной балл @CurModule.Test.MinScore</div>
+<div class="info_items">
+    <div class="info_item ">
+        <div class="info_item_title small_img">
+            <img src="img\question.svg" alt=""> Количество коанов:
+        </div>
+        <div class="info_item_info">
+            @CurModule.Test.KoanInTests.Count
+        </div>
+    </div>
+    <div class="info_item short">
+        <div class="info_item_title">
+            <img src="img\time.png" alt=""> Время:
+        </div>
+        <div class="info_item_info">
+            @CurModule.Test.Time.Minute мин.
+        </div>
+    </div>
+    <div class="info_item">
+        <div class="info_item_title">
+            <img src="img\score.png" alt=""> Проходной балл:
+        </div>
+        <div class="info_item_info">
+            @CurModule.Test.MinScore%
+        </div>
+    </div>
+</div>
+
 @if (locStorageTest != null)
 {
     @switch (statusTest)
     {
         case Enums.StatusTest.NotStart:
-            @* <button @onclick="()=>StartTest.InvokeAsync(CurModule.Test)">Начать тест</button>*@
-            <button @onclick="StartTestAsync">Начать тест</button>
+            <button class="start" @onclick="StartTestAsync">Начать тест</button>
             break;
         case Enums.StatusTest.InProgress:
-            <button @onclick="ContinueTestAsync">Продолжить тест</button>
+            <button class="start" @onclick="ContinueTestAsync">Продолжить тест</button>
             break;
         case Enums.StatusTest.End:
             <div>Тест завершён</div>
@@ -25,16 +47,16 @@
 }
 
 @code {
-    [Parameter] 
+    [Parameter]
     public EventCallback StartTestAsync { get; set; }
 
-    [Parameter] 
+    [Parameter]
     public EventCallback ContinueTestAsync { get; set; }
 
     [CascadingParameter(Name = "CurModule")]
     public Module CurModule { get; set; }
 
-        [CascadingParameter(Name = "Student")]
+    [CascadingParameter(Name = "Student")]
     public Student Student { get; set; }
 
     LocStorageTest locStorageTest;

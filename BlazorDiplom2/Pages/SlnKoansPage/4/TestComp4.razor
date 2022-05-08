@@ -8,20 +8,23 @@
 }
 else
 {
-    <div>
-        <div @onclick="(()=>_activeTab = Enums.TabTestStudent.Test)">Тест</div>
-        <div @onclick="(()=>_activeTab = Enums.TabTestStudent.ResultTest)">Результат</div>
+    <div class="info scroll">
+        <div class="nav_top">
+            <div class="nav_top_link border" @onclick="(()=>_activeTab = Enums.TabTestStudent.Test)">Тест</div>
+            <div class="nav_top_link" style="@GetVisibleTabTest()" @onclick="(()=>_activeTab = Enums.TabTestStudent.ResultTest)">Результат</div>
+            @switch (_activeTab)
+            {
+                case Enums.TabTestStudent.Test:
+                    <DescriptionTestComp4 StartTestAsync="StartTestAsync" ContinueTestAsync="ContinueTestAsync"></DescriptionTestComp4>
+                    break;
+                case Enums.TabTestStudent.ResultTest:
+                    <ResultTestComp></ResultTestComp>
+                    break;
+            }
+        </div>
     </div>
 
-    @switch (_activeTab)
-    {
-        case Enums.TabTestStudent.Test:
-            <DescriptionTestComp4  StartTestAsync="StartTestAsync" ContinueTestAsync="ContinueTestAsync"></DescriptionTestComp4>
-            break;
-        case Enums.TabTestStudent.ResultTest:
-            <CreateEditEducationalInstitutionComp EducationalInstitution="new EducationalInstitution()"></CreateEditEducationalInstitutionComp>
-            break;
-    }
+
 }
 
 
@@ -76,7 +79,7 @@ else
     private async void ContinueTestAsync()
     {
         var locStorageTest = await LocStorage.GetTestLocalStorageAsync(_db, Student);
-        var idKoanInTest =  locStorageTest.ListLocStoragesTestKoan.Last().IdKoanInTest;
+        var idKoanInTest = locStorageTest.ListLocStoragesTestKoan.Last().IdKoanInTest;
         var koanId = _db.KoanInTests.First(x => x.Id.Equals(idKoanInTest)).KoanId;
 
         if (locStorageTest.ListLocStoragesTestKoan.Count > 0)
@@ -92,6 +95,16 @@ else
     {
         _isInProressTest = false;
         _activeTab = Enums.TabTestStudent.ResultTest;
+        StateHasChanged(); //проверить сработает ли без StateHasChanged
+    }
+
+    private string GetVisibleTabTest() // !!!!!!!!!!!!!!!!!!!!!! Врядли работает
+    {
+        if (!Student.ResultTests.Select(x => x.TestId).Contains(CurModule.Test.Id))
+            return "display: none;";
+        else
+            return "";
+
     }
 
 

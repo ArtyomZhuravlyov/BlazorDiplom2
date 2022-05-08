@@ -37,7 +37,6 @@
                             </div>
                         }
 
-
                         <div class="koan test">
                             <div class="koan_done @GetStatusDoneTest(item)"><img src="@GetStatusIsPassedTest(item)" alt=""></div>
                             <div class="koan_name @GetAccessObj(item, null, true)" @onclick="()=>SelectTest(item)">Тест по модулю @(listModules.IndexOf(item)+1)</div>
@@ -50,17 +49,13 @@
 
         @if (_isTest)
         {
-
-
             <CascadingValue Value="@_listKoans" Name="ListKoans">
                 <CascadingValue Value="@_listTestKoans" Name="ListTestKoans">
-
                     <CascadingValue Value="@_student" Name="Student">
                         <CascadingValue Value="@_curModule" Name="CurModule">
                             <CascadingValue Value="@_curKoan" Name="CurKoan">
                                 <TestComp4 BackKoan="BackKoan" NextKoan="NextKoan"></TestComp4>
                             </CascadingValue>
-
                         </CascadingValue>
                     </CascadingValue>
                 </CascadingValue>
@@ -68,22 +63,17 @@
         }
         else
         {
-
             <CascadingValue Value="@_listKoans" Name="ListKoans">
                 <CascadingValue Value="@_listTestKoans" Name="ListTestKoans">
-
                     <CascadingValue Value="@_student" Name="Student">
                         <CascadingValue Value="@_curModule" Name="CurModule">
                             <CascadingValue Value="@_curKoan" Name="CurKoan">
                                 <SlnKoanComp4 BackKoan="BackKoan" NextKoan="NextKoan"></SlnKoanComp4>
                             </CascadingValue>
-
                         </CascadingValue>
                     </CascadingValue>
                 </CascadingValue>
             </CascadingValue>
-
-
         }
     </div>
 }
@@ -151,7 +141,7 @@ else
         //_db.Entry(student).Reference(x => x.Group).Load();// .Collection
         //aspUser.Student = _db.Students.First();// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //_db.SaveChanges();
-        _student = _db.Students.Include(x => x.AspNetUser)
+        _student = await Task.FromResult( _db.Students.Include(x => x.AspNetUser)
             .Include(x => x.Group)
                 .ThenInclude(x => x.Courses)
                     .ThenInclude(x => x.Modules.OrderBy(x => x.Priority))
@@ -165,7 +155,7 @@ else
                                 .ThenInclude(x => x.Koan)
             .Include(x => x.KoanInModules.OrderBy(x => x.Priority))
             //.First(x => x.AspNetUser == aspUser);\
-            .First(x => x.AspNetUser == CurrentUser.User);
+            .First(x => x.AspNetUser == CurrentUser.User));
         //student.Group.Courses.Add(_db.Courses.First(x => x.Id == 10));
         //_db.SaveChanges();
         listModules = _student.Group.Courses.First().Modules.ToList(); //!!!!!!!!!!!

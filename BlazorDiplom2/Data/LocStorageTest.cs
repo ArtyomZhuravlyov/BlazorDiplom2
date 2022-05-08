@@ -88,7 +88,7 @@
                 resultKoanTests.Add(resultKoanTest);
             }
 
-            var score = ListLocStoragesTestKoan.Where(x => x.IsPassed).Count();
+            var score = ListLocStoragesTestKoan.Where(x => x.IsPassed).Count() / ListLocStoragesTestKoan.Count() * 100;
             var time = new DateTime(1, 1, 1, 0, MinutesTest, 0);
             if(DateTime.Now.Subtract(DateTimeStartTest).TotalMinutes < MinutesTest)
                 time = new DateTime(1, 1, 1, 0, (int)DateTime.Now.Subtract(DateTimeStartTest).TotalMinutes, 0);

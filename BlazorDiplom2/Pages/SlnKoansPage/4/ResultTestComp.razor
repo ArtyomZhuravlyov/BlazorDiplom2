@@ -1,0 +1,108 @@
+﻿<div class="info_items">
+    <div class="info_item short ">
+        <div class="info_item_title">
+            <img src="img\time.png" alt=""> Время:
+        </div>
+        <div class="info_item_info">
+            @_resultTest.Time.Minute мин. @_resultTest.Time.Second сек.
+        </div>
+    </div>
+    <div class="info_item short">
+        <div class="info_item_title">
+            <img src="img\score.png" alt=""> Балл:
+        </div>
+        <div class="info_item_info">
+            @_resultTest.Score%
+        </div>
+    </div>
+    <div class="info_item">
+        <div class="info_item_title">
+            <img src="img\star.png" alt=""> Зачтено:
+        </div>
+        <div class="info_item_info">
+            @GetStatusResult()
+        </div>
+    </div>
+</div>
+<table border="1">
+    <tr>
+        @for (int i = 1; i <= _resultTest.ResultKoanTests.Count; i++)
+        {
+            int locI = i;
+            <th>@locI</th>
+        }
+    </tr>
+    <tr>
+        @foreach (var rKT in _resultTest.ResultKoanTests)
+        {
+            if (rKT.IsError)
+            {
+                <td><img src="img\error.svg" alt=""></td>
+            }
+            else
+            {
+                <td><img src="img\done.png" alt=""></td>
+            }
+        }
+    </tr>
+</table>
+<div class="results">
+    <div class="label">Коан</div>
+    <select @onchange="@ChangeResultTestKoan">
+        @foreach (var rKT in _resultTest.ResultKoanTests)
+        {
+            <option value="@rKT.Id">Коан @(_resultTest.ResultKoanTests.IndexOf(rKT)+1)</option>
+        }
+    </select>
+    <div class="result_texts">
+        <div class="result_text">
+            <div class="result_text_title">Ваш ответ:</div>
+            <div class="result_text_info">
+             @_curResultKoanTest.Answer
+            </div>
+        </div>
+        <hr />
+        <div class="result_text">
+            <div class="result_text_title">Ответ компилятора:</div>
+            <div class="result_text_info">
+                @_curResultKoanTest.Message
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+    [CascadingParameter(Name = "Student")]
+    public Student Student { get; set; }
+
+    [CascadingParameter(Name = "CurModule")]
+    public Module CurModule { get; set; }
+
+    private ResultTest _resultTest;
+
+    private ResultKoanTest _curResultKoanTest;
+
+    protected override void OnInitialized()
+    {
+        _resultTest = Student.ResultTests.First(x => x.TestId.Equals(CurModule.Test.Id)); // .Select(x => x.Test).First(x => x.Id.Equals(CurModule.Test.Id));
+        _curResultKoanTest = _resultTest.ResultKoanTests.First();
+    }
+
+
+    private string GetStatusResult()
+    {
+        if (_resultTest.IsPassed)
+            return "Да";
+        else
+            return "Нет";
+    }
+
+    private void ChangeResultTestKoan(ChangeEventArgs eventArgs)
+    {
+        var selResultKoanTestInt = Convert.ToInt32(eventArgs.Value);
+        _curResultKoanTest = _resultTest.ResultKoanTests.First(x => x.Id.Equals(selResultKoanTestInt));
+    }
+
+
+}
