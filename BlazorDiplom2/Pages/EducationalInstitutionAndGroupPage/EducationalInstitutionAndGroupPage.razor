@@ -1,4 +1,5 @@
 ﻿@page "/EducationalInstitutionandgroup"
+@attribute [Authorize(Roles = @Constants.ROLE_TEACHER_IDENTITY)]
 
 <div class="menu_info">
     <NavMenu></NavMenu>

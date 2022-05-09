@@ -1,5 +1,5 @@
 ﻿@page "/Users"
-
+@attribute [Authorize(Roles = @Constants.ROLE_ADMINISTRATOR_IDENTITY)]
 
 <div class="menu_info">
      <NavMenu></NavMenu>

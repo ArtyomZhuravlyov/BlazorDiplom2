@@ -1,4 +1,5 @@
 ﻿@page "/ResultStudentsPage"
+@attribute [Authorize(Roles = @Constants.ROLE_TEACHER_IDENTITY)]
 
 @using Microsoft.EntityFrameworkCore
 @inject DB _db;

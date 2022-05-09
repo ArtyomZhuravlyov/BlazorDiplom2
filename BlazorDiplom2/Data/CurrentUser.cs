@@ -13,14 +13,22 @@ namespace BlazorDiplom2.Data
 
         public static async void SetUserAsync(AuthenticationStateProvider authenticationStateProvider, UserManager<AspNetUsers> _userManager)
         {
-            var authstate = await authenticationStateProvider.GetAuthenticationStateAsync();
-            var user = authstate.User;
-            User = await _userManager.GetUserAsync(user);
-            if(User != null)
+            try // потом убрать
             {
-                var roles = await _userManager.GetRolesAsync(User);//.GetRoles(User.Id);
-                Role = roles.First();
+                var authstate = await authenticationStateProvider.GetAuthenticationStateAsync();
+                var user = authstate.User;
+                User = await _userManager.GetUserAsync(user);
+                if (User != null)
+                {
+                    var roles = await _userManager.GetRolesAsync(User);//.GetRoles(User.Id);
+                    Role = roles.First();
+                }
             }
+            catch (Exception ex)
+            {
+
+            }
+           
             
         }
     }
