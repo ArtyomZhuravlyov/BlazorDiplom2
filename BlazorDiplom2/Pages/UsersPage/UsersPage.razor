@@ -2,12 +2,13 @@
 
 
 <div class="menu_info">
+     <NavMenu></NavMenu>
     <div class="results_student">
         <div class="nav_top">
-            <div class="nav_top_link border" @onclick="(()=>activeTab = Enums.TabUsers.Users)">Пользователи</div>
-            <div class="nav_top_link" @onclick="(()=>activeTab = Enums.TabUsers.AddUser)">Добавить пользователя</div>
+            <div class="nav_top_link border" @onclick="(()=>_activeTab = Enums.TabUsers.Users)">Пользователи</div>
+            <div class="nav_top_link" @onclick="(()=>_activeTab = Enums.TabUsers.AddUser)">Добавить пользователя</div>
         </div>
-        @switch (activeTab)
+        @switch (_activeTab)
         {
             case Enums.TabUsers.Users:
                 <ListUsersComp></ListUsersComp>
@@ -22,5 +23,5 @@
 
 
 @code {
-    public Enums.TabUsers activeTab { get; set; } = Enums.TabUsers.Users;
+    private Enums.TabUsers _activeTab = Enums.TabUsers.Users;
 }

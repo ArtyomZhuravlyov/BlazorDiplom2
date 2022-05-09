@@ -48,7 +48,7 @@ builder.Services.AddDbContext<DB>(options => options.UseSqlServer(connection));/
 //builder.Services.AddHttpContextAccessor();//cookies
 builder.Services.AddHttpClient(); //для инпутфаил
 builder.Services.AddRazorPages();
-builder.Services.AddServerSideBlazor();
+builder.Services.AddServerSideBlazor().AddCircuitOptions(options => { options.DetailedErrors = true; }); ;
 builder.Services.AddStorage();
 
 builder.Services.AddSingleton<CompileService>();

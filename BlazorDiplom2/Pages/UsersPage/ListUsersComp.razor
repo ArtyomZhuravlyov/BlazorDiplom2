@@ -9,8 +9,8 @@
         <div class="filtr_item short_select">
             <div class="main_name">Роль пользователя</div>
             <select @bind="_selectRol">
-                <option selected value="@Constants.ROLE_STUDENT">@Constants.ROLE_STUDENT</option>
-                <option value="@Constants.ROLE_TEACHER">@Constants.ROLE_TEACHER</option>
+                <option selected value="@Constants.ROLE_STUDENT_SELECT">@Constants.ROLE_STUDENT_SELECT</option>
+                <option value="@Constants.ROLE_TEACHER_SELECT">@Constants.ROLE_TEACHER_SELECT</option>
             </select>
         </div>
     </div>
@@ -24,7 +24,7 @@
         <div class="table_admin">
             <table border="1">
 
-                @if (_selectRol.Equals(Constants.ROLE_STUDENT))
+                @if (_selectRol.Equals(Constants.ROLE_STUDENT_SELECT))
                 {
                     <tr>
                         <th>ФИО</th>
@@ -111,7 +111,7 @@ else
     private UserModelForm _userModelForm;
     private bool _shouldRender = true;
     private bool _showList = true;
-    private string _selectRol = Constants.ROLE_STUDENT;
+    private string _selectRol = Constants.ROLE_STUDENT_SELECT;
 
     //protected override async Task OnInitializedAsync() =>  students2 = await _db.GetStudentsAsync();
 

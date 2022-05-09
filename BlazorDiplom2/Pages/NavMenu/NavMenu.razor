@@ -1,0 +1,80 @@
+﻿@using Microsoft.EntityFrameworkCore
+@inject DB _db;
+
+<div class="menu">
+
+    @*  <AuthorizeView Roles="Administrators">
+        <Authorized>
+        <NavLink class="main_nav_link border" href="Users">Управление пользователями</NavLink>
+        <NavLink class="main_nav_link" href="EducationalInstitutionandgroup">Управление учебными заведениями и группами</NavLink>
+        <div class="account"><img src="img\account.png" alt=""></div>
+        </Authorized>
+        </AuthorizeView>*@
+    <AuthorizeView Roles=@($"{Constants.ROLE_TEACHER_IDENTITY}, {Constants.ROLE_STUDENT_IDENTITY}")>
+        <Authorized>
+            <div class="name">@_name</div>
+        </Authorized>
+    </AuthorizeView>
+    <div class="username">@_userName</div>
+    <AuthorizeView Roles=@($"{Constants.ROLE_TEACHER_IDENTITY}")>
+        <Authorized>
+            <NavLink class="menu_items" href="coursesteacher">Курсы</NavLink>
+            <NavLink class="menu_items" href="koansteacher">Коаны</NavLink>
+        </Authorized>
+    </AuthorizeView>
+     <AuthorizeView Roles=@($"{Constants.ROLE_STUDENT_IDENTITY}")>
+        <Authorized>
+            <NavLink class="menu_items" href="">Мои курсы</NavLink> @*сделать страницу*@
+        </Authorized>
+    </AuthorizeView>
+
+    <NavLink class="menu_items" href="aboutuser">О пользователе</NavLink> @*сделать компонент*@
+    <NavLink class="menu_items" href="Identity/Account/Logout"><img src="img\exit.png" alt="">Выйти</NavLink>
+
+    @*  <form class="form-inline" method="post" action="/Identity/Account/Logout">
+        <button type="submit" class="nav-link btn btn-link text-dark">Click here to Logout</button>
+        <input name="__RequestVerificationToken" type="hidden" value="CfDJ8Ecg7_BapVZAvWbrvLxMIO3dcVEbZk190V3VKQ9zJ0Q0NzOUCX_VsO_AET81J3B9QRnUzTmfv7Wcqy33VeQaoMUMATnxPD9xoiOTE1r-70Stlk-j7HMphYwB0YhFcsRY8Xwpqe22cAUyT1YwJp-2mSztO_4BdnvP2EN-1XTS0pREXec9tgf5YMNKkxG-YQb3eg"></form>*@
+
+    @*<div class="menu_items">Курсы</div>
+        <div class="menu_items">Коаны</div>
+        <div class="menu_items">О пользователе</div>
+        <div class="menu_items"><img src="img\exit.png" alt="">Выйти</div>*@
+</div>
+
+@code {
+
+    private string _name;
+    private string _userName;
+
+    protected override void OnInitialized()
+    {
+
+        switch (CurrentUser.Role)
+        {
+            case Constants.ROLE_ADMINISTRATOR_IDENTITY:
+                break;
+            case Constants.ROLE_TEACHER_IDENTITY:
+                var teacher = _db.Teachers
+             .Include(x => x.AspNetUser)
+             .First(x => x.AspNetUser == CurrentUser.User);
+                _name = teacher.LastName + teacher.FirstName;
+                break;
+            case Constants.ROLE_STUDENT_IDENTITY:
+                var student = _db.Students
+                 .Include(x => x.AspNetUser)
+                 .First(x => x.AspNetUser == CurrentUser.User);
+                _name = student.LastName + student.FirstName;
+                break;
+            default: break;
+        }
+
+        //if (CurrentUser.Role.Equals())
+        //{
+
+        //}
+
+
+
+        _userName = CurrentUser.User.UserName;
+    }
+}

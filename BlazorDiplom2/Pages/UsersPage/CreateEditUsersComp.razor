@@ -11,19 +11,19 @@
         <select disabled > @*@onchange="@ChangeRole"*@
             @if (UserModelForm is StudentModelForm)
             {
-                <option selected value="@Constants.ROLE_STUDENT">@Constants.ROLE_STUDENT</option>
+                <option selected value="@Constants.ROLE_STUDENT_SELECT">@Constants.ROLE_STUDENT_SELECT</option>
             }
             else
             {
-                <option selected value="@Constants.ROLE_TEACHER">@Constants.ROLE_TEACHER</option>
+                <option selected value="@Constants.ROLE_TEACHER_SELECT">@Constants.ROLE_TEACHER_SELECT</option>
             }
         </select>
     }
     else
     {
         <select @onchange="@ChangeRole">
-            <option selected value="@Constants.ROLE_STUDENT">@Constants.ROLE_STUDENT</option>
-            <option value="@Constants.ROLE_TEACHER">@Constants.ROLE_TEACHER</option>
+            <option selected value="@Constants.ROLE_STUDENT_SELECT">@Constants.ROLE_STUDENT_SELECT</option>
+            <option value="@Constants.ROLE_TEACHER_SELECT">@Constants.ROLE_TEACHER_SELECT</option>
         </select>
     }
   
@@ -217,7 +217,7 @@ else if (UserModelForm is StudentModelForm StudentModelForm)
 
     [Parameter] public EventCallback Refresh { get; set; }
 
-    private string _selectRol = Constants.ROLE_STUDENT;
+    private string _selectRol = Constants.ROLE_STUDENT_SELECT;
 
     private bool _edit;
 
@@ -262,7 +262,7 @@ else if (UserModelForm is StudentModelForm StudentModelForm)
 
     private void ChangeRole(ChangeEventArgs eventArgs)
     {
-        if (eventArgs.Value.ToString().Equals(Constants.ROLE_STUDENT))
+        if (eventArgs.Value.ToString().Equals(Constants.ROLE_STUDENT_SELECT))
             UserModelForm = new StudentModelForm();
         else
             UserModelForm = new TeacherModelForm();

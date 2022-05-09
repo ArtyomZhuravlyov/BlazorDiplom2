@@ -160,7 +160,8 @@ else
         //_db.SaveChanges();
         listModules = _student.Group.Courses.First().Modules.ToList(); //!!!!!!!!!!!
         SelectModul(listModules.First());//!!!!!!!!!!!!!!!!!!
-        await _compServive.InitAsync();
+        //await _compServive.InitAsync();
+         _compServive.Init();
         isLoaded = true;
     }
 

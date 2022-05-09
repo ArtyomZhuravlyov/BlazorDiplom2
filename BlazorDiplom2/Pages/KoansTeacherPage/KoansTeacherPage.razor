@@ -1,14 +1,15 @@
 ﻿@page "/koansteacher"
 
 <div class="menu_info">
-    <div class="menu">
+  @*  <div class="menu">
         <div class="name">Калимуллина Адиля</div>
         <div class="username">kalimullina-adilya</div>
         <div class="menu_items">Курсы</div>
         <div class="menu_items">Коаны</div>
         <div class="menu_items">О пользователе</div>
         <div class="menu_items"><img src="img\exit.png" alt="">Выйти</div>
-    </div>
+    </div>*@
+    <NavMenu></NavMenu>
     <div class="info">
         <div class="nav_top">
             <div class="nav_top_link border" @onclick="(()=>_activeTab = Enums.TabKoansTeacher.Koans)">Мои коаны</div>

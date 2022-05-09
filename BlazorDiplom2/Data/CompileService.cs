@@ -21,7 +21,7 @@ namespace BlazorDiplom2.Data
         public List<string> CompileLog { get; set; }
         private List<MetadataReference> references { get; set; }
 
-        public async Task InitAsync()
+        public void Init()
         {
             if (references == null)
             {
@@ -63,6 +63,31 @@ namespace BlazorDiplom2.Data
             }
         }
 
+
+        public async Task<(string, bool)> CompileAndRun(string code)
+        {
+            //await InitAsync();
+
+            var assembly = await this.Compile(code);
+            try
+            {
+                if (assembly != null)
+                {
+                    var type = assembly.GetExportedTypes().FirstOrDefault();
+                    var methodInfo = type.GetMethod("Run");
+                    var instance = Activator.CreateInstance(type);
+                    methodInfo.Invoke(instance, null);
+                    return ("Задача решена верно", true);
+                }
+            }
+            catch (Exception ex)
+            {
+                return ($"Задача решена неверно: {ex.InnerException.Message}", false);
+            }
+            return ("Ошибка", false);
+
+        }
+
         public async Task<Assembly> Compile(string code)
         {
             //await InitAsync();
@@ -78,7 +103,7 @@ namespace BlazorDiplom2.Data
                 CompileLog.Add("Parse SyntaxTree Error!");
                 return null;
             }
-
+            
             CompileLog.Add("Parse SyntaxTree Success");
 
             CSharpCompilation compilation = CSharpCompilation.Create("CompileBlazorInBlazor.Demo", new[] { syntaxTree },
@@ -104,36 +129,14 @@ namespace BlazorDiplom2.Data
                 stream.Seek(0, SeekOrigin.Begin);
 
                 //                var context = new CollectibleAssemblyLoadContext();
-                Assembly assemby = AppDomain.CurrentDomain.Load(stream.ToArray());
-                return assemby;
+                Assembly assembly = AppDomain.CurrentDomain.Load(stream.ToArray());
+                return assembly;
             }
 
             return null;
         }
 
 
-        public async Task<(string, bool)> CompileAndRun(string code)
-        {
-            //await InitAsync();
-
-            var assemby = await this.Compile(code);
-            try
-            {
-                if (assemby != null)
-                {
-                    var type = assemby.GetExportedTypes().FirstOrDefault();
-                    var methodInfo = type.GetMethod("Run");
-                    var instance = Activator.CreateInstance(type);
-                    methodInfo.Invoke(instance, null);
-                    return ("Задача решена верно", true);
-                }
-            }
-            catch (Exception ex)
-            {
-                return ($"Задача решена неверно: {ex.InnerException.Message}", false);
-            }
-            return ("Ошибка", false);
-
-        }
+     
     }
 }

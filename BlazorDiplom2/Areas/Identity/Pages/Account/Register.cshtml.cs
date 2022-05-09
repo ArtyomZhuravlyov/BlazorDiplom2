@@ -271,9 +271,9 @@ namespace BlazorDiplom2.Areas.Identity.Pages.Account
             //user4Student.Student = student2;
 
             //_db.Roles.AddRange(new IdentityRole("Administrators"), new IdentityRole("Teacher"), new IdentityRole("Students"));
-            await _roleManager.CreateAsync(new IdentityRole("Administrators"));
-            await _roleManager.CreateAsync(new IdentityRole("Teachers"));
-            await _roleManager.CreateAsync(new IdentityRole("Students"));
+            await _roleManager.CreateAsync(new IdentityRole(Constants.ROLE_ADMINISTRATOR_IDENTITY));
+            await _roleManager.CreateAsync(new IdentityRole(Constants.ROLE_TEACHER_IDENTITY));
+            await _roleManager.CreateAsync(new IdentityRole(Constants.ROLE_STUDENT_IDENTITY));
 
    
            
