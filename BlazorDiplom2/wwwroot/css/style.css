@@ -415,10 +415,13 @@ textarea {
     border-radius: 5px;
     width: 33px;
     height: 34px;
-    transform: rotate(180deg);
     background-color: #fff;
     cursor: pointer;
 }
+
+    .next img {
+        transform: rotate(180deg);
+    }
 
 .check {
     background-color: #576BB7;
@@ -455,6 +458,66 @@ textarea {
     font-size: 14px;
 }
 
+.next_test {
+    width: 210px;
+    height: 34px;
+    color: #576BB7;
+    font-size: 16px;
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .next_test img {
+        margin-left: 5px;
+    }
+
+.finish {
+    background-color: #576BB7;
+    width: 210px;
+    height: 34px;
+    color: #fff;
+    border: none;
+    font-size: 16px;
+    font-family: 'Roboto', sans-serif;
+    border-radius: 5px;
+}
+
+.time_test {
+    display: flex;
+    align-items: center;
+}
+
+.time_icon {
+    width: 25px;
+    margin-right: 5px;
+}
+
+    .time_icon img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+.time_num {
+    color: #28A526;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: normal;
+}
+
+.task_test {
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 33px;
+}
+
+    .task_test .task_title {
+        margin-bottom: 0;
+    }
 
 /*aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa*/
 

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Emit;
@@ -13,7 +14,9 @@ namespace BlazorDiplom2.Data
 {
     public class CompileService
     {
-        private readonly HttpClient _http;
+        //public HttpClient Http { get; set; }
+
+        //public  NavigationManager UriHelper { get; set; }
 
         public List<string> CompileLog { get; set; }
         private List<MetadataReference> references { get; set; }
@@ -24,14 +27,23 @@ namespace BlazorDiplom2.Data
             {
                 references = new List<MetadataReference>();
 
-                references.Add(MetadataReference.CreateFromFile(typeof(object).Assembly.Location));
-                references.Add(MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location));
-                references.Add(MetadataReference.CreateFromFile(@"C:\Program Files\dotnet\shared\Microsoft.NETCore.App\6.0.4\System.Runtime.dll"));
+                string[] libs = Directory.GetFiles($"{Directory.GetCurrentDirectory()}\\wwwroot\\Libs\\");
 
-                references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.BaseDirectory + "//xunit.abstractions.dll"));
-                references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.BaseDirectory + "//xunit.assert.dll"));
-                references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.BaseDirectory + "//xunit.core.dll"));
-                references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.BaseDirectory + "//xunit.execution.dotnet.dll"));
+                foreach (var lib in libs)
+                    references.Add(MetadataReference.CreateFromFile(lib));
+
+               
+                
+
+                //references.Add(MetadataReference.CreateFromFile(typeof(object).Assembly.Location));
+                //references.Add(MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location));
+                //references.Add(MetadataReference.CreateFromFile(@"C:\Program Files\dotnet\shared\Microsoft.NETCore.App\6.0.4\System.Runtime.dll"));
+
+                //references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.BaseDirectory + "//xunit.abstractions.dll"));
+                //references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.BaseDirectory + "//xunit.assert.dll"));
+                //references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.BaseDirectory + "//xunit.core.dll"));
+                //references.Add(MetadataReference.CreateFromFile(AppDomain.CurrentDomain.BaseDirectory + "//xunit.execution.dotnet.dll"));
+
                 //var a = AppDomain.CurrentDomain.GetAssemblies();
                 //foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
                 //{
@@ -41,26 +53,19 @@ namespace BlazorDiplom2.Data
                 //    }
                 //    var name = assembly.GetName().Name + ".dll";
                 //    Console.WriteLine(name);
-                //    //references.Add(MetadataReference.CreateFromFile(Assembly.Load(new AssemblyName(name)).Location));
-                //    references.Add(MetadataReference.CreateFromFile(typeof(object).Assembly.Location));
-                //    references.Add(MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location));
-
-
-
+                //    Console.WriteLine(UriHelper.BaseUri);
+                //    Console.WriteLine(UriHelper.BaseUri + "/_framework/_bin/" + name);
 
                 //    references.Add(
-                //        MetadataReference.CreateFromFile(myType.Assembly.Location));
-                //    //references.Add(
-                //    //    MetadataReference.CreateFromStream(
-                //    //        await this._http.GetStreamAsync(_uriHelper.BaseUri + "/_framework/_bin/" + name)));
+                //        MetadataReference.CreateFromStream(
+                //            await Http.GetStreamAsync(UriHelper.BaseUri + "/_framework/_bin/" + name)));
                 //}
             }
         }
 
-
         public async Task<Assembly> Compile(string code)
         {
-            await InitAsync();
+            //await InitAsync();
 
             SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(code, new CSharpParseOptions(LanguageVersion.Preview));
             foreach (var diagnostic in syntaxTree.GetDiagnostics())
@@ -109,7 +114,7 @@ namespace BlazorDiplom2.Data
 
         public async Task<(string, bool)> CompileAndRun(string code)
         {
-            await InitAsync();
+            //await InitAsync();
 
             var assemby = await this.Compile(code);
             try

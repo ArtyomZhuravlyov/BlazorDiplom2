@@ -3,49 +3,85 @@
 @inject CompileService compServive;
 @inject DB _db;
 @implements IDisposable
-<h3>slnKoanComp</h3>
+
 @if (IsTest)
 {
-    <div>
 
-            <div>@_timeOnly</div>
-        
+    <div class="program">
+        <textarea class="form_program" @bind="@CodeKoan"></textarea>
+        <div class="btns">
+            <button class="reset" @onclick="ReadFileKoanAsync">
+                <img src="img\reset.svg" alt="">
+            </button>
+            <div class="back_next_check">
+                @if (ListTestKoans.IndexOf(CurKoan) > 0)
+                {
+                    <button class="back" @onclick="BackKoan">
+                        <img src="img\arrow_koan.svg" alt="">
+                    </button>
+                }
 
-        <textarea class="form-control" id="exampleFormControlTextarea1" rows="10" @bind="@CodeKoan"></textarea>
-        @if (ListTestKoans.IndexOf(CurKoan) > 0)
-        {
-            <button type="button" class="btn btn-primary" @onclick="BackKoan">Назад</button>
-        }
+                @if (ListTestKoans.IndexOf(CurKoan) < ListTestKoans.Count - 1)
+                {
+                    <button class="next next_test" @onclick="SendResultKoanAsync">Следующий вопрос<img src="img\arrow_koan.svg" alt=""></button>
+                }
+                else
+                {
+                    <button class="finish" @onclick="SendFinalResultAsync">Завершить</button>
+                }
 
-
-        <button type="button" class="btn btn-primary" @onclick="ReadFileKoanAsync">Обновить</button>
-        @if (ListTestKoans.IndexOf(CurKoan) < ListTestKoans.Count - 1)
-        {
-            <button type="button" class="btn btn-primary" @onclick="SendResultKoanAsync">Следующий</button>
-        }
-        else
-        {
-            <button type="button" class="btn btn-primary" @onclick="SendFinalResultAsync">Закончить</button>
-        }
+            </div>
+        </div>
     </div>
+    <div class="task task_test">
+        <div class="task_title">Вопрос @(ListTestKoans.IndexOf(CurKoan) + 1)</div>
+        <div class="time_test">
+            <div class="time_icon"><img src="\wwwroot\img\time_test.png" alt=""></div>
+            <div class="time_num">@_timeOnly</div>
+        </div>
+    </div>
+
+
+
+
+
 }
 else
 {
-    <div>
-        <textarea class="form-control" id="exampleFormControlTextarea1" rows="10" @bind="@CodeKoan"></textarea>
-        @if (ListKoans.IndexOf(CurKoan) > 0)
-        {
-            <button type="button" class="btn btn-primary" @onclick="BackKoan">Назад</button>
-        }
 
-        <button type="button" class="btn btn-primary" @onclick="CheckAsync">Проверить</button>
-        <button type="button" class="btn btn-primary" @onclick="ReadFileKoanAsync">Обновить</button>
-        @if (ListKoans.IndexOf(CurKoan) < ListKoans.Count && Student.KoanInModules.Contains(CurModule.KoanInModules.First(x => x.KoanId.Equals(CurKoan.Id))))
-        {
-            <button type="button" class="btn btn-primary" @onclick="NextKoan">Вперёд</button>
-        }
+    <div class="program">
+        <textarea class="form_program" @bind="@CodeKoan"></textarea>
+        <div class="btns">
+            <button class="reset" @onclick="ReadFileKoanAsync">
+                <img src="img\reset.svg" alt="">
+            </button>
+            <div class="back_next_check">
+                @if (ListKoans.IndexOf(CurKoan) > 0)
+                {
+                    <button class="back" @onclick="BackKoan">
+                        <img src="img\arrow_koan.svg" alt="">
+                    </button>
+                }
+                <button class="check" @onclick="CheckAsync">
+                    Проверить
+                    <img src="img\arrow_btn.svg" alt="">
+                </button>
+                @if (ListKoans.IndexOf(CurKoan) < ListKoans.Count && Student.KoanInModules.Contains(CurModule.KoanInModules.First(x => x.KoanId.Equals(CurKoan.Id))))
+                {
+                    <button class="next" @onclick="NextKoan">
+                        <img src="img\arrow_koan.svg" alt="">
+                    </button>
+                }
+
+            </div>
+        </div>
     </div>
-    <div>@CurKoan.Description Описание</div>
+    <div class="task">
+        <div class="task_title">@CurKoan.Name</div>
+        <div class="task_info">@CurKoan.Description</div>
+    </div>
+
+
     <div>@message</div>
     <div>@log</div>
 
@@ -122,11 +158,11 @@ else
               {
                   //if(_dateTimeSrartTest != new DateTime())
                   //{
-                        var t = DateTime.Now.Subtract(_dateTimeSrartTest);
-                        _timeOnly = new TimeOnly(0, t.Minutes, t.Seconds);
-                        StateHasChanged();
+                  var t = DateTime.Now.Subtract(_dateTimeSrartTest);
+                  _timeOnly = new TimeOnly(0, t.Minutes, t.Seconds);
+                  StateHasChanged();
                   //}
-                  
+
               };
             //_timer.Enabled = true;
         }

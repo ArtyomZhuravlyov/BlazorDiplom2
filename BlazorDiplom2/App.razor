@@ -1,15 +1,19 @@
 ﻿@*@using Microsoft.AspNetCore.Http
-@inject IHttpContextAccessor httpContextAccessor
-<CascadingValue Value="httpContextAccessor" Name="HttpContextAccessor">*@
+    @inject IHttpContextAccessor httpContextAccessor
+    <CascadingValue Value="httpContextAccessor" Name="HttpContextAccessor">*@
 
 @using Cloudcrate.AspNetCore.Blazor.Browser.Storage;
 @inject LocalStorage _storage;
 @inject AuthenticationStateProvider _getAuthenticationStateAsync;
 @inject UserManager<AspNetUsers> _userManager;
 
+@*@inject CompileService _compileService;
+    @inject NavigationManager _navigation;
+    @inject HttpClient _http;*@
+
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(Program).Assembly">
-      <Found Context="routeData">
+        <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
                     <NotAuthorizedHandler />
@@ -30,23 +34,34 @@
     public List<Cookie> Cookies { get; set; }
 
 
-}*@
+    }*@
 
-@code{
+@code {
 
+    protected override void OnInitialized()
+    {
+        if (CurrentUser.User == null)
+            CurrentUser.SetUserAsync(_getAuthenticationStateAsync, _userManager);
+        //CurrentUser.SetUserAsync(_getAuthenticationStateAsync, _userManager);
+
+    }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         //if(firstRender)
-        if(LocStorage.LocalStorage == null)
+        if (LocStorage.LocalStorage == null)
         {
             LocStorage.LocalStorage = _storage;
             //LocStorage LocStorageTest = new LocStorage();
             //await LocStorage.LocalStorage.SetItemAsync("TestK", Newtonsoft.Json.JsonConvert.SerializeObject(LocStorageTest));
         }
 
-        if (CurrentUser.User == null)
-             CurrentUser.SetUserAsync(_getAuthenticationStateAsync, _userManager);
 
+
+        //if (_compileService.UriHelper == null)
+        //{
+        //    _compileService.UriHelper = _navigation;
+        //    _compileService.Http = _http;
+        //}
     }
 
     //protected override async  Task OnInitializedAsync()
