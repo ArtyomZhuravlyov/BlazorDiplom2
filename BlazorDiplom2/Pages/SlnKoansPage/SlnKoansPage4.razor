@@ -247,7 +247,7 @@ else
         //посмотреть как будет работать, если запрашивать каждый раз, а не записать один раз в отдельный список
 
         var indexM = listModules.IndexOf(module);
-        if (indexM == 0)
+        if (indexM != 0)
         {
             // Смотрим по тесту из пред. модуля
             var res = listModules[indexM - 1].Test.ResultTests.FirstOrDefault();

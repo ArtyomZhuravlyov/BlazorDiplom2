@@ -5,8 +5,8 @@
      <NavMenu></NavMenu>
     <div class="results_student">
         <div class="nav_top">
-            <div class="nav_top_link border" @onclick="(()=>_activeTab = Enums.TabUsers.Users)">Пользователи</div>
-            <div class="nav_top_link" @onclick="(()=>_activeTab = Enums.TabUsers.AddUser)">Добавить пользователя</div>
+            <div class="nav_top_link border @GetHighlight(Enums.TabUsers.Users)" @onclick="(()=>_activeTab = Enums.TabUsers.Users)">Пользователи</div>
+            <div class="nav_top_link @GetHighlight(Enums.TabUsers.AddUser)" @onclick="(()=>_activeTab = Enums.TabUsers.AddUser)">Добавить пользователя</div>
         </div>
         @switch (_activeTab)
         {
@@ -24,4 +24,11 @@
 
 @code {
     private Enums.TabUsers _activeTab = Enums.TabUsers.Users;
+
+    private string GetHighlight(Enums.TabUsers tab)
+    {
+        if (_activeTab == tab)
+            return "nav_top_link_highligth";
+        else return "";
+    }
 }

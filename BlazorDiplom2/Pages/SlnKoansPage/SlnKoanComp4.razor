@@ -8,9 +8,15 @@
 {
 
     <div class="program">
-        <textarea class="form_program" @bind="@CodeKoan"></textarea>
+
+
+           <MonacoEditor @ref="_editor" Id="sample-code-editor-123" ConstructionOptions="EditorConstructionOptions"  />
+
+
+
+        @*<textarea class="form_program" @bind="@_codeKoan"></textarea>*@
         <div class="btns">
-            <button class="reset" @onclick="ReadFileKoanAsync">
+            <button class="reset" @onclick="()=>ReadFileKoanAsync(true)">
                 <img src="img\reset.svg" alt="">
             </button>
             <div class="back_next_check">
@@ -50,9 +56,13 @@ else
 {
 
     <div class="program">
-        <textarea class="form_program" @bind="@CodeKoan"></textarea>
+
+
+                <MonacoEditor @ref="_editor" Id="sample-code-editor-123" ConstructionOptions="EditorConstructionOptions"  />
+
+        @*<textarea class="form_program" @bind="@CodeKoan"></textarea>*@
         <div class="btns">
-            <button class="reset" @onclick="ReadFileKoanAsync">
+            <button class="reset" @onclick="()=>ReadFileKoanAsync(true)">
                 <img src="img\reset.svg" alt="">
             </button>
             <div class="back_next_check">
@@ -75,7 +85,9 @@ else
 
             </div>
         </div>
+          
     </div>
+  
     <div class="task">
         <div class="task_title">@CurKoan.Name</div>
         <div class="task_info">@CurKoan.Description</div>
@@ -113,7 +125,7 @@ else
     [Parameter]
     public EventCallback NavToResultTest { get; set; }
 
-    public string CodeKoan { get; set; }
+    private string _codeKoan = "";
 
     [CascadingParameter(Name = "ListTestKoans")]
     public List<Koan> ListTestKoans { get; set; }
@@ -149,6 +161,36 @@ else
     /// </summary>
     private DateTime _dateTimeSrartTest;
 
+
+    private MonacoEditor _editor;
+
+    private StandaloneEditorConstructionOptions EditorConstructionOptions(MonacoEditor editor)
+    {
+        return new StandaloneEditorConstructionOptions
+        {
+
+            Language = "csharp",
+                Theme = "vs",
+                LineNumbers = "on",
+                GlyphMargin = false,
+                AutomaticLayout = true,
+                LineHeight = 19,
+                ScrollBeyondLastLine = false,
+                Minimap = new EditorMinimapOptions(){Enabled = false},
+                Value = _codeKoan
+        };
+    }
+
+    private async Task SetValueMonacoAsync() =>  await _editor.SetValue(_codeKoan);
+    //{
+    //    await _editor.SetValue(_codeKoan);
+    //}
+
+    private async Task<string> GetValueMonacoAsync() =>  await _editor.GetValue();
+    //{
+    //    return await _editor.GetValue();
+    //}
+
     protected override async Task OnInitializedAsync()
     {
         if (IsTest)
@@ -156,14 +198,14 @@ else
             _timer = new Timer(1000);
             _timer.Elapsed += (sender, e) =>
               {
-                  //if(_dateTimeSrartTest != new DateTime())
-                  //{
-                  var t = DateTime.Now.Subtract(_dateTimeSrartTest);
+              //if(_dateTimeSrartTest != new DateTime())
+              //{
+              var t = DateTime.Now.Subtract(_dateTimeSrartTest);
                   _timeOnly = new TimeOnly(0, t.Minutes, t.Seconds);
                   StateHasChanged();
-                  //}
+              //}
 
-              };
+          };
             //_timer.Enabled = true;
         }
         //if (IsTest)
@@ -185,10 +227,18 @@ else
     protected override void OnParametersSet()
     {
         ReadFileKoanAsync();
+        _isCodeParChange = true;
     }
+
+    private bool _isCodeParChange = false;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        if(_isCodeParChange)
+        {
+            ReadFileKoanAsync(true);
+            _isCodeParChange = false;
+        }
         //if(LocStorage.LocalStorage == null)
         if (firstRender && IsTest)
         {
@@ -222,15 +272,18 @@ else
     List<Module> listModules;
     List<Module> listIdModuleInvisible = new();
 
-    private async void ReadFileKoanAsync()
+    private async void ReadFileKoanAsync(bool isAfterReload = false)
     {
         using (FileStream fstream = File.OpenRead(CurKoan.Link))
         {
             byte[] buffer = new byte[fstream.Length];
             await fstream.ReadAsync(buffer, 0, buffer.Length);
-            CodeKoan = Encoding.Default.GetString(buffer);
+            _codeKoan = Encoding.Default.GetString(buffer);
         }
-        this.StateHasChanged();
+
+        if (isAfterReload)
+            await SetValueMonacoAsync();
+        //this.StateHasChanged();
     }
 
     private async Task CheckAsync()
@@ -250,7 +303,7 @@ else
         //    message = "Ошибка";
         //}
         //log = string.Join("\r\n", compServive.CompileLog);
-
+        
         bool isPassed = await CompileCodeAsync();
 
         if (isPassed && !Student.KoanInModules.Contains(CurModule.KoanInModules.First(x => x.KoanId == CurKoan.Id)))
@@ -263,11 +316,12 @@ else
 
     private async Task<bool> CompileCodeAsync()
     {
+        _codeKoan = await GetValueMonacoAsync();
         (string, bool) ValueTuple = ("", false);
         compServive.CompileLog = new List<string>();
         try
         {
-            ValueTuple = await compServive.CompileAndRun(CodeKoan);
+            ValueTuple = await compServive.CompileAndRun(_codeKoan);
             message = ValueTuple.Item1;
         }
         catch (Exception e)
@@ -292,7 +346,7 @@ else
         LocStorageTestKoan locStorageTestKoan = new()
             {
                 IdKoanInTest = CurModule.Test.KoanInTests.First(x => x.KoanId == CurKoan.Id).Id,// CurKoan.Id,
-                AnswerStudent = CodeKoan,
+                AnswerStudent = _codeKoan,
                 IsPassed = isPassed,
                 Message = $"{message}\r\n{log}"
             };

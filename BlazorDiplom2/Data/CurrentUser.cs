@@ -7,11 +7,11 @@ namespace BlazorDiplom2.Data
     {
         //public static LocalStorage LocalStorage { get; set; }
 
-        public static AspNetUsers User { get; private set; }
+        public static AspNetUsers User { get; set; }
 
         public static string Role { get; private set; }
 
-        public static async void SetUserAsync(AuthenticationStateProvider authenticationStateProvider, UserManager<AspNetUsers> _userManager)
+        public static async Task SetUserAsync(AuthenticationStateProvider authenticationStateProvider, UserManager<AspNetUsers> _userManager)
         {
             try // потом убрать
             {

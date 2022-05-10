@@ -12,6 +12,7 @@
     <link href="css/site.css" rel="stylesheet" />
    @* <link href="BlazorDiplom2.styles.css" rel="stylesheet" />*@
     <link rel="stylesheet" href="css/style.css">
+    <link href="_content/BlazorMonaco/lib/monaco-editor/min/vs/editor/editor.main.css" rel="stylesheet" />  
      <title>KOANS</title>
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
 </head>
@@ -29,8 +30,13 @@
         <a class="dismiss">🗙</a>
     </div>
 
+
+    <script src="_content/BlazorMonaco/lib/monaco-editor/min/vs/loader.js"></script>
+    <script>require.config({ paths: { 'vs': '_content/BlazorMonaco/lib/monaco-editor/min/vs' } });</script>
+    <script src="_content/BlazorMonaco/lib/monaco-editor/min/vs/editor/editor.main.js"></script>
+    <script src="_content/BlazorMonaco/jsInterop.js"></script>
     <script src="_framework/blazor.server.js"></script>
-   @* <script src="_content/Cloudcrate.AspNetCore.Blazor.Browser.Storage/Storage.js"></script>*@
-    <script src="Storage.js"></script>
+    <script src="_content/Cloudcrate.AspNetCore.Blazor.Browser.Storage/Storage.js"></script>
+   @* <script src="Storage.js"></script>*@
 </body>
 </html>

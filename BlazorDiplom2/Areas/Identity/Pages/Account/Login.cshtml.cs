@@ -104,6 +104,7 @@ namespace BlazorDiplom2.Areas.Identity.Pages.Account
 
             returnUrl ??= Url.Content("~/");
 
+            CurrentUser.User = null;
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme); // было IdentityConstants.ExternalScheme и не работало
 

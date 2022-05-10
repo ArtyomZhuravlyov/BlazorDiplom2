@@ -537,6 +537,10 @@ textarea {
     color: #576BB7;
 }
 
+.nav_top_link_highligth {
+    color: #576BB7;
+}
+
 .border {
     border-right: 1px solid #c4c4c4;
 }
@@ -741,7 +745,7 @@ hr {
     margin-top: 20px;
 }
 
-.margin {
+.margin_t {
     margin-top: 10px;
 }
 
@@ -967,4 +971,9 @@ hr {
 .del_group_with_teacher img{
     display: block;
     width: 100%;
+}
+
+.monaco-editor-container {
+    height: 200px;
+    border: 1px solid gray;
 }

@@ -73,16 +73,27 @@ namespace BlazorDiplom2.Data
             {
                 if (assembly != null)
                 {
-                    var type = assembly.GetExportedTypes().FirstOrDefault();
-                    var methodInfo = type.GetMethod("Run");
-                    var instance = Activator.CreateInstance(type);
-                    methodInfo.Invoke(instance, null);
+                    Dictionary<MethodInfo, Type> dict = new();
+                    foreach (var type in assembly.GetExportedTypes())
+                    {
+                        var methodInfo = type.GetMethod("Run");
+                        if (methodInfo != null)
+                            dict.Add(methodInfo, type);
+                    }
+
+                    if(dict.Count == 0)
+                        return ("Не найдена точка входа(метод Run)", false);
+                    else if(dict.Count > 1)
+                        return ("Найдено больше одной точки входа", false);
+
+                    var instance = Activator.CreateInstance(dict.First().Value);
+                    dict.First().Key.Invoke(instance, null);
                     return ("Задача решена верно", true);
                 }
             }
             catch (Exception ex)
             {
-                return ($"Задача решена неверно: {ex.InnerException.Message}", false);
+                return ($"Задача решена неверно: {ex.InnerException?.Message}", false);
             }
             return ("Ошибка", false);
 
@@ -126,7 +137,7 @@ namespace BlazorDiplom2.Data
 
                 CompileLog.Add("Compilation success!");
 
-                stream.Seek(0, SeekOrigin.Begin);
+                //stream.Seek(0, SeekOrigin.Begin);
 
                 //                var context = new CollectibleAssemblyLoadContext();
                 Assembly assembly = AppDomain.CurrentDomain.Load(stream.ToArray());

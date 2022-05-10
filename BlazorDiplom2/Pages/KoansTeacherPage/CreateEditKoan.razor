@@ -47,6 +47,7 @@
     private string oldKoanName;
 
 
+
     private IBrowserFile loadedFile;
     //private bool isLoading;
 
@@ -109,7 +110,7 @@
         }
         catch (Exception exp)
         {
-            mesError = exp.Message;
+            mesError = exp.Message +"/r/n" + exp.InnerException?.Message +"/r/n" + exp.StackTrace;
         }
 
     }
@@ -121,42 +122,42 @@
     //    isLoading = false;
     //}
 
-    private async Task<string> SaveFileAsync(string path = null)
-    {
-        try
-        {
-            if (loadedFile == null)
-                return "Необходимо прикрепить фаил Коана";
+    //private async Task<string> SaveFileAsync(string path = null)
+    //{
+    //    try
+    //    {
+    //        if (loadedFile == null)
+    //            return "Необходимо прикрепить фаил Коана";
 
 
-            string fileName;
-            if (path == null)
-                fileName = Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
-            else
-                fileName = Path.GetFileNameWithoutExtension(path);
+    //        string fileName;
+    //        if (path == null)
+    //            fileName = Path.GetFileNameWithoutExtension(Path.GetRandomFileName());
+    //        else
+    //            fileName = Path.GetFileNameWithoutExtension(path);
 
 
-            var pathTeacher = $"{Directory.GetCurrentDirectory()}\\wwwroot\\Koans\\Teacher{Teacher.Id}";
-            if (!Directory.Exists(pathTeacher))
-            {
-                Directory.CreateDirectory(pathTeacher);
-            }
-            //var path = $"{Directory.GetCurrentDirectory()}\\wwwroot\\Koans\\{loadedFile.Name}";
+    //        var pathTeacher = $"{Directory.GetCurrentDirectory()}\\wwwroot\\Koans\\Teacher{Teacher.Id}";
+    //        if (!Directory.Exists(pathTeacher))
+    //        {
+    //            Directory.CreateDirectory(pathTeacher);
+    //        }
+    //        //var path = $"{Directory.GetCurrentDirectory()}\\wwwroot\\Koans\\{loadedFile.Name}";
 
-            link = $"{pathTeacher}\\{fileName}.cs";
-            using FileStream fs = new(link, FileMode.Create);
-            await loadedFile.OpenReadStream().CopyToAsync(fs);
-            //link = fullpath;
-        }
-        catch (Exception ex)
-        {
-            return ex.Message;
-            //mesError = ex.Message;
-            //Logger.LogError("File: {Filename} Error: {Error}",
-            //    file.Name, ex.Message);
-        }
-        return null;
-    }
+    //        link = $"{pathTeacher}\\{fileName}.cs";
+    //        using FileStream fs = new(link, FileMode.Create);
+    //        await loadedFile.OpenReadStream().CopyToAsync(fs);
+    //        //link = fullpath;
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        return ex.Message +"/r/n" + ex.InnerException.Message +"/r/n" + ex.StackTrace;
+    //        //mesError = ex.Message;
+    //        //Logger.LogError("File: {Filename} Error: {Error}",
+    //        //    file.Name, ex.Message);
+    //    }
+    //    return null;
+    //}
 
 
     private async Task<string> SaveFileAsync2(string oldFileRemove = null)
@@ -175,6 +176,7 @@
 
 
             var pathTeacher = $"{Directory.GetCurrentDirectory()}\\wwwroot\\Koans\\Teacher{Teacher.Id}";
+
             if (!Directory.Exists(pathTeacher))
             {
                 Directory.CreateDirectory(pathTeacher);
@@ -186,9 +188,9 @@
             await loadedFile.OpenReadStream().CopyToAsync(fs);
             //link = fullpath;
         }
-        catch (Exception ex)
+        catch (Exception exp)
         {
-            return ex.Message;
+            mesError = exp.Message +"/r/n" + exp.InnerException?.Message +"/r/n" + exp.StackTrace;
             //mesError = ex.Message;
             //Logger.LogError("File: {Filename} Error: {Error}",
             //    file.Name, ex.Message);

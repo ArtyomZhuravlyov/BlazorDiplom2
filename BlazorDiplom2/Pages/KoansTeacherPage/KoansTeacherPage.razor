@@ -13,8 +13,8 @@
     <NavMenu></NavMenu>
     <div class="info">
         <div class="nav_top">
-            <div class="nav_top_link border" @onclick="(()=>_activeTab = Enums.TabKoansTeacher.Koans)">Мои коаны</div>
-            <div class="nav_top_link" @onclick="(()=>_activeTab = Enums.TabKoansTeacher.AddKoan)">Добавить коан</div>
+            <div class="nav_top_link border @GetHighlight(Enums.TabKoansTeacher.Koans)" @onclick="(()=>_activeTab = Enums.TabKoansTeacher.Koans)">Мои коаны</div>
+            <div class="nav_top_link @GetHighlight(Enums.TabKoansTeacher.AddKoan)" @onclick="(()=>_activeTab = Enums.TabKoansTeacher.AddKoan)">Добавить коан</div>
         </div>
         @switch (_activeTab)
         {
@@ -33,5 +33,11 @@
 
     public Enums.TabKoansTeacher _activeTab = Enums.TabKoansTeacher.Koans;
 
+    private string GetHighlight(Enums.TabKoansTeacher tab)
+    {
+        if (_activeTab == tab)
+            return "nav_top_link_highligth";
+        else return "";
+    }
 
 }
