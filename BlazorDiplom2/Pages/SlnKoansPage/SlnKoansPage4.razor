@@ -197,7 +197,7 @@ else
         //туду проверка на возможность открывать этот коан
 
         var koansInM = module.KoanInModules;//.OrderBy(x => x.Priority);
-        var kInM = koansInM.First(x => x.KoanId.Equals(koan.Id));
+        var kInM = koansInM.First(x => x.KoanId == koan.Id);
         if (!CheckAccessKoan(module, kInM))
             return;
 
@@ -247,7 +247,7 @@ else
         //посмотреть как будет работать, если запрашивать каждый раз, а не записать один раз в отдельный список
 
         var indexM = listModules.IndexOf(module);
-        if (!indexM.Equals(0))
+        if (indexM == 0)
         {
             // Смотрим по тесту из пред. модуля
             var res = listModules[indexM - 1].Test.ResultTests.FirstOrDefault();
@@ -265,7 +265,7 @@ else
         {
             var listKoan = module.KoanInModules.ToList();
             var indexK = listKoan.IndexOf(koanInModule);
-            if (indexK.Equals(0))
+            if (indexK == 0)
                 return true;
 
             //var listKoan = module.KoanInModules.Select(x => x.Koan).ToList();
@@ -349,7 +349,7 @@ else
 
     private string GetStatusDoneTest(Module module)
     {
-        var res = listModules.First(x => x.Id.Equals(module.Id)).Test.ResultTests.FirstOrDefault();// ElementAt(module). .Test.ResultTests.FirstOrDefault();
+        var res = listModules.First(x => x.Id == module.Id).Test.ResultTests.FirstOrDefault();// ElementAt(module). .Test.ResultTests.FirstOrDefault();
         if (res != null)//.First(x => x.StudentId.Equals(_student.Id)).IsPassed)
             return "opacity";
         else
@@ -359,7 +359,7 @@ else
 
     private string GetStatusIsPassedTest(Module module)
     {
-        var res = listModules.First(x => x.Id.Equals(module.Id)).Test.ResultTests.FirstOrDefault();// ElementAt(module). .Test.ResultTests.FirstOrDefault();
+        var res = listModules.First(x => x.Id == module.Id).Test.ResultTests.FirstOrDefault();// ElementAt(module). .Test.ResultTests.FirstOrDefault();
         if (res == null)//.First(x => x.StudentId.Equals(_student.Id)).IsPassed)
             return "";
         else if (res.IsPassed)

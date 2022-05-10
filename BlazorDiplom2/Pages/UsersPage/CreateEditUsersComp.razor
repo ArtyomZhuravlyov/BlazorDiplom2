@@ -243,13 +243,13 @@ else if (UserModelForm is StudentModelForm StudentModelForm)
         //    ;
         if (_edit)
         {
-            groups = educationalInstitutions.FirstOrDefault(x => x.FullName.Equals(UserModelForm.EducationalInstitution)).Groups.ToList();
+            groups = educationalInstitutions.FirstOrDefault(x => x.FullName == UserModelForm.EducationalInstitution).Groups.ToList();
             _groupsTeacher = new(groups);
 
             if (UserModelForm is TeacherModelForm teacherModelForm && teacherModelForm.Groups?.Count > 0)
             {
                 foreach (var item in teacherModelForm.Groups)
-                    _groupsTeacher.RemoveAll(x => x.Name.Equals(item));
+                    _groupsTeacher.RemoveAll(x => x.Name == item);
             }
         }
 
@@ -262,7 +262,7 @@ else if (UserModelForm is StudentModelForm StudentModelForm)
 
     private void ChangeRole(ChangeEventArgs eventArgs)
     {
-        if (eventArgs.Value.ToString().Equals(Constants.ROLE_STUDENT_SELECT))
+        if (eventArgs.Value.ToString() == Constants.ROLE_STUDENT_SELECT)
             UserModelForm = new StudentModelForm();
         else
             UserModelForm = new TeacherModelForm();
@@ -272,17 +272,17 @@ else if (UserModelForm is StudentModelForm StudentModelForm)
     {
         var teacherModelForm = UserModelForm as TeacherModelForm;
         teacherModelForm.Groups.Remove(groupName);
-        _groupsTeacher.Add(groups.First(x => x.Name.Equals(groupName)));
+        _groupsTeacher.Add(groups.First(x => x.Name == groupName));
     }
 
     private void SelectAndAddGroup(ChangeEventArgs eventArgs/*Group group*/)
     {
         string groupName = eventArgs.Value.ToString();
-        if (groupName.Equals("-1"))
+        if (groupName == "-1")
             return;
         var teacherModelForm = UserModelForm as TeacherModelForm;
         teacherModelForm.Groups.Add(groupName);
-        _groupsTeacher.Remove(groups.First(x => x.Name.Equals(groupName)));
+        _groupsTeacher.Remove(groups.First(x => x.Name == groupName));
 
         //var teacherModelForm = UserModelForm as TeacherModelForm;
         //teacherModelForm.Groups.Add(group.Name);
@@ -354,7 +354,7 @@ else if (UserModelForm is StudentModelForm StudentModelForm)
             var grs = new List<Group>();
             foreach (var item in ((TeacherModelForm)UserModelForm).Groups)
             {
-                grs.Add(groups.First(x => x.Name.Equals(item)));
+                grs.Add(groups.First(x => x.Name == item));
             }
 
             editUser.Teacher.FirstName = UserModelForm.FirstName;
@@ -420,7 +420,7 @@ else if (UserModelForm is StudentModelForm StudentModelForm)
             var grs = new List<Group>();
             foreach (var item in teacherModelForm.Groups)
             {
-                grs.Add(groups.First(x => x.Name.Equals(item)));
+                grs.Add(groups.First(x => x.Name == item));
             }
 
             Teacher teacher = new()

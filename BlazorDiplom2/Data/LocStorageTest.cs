@@ -36,7 +36,7 @@
 
         public Enums.StatusTest GetStatus(DB db, int idTest)
         {
-            if(!IdTest.Equals(0) && !IdTest.Equals(idTest))
+            if(IdTest != 0 && IdTest != idTest)
                 return Enums.StatusTest.InProgressOtherTest;
 
             //if (DateTime.Now.Subtract(DateTimeStartTest).TotalMinutes < MinutesTest)
@@ -64,7 +64,7 @@
 
             //}
 
-            if (DateTimeStartTest.Equals(new DateTime()) && db.ResultTests.Where(x=>x.StudentId.Equals(IdStudent) && x.TestId.Equals(idTest)).Count().Equals(0))
+            if (DateTimeStartTest.Equals(new DateTime()) && db.ResultTests.Where(x=>x.StudentId == IdStudent && x.TestId == idTest).Count() == 0)
                 return Enums.StatusTest.NotStart;
             else if (DateTime.Now.Subtract(DateTimeStartTest).TotalMinutes < MinutesTest)//if(DateTime.Now - DateTimeStartTest < TimeSpan())
                 return Enums.StatusTest.InProgress;
@@ -96,7 +96,7 @@
             ResultTest resultTest = new ResultTest()
             {
                 Score = score,
-                IsPassed = score >= db.Tests.First(x=>x.Id.Equals(IdTest)).MinScore,
+                IsPassed = score >= db.Tests.First(x=>x.Id == IdTest).MinScore,
                 StudentId = IdStudent,
                 ResultKoanTests = resultKoanTests,
                 TestId = IdTest,

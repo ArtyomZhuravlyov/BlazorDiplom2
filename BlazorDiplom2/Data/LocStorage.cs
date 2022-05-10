@@ -53,7 +53,7 @@ namespace BlazorDiplom2.Data
                 if (value != null)
                 {
                     locStorageTest = JsonConvert.DeserializeObject<LocStorageTest>(value);
-                    if (!locStorageTest.MinutesTest.Equals(0) && DateTime.Now.Subtract(locStorageTest.DateTimeStartTest).TotalMinutes > locStorageTest.MinutesTest)// время теста вышло и студент не завершил тест выйдя со страницы
+                    if (locStorageTest.MinutesTest != 0 && DateTime.Now.Subtract(locStorageTest.DateTimeStartTest).TotalMinutes > locStorageTest.MinutesTest)// время теста вышло и студент не завершил тест выйдя со страницы
                         locStorageTest.EndTestAsync(db);
                         
 

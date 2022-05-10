@@ -66,7 +66,7 @@ else
                     Проверить
                     <img src="img\arrow_btn.svg" alt="">
                 </button>
-                @if (ListKoans.IndexOf(CurKoan) < ListKoans.Count && Student.KoanInModules.Contains(CurModule.KoanInModules.First(x => x.KoanId.Equals(CurKoan.Id))))
+                @if (ListKoans.IndexOf(CurKoan) < ListKoans.Count && Student.KoanInModules.Contains(CurModule.KoanInModules.First(x => x.KoanId == CurKoan.Id)))
                 {
                     <button class="next" @onclick="NextKoan">
                         <img src="img\arrow_koan.svg" alt="">
@@ -253,9 +253,9 @@ else
 
         bool isPassed = await CompileCodeAsync();
 
-        if (isPassed && !Student.KoanInModules.Contains(CurModule.KoanInModules.First(x => x.KoanId.Equals(CurKoan.Id))))
+        if (isPassed && !Student.KoanInModules.Contains(CurModule.KoanInModules.First(x => x.KoanId == CurKoan.Id)))
         {
-            Student.KoanInModules.Add(CurModule.KoanInModules.First(x => x.KoanId.Equals(CurKoan.Id)));
+            Student.KoanInModules.Add(CurModule.KoanInModules.First(x => x.KoanId == CurKoan.Id));
             await _db.SaveChangesAsync();
         }
         this.StateHasChanged();
@@ -291,13 +291,13 @@ else
         var locStorageTest = await LocStorage.GetTestLocalStorageAsync(_db, Student);
         LocStorageTestKoan locStorageTestKoan = new()
             {
-                IdKoanInTest = CurModule.Test.KoanInTests.First(x => x.KoanId.Equals(CurKoan.Id)).Id,// CurKoan.Id,
+                IdKoanInTest = CurModule.Test.KoanInTests.First(x => x.KoanId == CurKoan.Id).Id,// CurKoan.Id,
                 AnswerStudent = CodeKoan,
                 IsPassed = isPassed,
                 Message = $"{message}\r\n{log}"
             };
 
-        var chStorTestKoan = locStorageTest.ListLocStoragesTestKoan.FirstOrDefault(x => x.IdKoanInTest.Equals(locStorageTestKoan.IdKoanInTest));
+        var chStorTestKoan = locStorageTest.ListLocStoragesTestKoan.FirstOrDefault(x => x.IdKoanInTest == locStorageTestKoan.IdKoanInTest);
         if (chStorTestKoan == null)
             locStorageTest.ListLocStoragesTestKoan.Add(locStorageTestKoan);
         else //проверить заменит или нет

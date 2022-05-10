@@ -21,9 +21,9 @@
 
             @foreach (var item in _educationalInstitutions)
                 {
-                @if (item.Id.Equals( Group.EducationalInstitutionId))
+                @if (item.Id == Group.EducationalInstitutionId)
                     {
-                    <option selected value="@Group.EducationalInstitutionId">@_educationalInstitutions.First(x=>x.Id.Equals(Group.EducationalInstitutionId)).FullName</option>
+                    <option selected value="@Group.EducationalInstitutionId">@_educationalInstitutions.First(x=>x.Id == Group.EducationalInstitutionId).FullName</option>
                     }
                     else
                     {

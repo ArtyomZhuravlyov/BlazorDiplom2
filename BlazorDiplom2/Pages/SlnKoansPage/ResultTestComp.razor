@@ -85,7 +85,7 @@
 
     protected override void OnInitialized()
     {
-        _resultTest = Student.ResultTests.First(x => x.TestId.Equals(CurModule.Test.Id)); // .Select(x => x.Test).First(x => x.Id.Equals(CurModule.Test.Id));
+        _resultTest = Student.ResultTests.First(x => x.TestId == CurModule.Test.Id); // .Select(x => x.Test).First(x => x.Id.Equals(CurModule.Test.Id));
         _curResultKoanTest = _resultTest.ResultKoanTests.First();
     }
 
@@ -101,7 +101,7 @@
     private void ChangeResultTestKoan(ChangeEventArgs eventArgs)
     {
         var selResultKoanTestInt = Convert.ToInt32(eventArgs.Value);
-        _curResultKoanTest = _resultTest.ResultKoanTests.First(x => x.Id.Equals(selResultKoanTestInt));
+        _curResultKoanTest = _resultTest.ResultKoanTests.First(x => x.Id == selResultKoanTestInt);
     }
 
 

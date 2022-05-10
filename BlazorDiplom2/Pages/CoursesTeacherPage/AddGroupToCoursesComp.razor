@@ -29,7 +29,7 @@
     <div class="new_group">
         <div class="main_name">Группа</div>
         <select @bind="_selGroupId">
-            @if (_selGroupId.Equals("-1"))
+            @if(_selGroupId == "-1")
             {
                 <option selected value="-1">Выберите группу</option>
             }
@@ -83,10 +83,10 @@
 
     private void AddGroup()
     {
-        if (_selGroupId.Equals("-1"))
+        if (_selGroupId == "-1")
             return;
         int idGroup = Convert.ToInt32(_selGroupId);
-        var gr = _teacher.Groups.First(x => x.Id.Equals(idGroup));
+        var gr = _teacher.Groups.First(x => x.Id == idGroup);
 
         _groupsWriteToCourse.Add(gr);
         _groupsDontWriteToCourse.Remove(gr);
@@ -118,14 +118,14 @@
         _groupsDontWriteToCourse.Clear();
 
         var selCourseInt = Convert.ToInt32(eventArgs.Value);
-        if (selCourseInt.Equals(-1))
+        if (selCourseInt == -1)
             return;
         else
         {
-            _selCourse = _teacher.Courses.First(x => x.Id.Equals(selCourseInt));
+            _selCourse = _teacher.Courses.First(x => x.Id == selCourseInt);
             foreach (var item in _teacher.Groups)
             {
-                var gr = item.Courses.FirstOrDefault(x => x.Id.Equals(selCourseInt));
+                var gr = item.Courses.FirstOrDefault(x => x.Id == selCourseInt);
                 if (gr != null)
                     _groupsWriteToCourse.Add(item);
                 else

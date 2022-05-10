@@ -80,7 +80,7 @@ else
     {
         var locStorageTest = await LocStorage.GetTestLocalStorageAsync(_db, Student);
         var idKoanInTest = locStorageTest.ListLocStoragesTestKoan.Last().IdKoanInTest;
-        var koanId = _db.KoanInTests.First(x => x.Id.Equals(idKoanInTest)).KoanId;
+        var koanId = _db.KoanInTests.First(x => x.Id == idKoanInTest).KoanId;
 
         if (locStorageTest.ListLocStoragesTestKoan.Count > 0)
             CurKoan = ListTestKoans.First(x => x.Id == koanId);

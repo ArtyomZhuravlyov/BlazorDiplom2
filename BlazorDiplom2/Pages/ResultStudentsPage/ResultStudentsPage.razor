@@ -92,7 +92,7 @@ else
                                         }
                                     }
 
-                                    ResultTest resultTest = st.ResultTests.FirstOrDefault(x => x.Id.Equals(m.Test.Id));
+                                    ResultTest resultTest = st.ResultTests.FirstOrDefault(x => x.Id == m.Test.Id);
                                     @if (resultTest != null)
                                     {
                                         @if (resultTest.IsPassed)
@@ -103,7 +103,7 @@ else
                                         {
                                             <td><img src="img\error.svg" alt=""></td>
                                         }
-                                        <td>@(resultTest.ResultKoanTests.Count(x=>x.IsError.Equals(false))/resultTest.ResultKoanTests.Count())%</td>
+                                        <td>@(resultTest.ResultKoanTests.Count(x=>x.IsError == false)/resultTest.ResultKoanTests.Count())%</td>
                                     }
                                     else
                                     {
@@ -118,7 +118,7 @@ else
                     </table>
                 </div>
 
-                @if (_students.Count.Equals(1))
+                @if (_students.Count == 1)
                 {
 
                     <div class="filtr_item">
@@ -274,14 +274,14 @@ else
         _students.Clear();
 
         var selCourseInt = Convert.ToInt32(eventArgs.Value);
-        if (selCourseInt.Equals(-1))
+        if (selCourseInt == -1)
             return;
         else
         {
             //_selCourse = _teacher.Courses.First(x => x.Id.Equals(selCourseInt));
             foreach (var item in _teacher.Groups)
             {
-                _course = item.Courses.FirstOrDefault(x => x.Id.Equals(selCourseInt));
+                _course = item.Courses.FirstOrDefault(x => x.Id == selCourseInt);
                 _modules = _course.Modules;
                 if (_course != null)
                     _groupsForSelect.Add(item);
@@ -297,26 +297,26 @@ else
         _students.Clear();
 
         var selGroupInt = Convert.ToInt32(eventArgs.Value);
-        if (selGroupInt.Equals(-1))
+        if (selGroupInt == -1)
             return;
         else
-            _studentsForSelect = _teacher.Groups.First(x => x.Id.Equals(selGroupInt)).Students.ToList();
+            _studentsForSelect = _teacher.Groups.First(x => x.Id == selGroupInt).Students.ToList();
 
     }
 
     private void ChangeStudent(ChangeEventArgs eventArgs)
     {
         var selStudentInt = Convert.ToInt32(eventArgs.Value);
-        if (selStudentInt.Equals(-1))
+        if (selStudentInt == -1)
             return;
-        else if (selStudentInt.Equals(0))
+        else if (selStudentInt == 0)
             _students = new(_studentsForSelect);
         else
         {
             _students.Clear();
-            var curStudent = _studentsForSelect.First(x => x.Id.Equals(selStudentInt));
+            var curStudent = _studentsForSelect.First(x => x.Id == selStudentInt);
             _students.Add(curStudent);
-            _resultTestForSelect = curStudent.ResultTests.Where(x => x.Test.Module.Course.Id.Equals(_course.Id)).ToList();
+            _resultTestForSelect = curStudent.ResultTests.Where(x => x.Test.Module.Course.Id == _course.Id).ToList();
             //_resultKoanTests.Clear();
             if (_resultTestForSelect.Count > 0)
             {
@@ -347,7 +347,7 @@ else
     private void ChangeTestModule(ChangeEventArgs eventArgs)
     {
         var selResultTestInt = Convert.ToInt32(eventArgs.Value);
-        _resultTest = _resultTestForSelect.First(x => x.Id.Equals(selResultTestInt));
+        _resultTest = _resultTestForSelect.First(x => x.Id == selResultTestInt);
         _test = _resultTest.Test;
         _curResultKoanTest = _resultTest.ResultKoanTests.First();
     }
@@ -355,7 +355,7 @@ else
     private void ChangeResultTestKoan(ChangeEventArgs eventArgs)
     {
         var selResultKoanTestInt = Convert.ToInt32(eventArgs.Value);
-        _curResultKoanTest = _resultTest.ResultKoanTests.First(x => x.Id.Equals(selResultKoanTestInt));
+        _curResultKoanTest = _resultTest.ResultKoanTests.First(x => x.Id == selResultKoanTestInt);
     }
 
 

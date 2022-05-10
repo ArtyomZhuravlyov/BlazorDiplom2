@@ -8,22 +8,23 @@
     public override async Task SetParametersAsync(ParameterView parameters)
     {
 
-        //if (DB.StatusStart)
-        //{
-        //    DB.StatusStart = false;
-        //    _db.SetDefValue();
-        //    _navigation.NavigateTo("/Identity/Account/Register");
+        if (DB.StatusStart)
+        {
+            DB.StatusStart = false;
+            _db.SetDefValue();
+            _navigation.NavigateTo("/Identity/Account/Register");
 
-        //}
-        //else
-        //{
-        //    //await InUserAsync();
-        //    //var t = _userManager.Users.ToList();
-        //    await _signInManager.SignInAsync(_userManager.Users.First(x=>x.UserName == "art@mail.ru"), isPersistent: false);
-        //    _navigation.NavigateTo("/");
-        //}
+        }
+        else
+        {
+            
+            //await _signInManager.SignInAsync(_userManager.Users.First(x=>x.UserName == "art@mail.ru"), isPersistent: false);
+            //_navigation.NavigateTo("/");
+            await _signInManager.SignInAsync(_userManager.Users.First(x=>x.UserName == "rab"), isPersistent: false);
+            _navigation.NavigateTo("/slnkoans4");
+        }
 
-           _navigation.NavigateTo("/Identity/Account/Login");
+         //  _navigation.NavigateTo("/Identity/Account/Login");
 
         //await base.SetParametersAsync(parameters);
     }
