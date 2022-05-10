@@ -103,7 +103,7 @@ namespace BlazorDiplom2.Areas.Identity.Pages.Account
             returnUrl ??= Url.Content("~/");
 
             // Clear the existing external cookie to ensure a clean login process
-            await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
+            await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme); // было IdentityConstants.ExternalScheme и не работало
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 

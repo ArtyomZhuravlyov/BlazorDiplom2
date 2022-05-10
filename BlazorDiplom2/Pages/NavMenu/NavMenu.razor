@@ -1,5 +1,7 @@
 ﻿@using Microsoft.EntityFrameworkCore
 @inject DB _db;
+@inject NavigationManager _navigation
+@inject SignInManager<AspNetUsers> _signInManager;
 
 <div class="menu">
 
@@ -29,11 +31,12 @@
     </AuthorizeView>
 
     <NavLink class="menu_items" href="aboutuser">О пользователе</NavLink> @*сделать компонент*@
-    <NavLink class="menu_items" href="Identity/Account/Logout"><img src="img\exit.png" alt="">Выйти</NavLink>
+    <NavLink class="menu_items" href="Identity/Account/Login"><img src="img\exit.png" alt="">Выйти</NavLink>
+    @*<div class="menu_items" @onclick="LogOut"><img src="img\exit.png" alt="">Выйти</div>*@
 
-    @*  <form class="form-inline" method="post" action="/Identity/Account/Logout">
-        <button type="submit" class="nav-link btn btn-link text-dark">Click here to Logout</button>
-        <input name="__RequestVerificationToken" type="hidden" value="CfDJ8Ecg7_BapVZAvWbrvLxMIO3dcVEbZk190V3VKQ9zJ0Q0NzOUCX_VsO_AET81J3B9QRnUzTmfv7Wcqy33VeQaoMUMATnxPD9xoiOTE1r-70Stlk-j7HMphYwB0YhFcsRY8Xwpqe22cAUyT1YwJp-2mSztO_4BdnvP2EN-1XTS0pREXec9tgf5YMNKkxG-YQb3eg"></form>*@
+     @* <form  method="post" action="/Identity/Account/Logout">
+        <button type="submit" class="menu_items"><img src="img\exit.png" alt="">Выйти</button>
+        <input name="__RequestVerificationToken" type="hidden"></form>*@
 
     @*<div class="menu_items">Курсы</div>
         <div class="menu_items">Коаны</div>
@@ -68,13 +71,7 @@
             default: break;
         }
 
-        //if (CurrentUser.Role.Equals())
-        //{
-
-        //}
-
-
-
         _userName = CurrentUser.User.UserName;
     }
+
 }
