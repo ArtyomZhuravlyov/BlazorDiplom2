@@ -18,6 +18,8 @@ using BlazorDiplom2.Data;
 
 namespace BlazorDiplom2.Areas.Identity.Pages.Account
 {
+
+    [IgnoreAntiforgeryToken] // не выдаёт ошибку 400 при login после logout
     public class LoginModel : PageModel
     {
         private readonly SignInManager<AspNetUsers> _signInManager;
