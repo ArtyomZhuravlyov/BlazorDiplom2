@@ -5,15 +5,9 @@
 @inject DB _db;
 
 
-@if (_teacher == null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
 
     <div class="menu_info">
-         <NavMenu></NavMenu>
+        @* <NavMenu></NavMenu>*@
         <div class="results_student">
             <div class="nav_top">
                 <div class="nav_top_link">Результаты студентов</div>
@@ -211,7 +205,7 @@ else
     </div>
 
 
-}
+
 
 
 @code {
@@ -235,10 +229,10 @@ else
     private ResultTest _resultTest;
     private ResultKoanTest _curResultKoanTest;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
 
-        _teacher = await Task.FromResult(_db.Teachers
+        _teacher = _db.Teachers
             .Include(x => x.AspNetUser)
             .Include(x => x.Courses)
                 .ThenInclude(x => x.Groups)
@@ -261,7 +255,7 @@ else
                     .ThenInclude(x => x.Test)
                          .ThenInclude(x => x.KoanInTests.OrderBy(x => x.Priority))
             .Include(x => x.Groups)
-            .First(x => x.AspNetUser == CurrentUser.User));
+            .First(x => x.AspNetUser == CurrentUser.User);
 
     }
 

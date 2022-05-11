@@ -17,8 +17,7 @@
     <div class="module_arrow" @onclick="(()=>ChangeVisibleModule(item))"><img src="img\arrow.svg" alt=""></div>
     }*@
 
-@if (isLoaded)
-{
+
     <div class="education_process">
         <div class="nav">
             @foreach (var item in listModules)
@@ -77,11 +76,7 @@
             </CascadingValue>
         }
     </div>
-}
-else
-{
-    <div>Loading</div>
-}
+
 
 @code {
     private string _codeKoan;
@@ -125,24 +120,18 @@ else
     //int curLesson;
     //bool showList = true;
     private Student _student;
-    bool isLoaded;
     List<Module> listModules = new();
     List<Module> listIdModuleInvisible = new();
 
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        //var authstate = await _getAuthenticationStateAsync.GetAuthenticationStateAsync();
-        //var user = authstate.User;
-        //var aspUser = await _userManager.GetUserAsync(user);
-
-
 
         //student = _db.Students.First(x => x.AspNetUsersId.Equals(aspUser.Id));
         //_db.Entry(student).Reference(x => x.Group).Load();// .Collection
         //aspUser.Student = _db.Students.First();// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //_db.SaveChanges();
-        _student = await Task.FromResult( _db.Students.Include(x => x.AspNetUser)
+        _student =  _db.Students.Include(x => x.AspNetUser)
             .Include(x => x.Group)
                 .ThenInclude(x => x.Courses)
                     .ThenInclude(x => x.Modules.OrderBy(x => x.Priority))
@@ -156,14 +145,13 @@ else
                                 .ThenInclude(x => x.Koan)
             .Include(x => x.KoanInModules.OrderBy(x => x.Priority))
             //.First(x => x.AspNetUser == aspUser);\
-            .First(x => x.AspNetUser == CurrentUser.User));
+            .First(x => x.AspNetUser == CurrentUser.User);
         //student.Group.Courses.Add(_db.Courses.First(x => x.Id == 10));
         //_db.SaveChanges();
         listModules = _student.Group.Courses.First().Modules.ToList(); //!!!!!!!!!!!
         SelectModul(listModules.First());//!!!!!!!!!!!!!!!!!!
         //await _compServive.InitAsync();
          _compServive.Init();
-        isLoaded = true;
     }
 
 

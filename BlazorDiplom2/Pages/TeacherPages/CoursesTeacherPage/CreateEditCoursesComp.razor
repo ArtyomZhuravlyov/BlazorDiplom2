@@ -164,7 +164,7 @@
 
     private bool isLoaded;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
         edit = Course.Id != 0;
         messageBtn = edit ? Constants.BTN_CHANGE : Constants.BTN_ADD;

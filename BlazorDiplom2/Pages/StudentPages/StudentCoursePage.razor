@@ -1,8 +1,57 @@
 ﻿@page "/studentcourse"
 @attribute [Authorize(Roles = @Constants.ROLE_STUDENT_IDENTITY)]
 
-<h3>StudentCourse</h3>
+@using Microsoft.EntityFrameworkCore
+@inject DB _db;
+
+<div class="menu_info">
+    <NavMenu></NavMenu>
+    <div class="info">
+        <div class="title">Мои курсы</div>
+        @foreach (var c in _courses)
+        {
+            <div class="element">
+                <div class="element_title">@c.Name</div>
+                <div class="element_item">
+                    <div class="element_item_title">
+                        <img src="img\description.png" alt=""> Описание
+                    </div>
+                    <div class="element_item_info">
+                        @c.Description
+                    </div>
+                </div>
+                <div class="element_item">
+                    <div class="element_item_title">
+                        <img src="img\teacher.png" alt="">Преподаватель
+                    </div>
+                    <div class="element_item_info">
+                        @($"{c.Teacher.LastName} {c.Teacher.FirstName} {c.Teacher.FatherName}")
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+
+
+
+</div>
 
 @code {
 
+    private Student _student;
+
+    private List<Course> _courses = new();
+
+    protected override void OnInitialized()
+    {
+
+        _student = _db.Students
+    .Include(x => x.AspNetUser)
+    .Include(x => x.Group)
+    .ThenInclude(x => x.Courses)
+        .ThenInclude(x => x.Teacher)
+    .First(x => x.AspNetUser == CurrentUser.User);
+        _courses = _student.Group.Courses.ToList();
+    }
 }

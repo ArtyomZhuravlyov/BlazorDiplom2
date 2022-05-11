@@ -2,7 +2,7 @@
 
 @using Microsoft.EntityFrameworkCore
 @inject DB _db;
-@inject NavigationManager _navigation
+@*@inject NavigationManager _navigation*@
 
 
 @attribute [Authorize]
@@ -75,7 +75,8 @@
     private Student _student;
     private string _email;
 
-    protected override async Task OnInitializedAsync()
+
+    protected override void OnInitialized()
     {
 
         switch (CurrentUser.Role)
@@ -102,6 +103,34 @@
         _userName = CurrentUser.User.UserName;
         _email = CurrentUser.User.Email;
     }
+
+    //protected override async Task OnInitializedAsync()
+    //{
+
+    //    switch (CurrentUser.Role)
+    //    {
+    //        case Constants.ROLE_ADMINISTRATOR_IDENTITY:
+    //            break;
+    //        case Constants.ROLE_TEACHER_IDENTITY:
+    //            _teacher = _db.Teachers
+    //         .Include(x => x.AspNetUser)
+    //         .First(x => x.AspNetUser == CurrentUser.User);
+    //            _name = $"{_teacher.LastName} {_teacher.FirstName} {_teacher.FatherName}";
+    //            break;
+    //        case Constants.ROLE_STUDENT_IDENTITY:
+    //            _student = _db.Students
+    //             .Include(x => x.AspNetUser)
+    //             .Include(x => x.Group)
+    //                .ThenInclude(x => x.EducationalInstitution)
+    //             .First(x => x.AspNetUser == CurrentUser.User);
+    //            _name = $"{_student.LastName} {_student.FirstName} {_student.FatherName}";
+    //            break;
+    //        default: break;
+    //    }
+
+    //    _userName = CurrentUser.User.UserName;
+    //    _email = CurrentUser.User.Email;
+    //}
 
     //protected override async Task OnInitializedAsync()
     //{

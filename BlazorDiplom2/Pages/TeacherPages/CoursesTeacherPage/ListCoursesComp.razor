@@ -3,48 +3,42 @@
 @inject UserManager<AspNetUsers> _userManager;
 @*@inject AuthenticationStateProvider GetAuthenticationStateAsync*@
 
-@if (isLoaded)
-{
-    @if (showList)
-    {
-        @foreach (var item in courses)
-        {
-            <div class="element">
-                <div class="element_title">@item.Name</div>
-                <div class="element_item">
-                    <div class="element_item_title">
-                        <img src="img\description.png" alt=""> Описание
-                    </div>
-                    <div class="element_item_info">
-                        @item.Description
-                    </div>
-                </div>
-                <div class="element_item">
-                    <div class="element_item_title">
-                        <img src="img\group.png" alt="">Группы
-                    </div>
-                    <div class="element_item_info">
-                      @string.Join(", ", item.Groups) 
-                    </div>
-                </div>
-                <div class="edit_delete">
-                    <div class="edit_delete_item" @onclick="(()=>OpenChanged(item))"><img src="img\edit.png" alt=""></div>
-                    <div class="edit_delete_item" @onclick="(()=>Delete(item))"><img src="img\delete.png" alt=""></div>
-                </div>
-            </div> 
-        }
 
-    }
-    else
+@if (showList)
+{
+    @foreach (var item in courses)
     {
-        <CreateEditCoursesComp ShowList="ShowList" Course="editCourse" Teacher="thisTeacher"></CreateEditCoursesComp>
+        <div class="element">
+            <div class="element_title">@item.Name</div>
+            <div class="element_item">
+                <div class="element_item_title">
+                    <img src="img\description.png" alt=""> Описание
+                </div>
+                <div class="element_item_info">
+                    @item.Description
+                </div>
+            </div>
+            <div class="element_item">
+                <div class="element_item_title">
+                    <img src="img\group.png" alt="">Группы
+                </div>
+                <div class="element_item_info">
+                    @string.Join(", ", item.Groups)
+                </div>
+            </div>
+            <div class="edit_delete">
+                <div class="edit_delete_item" @onclick="(()=>OpenChanged(item))"><img src="img\edit.png" alt=""></div>
+                <div class="edit_delete_item" @onclick="(()=>Delete(item))"><img src="img\delete.png" alt=""></div>
+            </div>
+        </div>
     }
+
 }
 else
 {
-
-
+    <CreateEditCoursesComp ShowList="ShowList" Course="editCourse" Teacher="thisTeacher"></CreateEditCoursesComp>
 }
+
 
 
 @code {
@@ -52,10 +46,10 @@ else
     private Course editCourse;
     private bool showList = true;
     private Teacher thisTeacher;
-    private bool isLoaded;
 
 
-    protected override async Task OnInitializedAsync()
+
+    protected override void OnInitialized()
     {
         //var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
         //var user = authstate.User;
@@ -74,7 +68,7 @@ else
          //.First(x => x.AspNetUser == aspUser);
          .First(x => x.AspNetUser == CurrentUser.User);
         courses = thisTeacher.Courses;
-        isLoaded = true;
+
     }
 
     private void Delete(Course delCourse)
@@ -85,10 +79,8 @@ else
         _db.SaveChanges();
     }
 
-    private void ShowList()
-    {
-        showList = true;
-    }
+    private void ShowList() => showList = true;
+
 
     private void OpenChanged(Course eCourse)
     {

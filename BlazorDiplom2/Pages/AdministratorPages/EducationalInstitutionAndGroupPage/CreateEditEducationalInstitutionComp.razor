@@ -1,6 +1,6 @@
 ﻿@inject DB _db;
 
-@if (edit)
+@if (_edit)
 {
     <button @onclick="ShowList">Назад</button>
 }
@@ -15,7 +15,7 @@
         <div class="main_name">Сокращённое название</div>
          <InputText @bind-Value="EducationalInstitution.ShortName"></InputText>
     </div>   
-    <button class="save_btn">@messageBtn</button>
+    <button class="save_btn">@_messageBtn</button>
 </EditForm>
 @code {
 
@@ -23,14 +23,14 @@
 
     [Parameter] public EventCallback ShowList { get; set; }
 
-    private bool edit;
+    private bool _edit;
 
-    private string messageBtn;
+    private string _messageBtn;
 
     protected override void OnInitialized()
     {
-        edit = EducationalInstitution.Id != 0;
-        messageBtn = edit ? Constants.BTN_CHANGE : Constants.BTN_ADD;
+        _edit = EducationalInstitution.Id != 0;
+        _messageBtn = _edit ? Constants.BTN_CHANGE : Constants.BTN_ADD;
     }
 
     private void OnValidSubmit()
@@ -46,7 +46,7 @@
         //    _db.EducationalInstitutions.Add(EducationalInstitution);
 
         //}
-        if(!edit)
+        if(!_edit)
             _db.EducationalInstitutions.Add(EducationalInstitution);
         _db.SaveChanges();
         EducationalInstitution = new();

@@ -16,7 +16,7 @@
 
         @*<textarea class="form_program" @bind="@_codeKoan"></textarea>*@
         <div class="btns">
-            <button class="reset" @onclick="()=>ReadFileKoanAsync(true)">
+            <button class="reset" @onclick="ReadFileKoanAsync">
                 <img src="img\reset.svg" alt="">
             </button>
             <div class="back_next_check">
@@ -62,7 +62,7 @@ else
 
         @*<textarea class="form_program" @bind="@CodeKoan"></textarea>*@
         <div class="btns">
-            <button class="reset" @onclick="()=>ReadFileKoanAsync(true)">
+            <button class="reset" @onclick="ReadFileKoanAsync">
                 <img src="img\reset.svg" alt="">
             </button>
             <div class="back_next_check">
@@ -177,21 +177,16 @@ else
                 LineHeight = 19,
                 ScrollBeyondLastLine = false,
                 Minimap = new EditorMinimapOptions(){Enabled = false},
-                Value = _codeKoan
+                Value = ""
         };
     }
 
     private async Task SetValueMonacoAsync() =>  await _editor.SetValue(_codeKoan);
-    //{
-    //    await _editor.SetValue(_codeKoan);
-    //}
 
     private async Task<string> GetValueMonacoAsync() =>  await _editor.GetValue();
-    //{
-    //    return await _editor.GetValue();
-    //}
 
-    protected override async Task OnInitializedAsync()
+
+    protected override void OnInitialized()
     {
         if (IsTest)
         {
@@ -226,7 +221,7 @@ else
     /// </summary>
     protected override void OnParametersSet()
     {
-        ReadFileKoanAsync();
+        //ReadFileKoanAsync();
         _isCodeParChange = true;
     }
 
@@ -236,7 +231,8 @@ else
     {
         if(_isCodeParChange)
         {
-            ReadFileKoanAsync(true);
+            ReadFileKoanAsync();
+            //await SetValueMonacoAsync();
             _isCodeParChange = false;
         }
         //if(LocStorage.LocalStorage == null)
@@ -272,7 +268,7 @@ else
     List<Module> listModules;
     List<Module> listIdModuleInvisible = new();
 
-    private async void ReadFileKoanAsync(bool isAfterReload = false)
+    private async void/*Task<string>*/ ReadFileKoanAsync(/*bool isAfterReload = false*/)
     {
         using (FileStream fstream = File.OpenRead(CurKoan.Link))
         {
@@ -281,8 +277,9 @@ else
             _codeKoan = Encoding.Default.GetString(buffer);
         }
 
-        if (isAfterReload)
+        //if (isAfterReload)
             await SetValueMonacoAsync();
+        //return _codeKoan;
         //this.StateHasChanged();
     }
 

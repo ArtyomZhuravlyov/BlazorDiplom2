@@ -2,41 +2,40 @@
 @inject DB _db;
 
 
-@if (isLoaded)
-{
-    @if (showList)
-    {
-        @if (koans != null)
-        {
-            @foreach (var item in koans)
-            {
 
-                <div class="element">
-                    <div class="element_item">
-                        <div class="element_item_title">
-                            <img src="img\description.png" alt=""> Название
-                        </div>
-                        <div class="element_item_info">
-                            @item.Name
-                        </div>
+@if (showList)
+{
+    @if (koans != null)
+    {
+        @foreach (var item in koans)
+        {
+
+            <div class="element">
+                <div class="element_item">
+                    <div class="element_item_title">
+                        <img src="img\description.png" alt=""> Название
                     </div>
-                    <div class="edit_delete">
-                        <div class="edit_delete_item" @onclick="(()=>OpenChanged(item))"><img src="img\edit.png" alt=""></div>
-                        <div class="edit_delete_item" @onclick="(()=>Delete(item))"><img src="img\delete.png" alt=""></div>
+                    <div class="element_item_info">
+                        @item.Name
                     </div>
                 </div>
-            }
-        }
-        else
-        {
-            <div> Loading   </div>
+                <div class="edit_delete">
+                    <div class="edit_delete_item" @onclick="(()=>OpenChanged(item))"><img src="img\edit.png" alt=""></div>
+                    <div class="edit_delete_item" @onclick="(()=>Delete(item))"><img src="img\delete.png" alt=""></div>
+                </div>
+            </div>
         }
     }
     else
     {
-        <CreateEditKoan ShowList="ShowList" Koan="editKoan" Teacher="thisTeacher"></CreateEditKoan>
+        <div> Loading   </div>
     }
 }
+else
+{
+    <CreateEditKoan ShowList="ShowList" Koan="editKoan" Teacher="thisTeacher"></CreateEditKoan>
+}
+
 
 
 @code {
@@ -44,19 +43,19 @@
     Koan editKoan;
     bool showList = true;
     Teacher thisTeacher;
-    bool isLoaded;
 
 
 
-    protected override async Task OnInitializedAsync()
+
+    protected override void OnInitialized()
     {
         //var authstate = await GetAuthenticationStateAsync.GetAuthenticationStateAsync();
         //var user = authstate.User;
         //var aspUser = await _userManager.GetUserAsync(user);
         //thisTeacher = _db.Teachers.Include(x => x.AspNetUser).Include(x=>x.Koans).First(x => x.AspNetUser == aspUser);
-        thisTeacher = await Task.FromResult(_db.Teachers.Include(x => x.AspNetUser).Include(x => x.Koans).First(x => x.AspNetUser == CurrentUser.User));
+        thisTeacher = _db.Teachers.Include(x => x.AspNetUser).Include(x => x.Koans).First(x => x.AspNetUser == CurrentUser.User);
         koans = thisTeacher.Koans;
-        isLoaded = true;
+
     }
 
     private void Delete(Koan delKoan)
@@ -67,10 +66,8 @@
         _db.SaveChanges();
     }
 
-    private void ShowList()
-    {
-        showList = true;
-    }
+    private void ShowList() => showList = true;
+
 
     private void OpenChanged(Koan eKoan)
     {

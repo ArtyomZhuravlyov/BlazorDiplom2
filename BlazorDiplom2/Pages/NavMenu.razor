@@ -5,36 +5,33 @@
 
 <div class="menu">
 
-    @*  <AuthorizeView Roles="Administrators">
-        <Authorized>
-        <NavLink class="main_nav_link border" href="Users">Управление пользователями</NavLink>
-        <NavLink class="main_nav_link" href="EducationalInstitutionandgroup">Управление учебными заведениями и группами</NavLink>
-        <div class="account"><img src="img\account.png" alt=""></div>
-        </Authorized>
-        </AuthorizeView>*@
-    <AuthorizeView Roles=@($"{Constants.ROLE_TEACHER_IDENTITY}, {Constants.ROLE_STUDENT_IDENTITY}")>
-        <Authorized>
-            <div class="name">@_name</div>
-        </Authorized>
-    </AuthorizeView>
-    <div class="username">@_userName</div>
-    <AuthorizeView Roles=@($"{Constants.ROLE_TEACHER_IDENTITY}")>
-        <Authorized>
-            <NavLink class="menu_items" href="coursesteacher">Курсы</NavLink>
-            <NavLink class="menu_items" href="koansteacher">Коаны</NavLink>
-        </Authorized>
-    </AuthorizeView>
-     <AuthorizeView Roles=@($"{Constants.ROLE_STUDENT_IDENTITY}")>
-        <Authorized>
-            <NavLink class="menu_items" href="">Мои курсы</NavLink> @*сделать страницу*@
-        </Authorized>
-    </AuthorizeView>
 
-    <NavLink class="menu_items" href="/">О пользователе</NavLink> @*сделать страницу*@
-    <NavLink class="menu_items" href="/Identity/Account/Login"><img src="img\exit.png" alt="">Выйти</NavLink>
+        <AuthorizeView Roles=@($"{Constants.ROLE_TEACHER_IDENTITY}, {Constants.ROLE_STUDENT_IDENTITY}")>
+            <Authorized>
+                <div class="name">@_name</div>
+            </Authorized>
+        </AuthorizeView>
+        <div class="username">@_userName</div>
+        <AuthorizeView Roles=@($"{Constants.ROLE_TEACHER_IDENTITY}")>
+            <Authorized>
+                <NavLink class="menu_items" href="coursesteacher">Курсы</NavLink>
+                <NavLink class="menu_items" href="koansteacher">Коаны</NavLink>
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView Roles=@($"{Constants.ROLE_STUDENT_IDENTITY}")>
+            <Authorized>
+                <NavLink class="menu_items" href="studentcourse">Мои курсы</NavLink>
+            </Authorized>
+        </AuthorizeView>
+
+        <NavLink class="menu_items" href="/">О пользователе</NavLink>
+        <NavLink class="menu_items" href="/Identity/Account/Login"><img src="img\exit.png" alt="">Выйти</NavLink>
+    
+
+
     @*<div class="menu_items" @onclick="LogOut"><img src="img\exit.png" alt="">Выйти</div>*@
 
-     @* <form  method="post" action="/Identity/Account/Logout">
+    @* <form  method="post" action="/Identity/Account/Logout">
         <button type="submit" class="menu_items"><img src="img\exit.png" alt="">Выйти</button>
         <input name="__RequestVerificationToken" type="hidden"></form>*@
 

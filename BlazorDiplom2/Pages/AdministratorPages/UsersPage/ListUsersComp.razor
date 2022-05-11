@@ -115,18 +115,18 @@ else
 
     //protected override async Task OnInitializedAsync() =>  students2 = await _db.GetStudentsAsync();
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
 
-        _students = await Task.FromResult(_db.Students
+        _students = _db.Students
         .Include(x => x.AspNetUser)
         .Include(x => x.Group)
-            .ThenInclude(x => x.EducationalInstitution));
+            .ThenInclude(x => x.EducationalInstitution);
 
-        _teachers = await Task.FromResult(_db.Teachers
+        _teachers = _db.Teachers
         .Include(x => x.AspNetUser)
         .Include(x => x.Groups)
-            .ThenInclude(x => x.EducationalInstitution));
+            .ThenInclude(x => x.EducationalInstitution);
         //teachers = await _db.GetTeachersAsync();
     }
 
@@ -144,10 +144,8 @@ else
         _db.SaveChanges();
     }
 
-    private void ShowList()
-    {
-        _showList = true;
-    }
+    private void ShowList() => _showList = true;
+
 
     private void OpenChanged(Object user)
     {
