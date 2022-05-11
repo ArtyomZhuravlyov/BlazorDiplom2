@@ -30,7 +30,7 @@
         </Authorized>
     </AuthorizeView>
 
-    <NavLink class="menu_items" href="aboutuser">О пользователе</NavLink> @*сделать компонент*@
+    <NavLink class="menu_items" href="/">О пользователе</NavLink> @*сделать страницу*@
     <NavLink class="menu_items" href="/Identity/Account/Login"><img src="img\exit.png" alt="">Выйти</NavLink>
     @*<div class="menu_items" @onclick="LogOut"><img src="img\exit.png" alt="">Выйти</div>*@
 
@@ -60,13 +60,13 @@
                 var teacher = _db.Teachers
              .Include(x => x.AspNetUser)
              .First(x => x.AspNetUser == CurrentUser.User);
-                _name = teacher.LastName + teacher.FirstName;
+                _name = $"{teacher.LastName} {teacher.FirstName}";
                 break;
             case Constants.ROLE_STUDENT_IDENTITY:
                 var student = _db.Students
                  .Include(x => x.AspNetUser)
                  .First(x => x.AspNetUser == CurrentUser.User);
-                _name = student.LastName + student.FirstName;
+                _name = $"{student.LastName} {student.FirstName}";
                 break;
             default: break;
         }

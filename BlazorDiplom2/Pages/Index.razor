@@ -1,45 +1,130 @@
 ﻿@page "/"
 
-@inject DB _db
-@inject NavigationManager navigation
+@using Microsoft.EntityFrameworkCore
+@inject DB _db;
+@inject NavigationManager _navigation
+
+
 @attribute [Authorize]
-@*@using Microsoft.AspNetCore.Http
-@inject IHttpContextAccessor httpContextAccessor*@
+<div class="menu_info">
+    <NavMenu></NavMenu>
+    <div class="info">
+        <div class="title">О пользователе</div>
+        <div class="info_items">
+            <div class="info_item long">
+                <div class="info_item_title">
+                    <img src="img\name.png" alt=""> Полное имя
+                </div>
+                <div class="info_item_info">
+                    @_name
+                </div>
+            </div>
+            <div class="info_item short">
+                <div class="info_item_title">
+                    <img src="img\description.png" alt=""> Логин
+                </div>
+                <div class="info_item_info">
+                    @_userName
+                </div>
+            </div>
+            <div class="info_item">
+                <div class="info_item_title">
+                    <img src="img\mail.png" alt=""> Почта
+                </div>
+                <div class="info_item_info">
+                    @_email
+                </div>
+            </div>
 
-<PageTitle>Index</PageTitle>
+            <AuthorizeView Roles=@($"{Constants.ROLE_STUDENT_IDENTITY}")>
+                <Authorized>
+                    <div class="info_item long">
+                        <div class="info_item_title">
+                            <img src="img\study.png" alt=""> Учебное заведение
+                        </div>
+                        <div class="info_item_info">
+                            @_student.Group.EducationalInstitution.FullName
+                        </div>
+                    </div>
+                </Authorized>
+            </AuthorizeView>
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
+            <AuthorizeView Roles=@($"{Constants.ROLE_STUDENT_IDENTITY}")>
+                <Authorized>
+                    <div class="info_item short">
+                        <div class="info_item_title">
+                            <img src="img\group.png" alt=""> Группа
+                        </div>
+                        <div class="info_item_info">
+                            @_student.Group.Name
+                        </div>
+                    </div>
+                </Authorized>
+            </AuthorizeView>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+        </div>
+    </div>
+</div>
 
 @code {
 
-
+    private string _name;
+    private string _userName;
+    private Teacher _teacher;
+    private Student _student;
+    private string _email;
 
     protected override async Task OnInitializedAsync()
     {
 
-
-        //CookieTest cookiesTest = new CookieTest();
-
-        //if (Cookie.HttpContextAccessor == null)
-        //{
-        //    Cookie.HttpContextAccessor = httpContextAccessor;
-            
-        //    Cookie.HttpContextAccessor.HttpContext.Response.Cookies.Append("TestK", Newtonsoft.Json.JsonConvert.SerializeObject(cookiesTest));
-        //}
-
-        //Cookie.HttpContextAccessor.HttpContext.Response.Cookies.Append("TestK", Newtonsoft.Json.JsonConvert.SerializeObject(cookiesTest));
-
-        if (DB.StatusStart)
+        switch (CurrentUser.Role)
         {
-            DB.StatusStart = false;
-            _db.SetDefValue();
-            navigation.NavigateTo("/Identity/Account/Register");
-
+            case Constants.ROLE_ADMINISTRATOR_IDENTITY:
+                break;
+            case Constants.ROLE_TEACHER_IDENTITY:
+                _teacher = _db.Teachers
+             .Include(x => x.AspNetUser)
+             .First(x => x.AspNetUser == CurrentUser.User);
+                _name = $"{_teacher.LastName} {_teacher.FirstName} {_teacher.FatherName}";
+                break;
+            case Constants.ROLE_STUDENT_IDENTITY:
+                _student = _db.Students
+                 .Include(x => x.AspNetUser)
+                 .Include(x => x.Group)
+                    .ThenInclude(x => x.EducationalInstitution)
+                 .First(x => x.AspNetUser == CurrentUser.User);
+                _name = $"{_student.LastName} {_student.FirstName} {_student.FatherName}";
+                break;
+            default: break;
         }
+
+        _userName = CurrentUser.User.UserName;
+        _email = CurrentUser.User.Email;
     }
+
+    //protected override async Task OnInitializedAsync()
+    //{
+
+
+    //    //CookieTest cookiesTest = new CookieTest();
+
+    //    //if (Cookie.HttpContextAccessor == null)
+    //    //{
+    //    //    Cookie.HttpContextAccessor = httpContextAccessor;
+
+    //    //    Cookie.HttpContextAccessor.HttpContext.Response.Cookies.Append("TestK", Newtonsoft.Json.JsonConvert.SerializeObject(cookiesTest));
+    //    //}
+
+    //    //Cookie.HttpContextAccessor.HttpContext.Response.Cookies.Append("TestK", Newtonsoft.Json.JsonConvert.SerializeObject(cookiesTest));
+
+    //    if (DB.StatusStart)
+    //    {
+    //        DB.StatusStart = false;
+    //        _db.SetDefValue();
+    //        navigation.NavigateTo("/Identity/Account/Register");
+
+    //    }
+    //}
 
 }

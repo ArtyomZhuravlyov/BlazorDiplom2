@@ -1,21 +1,21 @@
 ﻿@page "/coursesteacher"
 @attribute [Authorize(Roles = @Constants.ROLE_TEACHER_IDENTITY)]
 <div class="menu_info">
-   @* <div class="menu">
+    @* <div class="menu">
         <div class="name">Калимуллина Адиля</div>
         <div class="username">kalimullina-adilya</div>
         <div class="menu_items">Курсы</div>
         <div class="menu_items">Коаны</div>
         <div class="menu_items">О пользователе</div>
         <div class="menu_items"><img src="img\exit.png" alt="">Выйти</div>
-    </div>*@
+        </div>*@
     <NavMenu></NavMenu>
     @*вставить левую панель сюда*@
     <div class="info">
         <div class="nav_top">
-            <div class="nav_top_link border" @onclick="(()=>_activeTab = Enums.TabCoursesTeacher.Courses)">Мои курсы</div>
-            <div class="nav_top_link border" @onclick="(()=>_activeTab = Enums.TabCoursesTeacher.AddCourse)">Добавить курс</div>
-            <div class="nav_top_link" @onclick="(()=>_activeTab = Enums.TabCoursesTeacher.AddGroupsToCourse)">Записать группы на курс</div>
+            <div class="nav_top_link border @GetHighlight(Enums.TabCoursesTeacher.Courses)" @onclick="(()=>_activeTab = Enums.TabCoursesTeacher.Courses)">Мои курсы</div>
+            <div class="nav_top_link border @GetHighlight(Enums.TabCoursesTeacher.AddCourse)" @onclick="(()=>_activeTab = Enums.TabCoursesTeacher.AddCourse)">Добавить курс</div>
+            <div class="nav_top_link @GetHighlight(Enums.TabCoursesTeacher.AddGroupsToCourse)" @onclick="(()=>_activeTab = Enums.TabCoursesTeacher.AddGroupsToCourse)">Записать группы на курс</div>
         </div>
         @switch (_activeTab)
         {
@@ -37,5 +37,11 @@
     //[CascadingParameter]
     private Enums.TabCoursesTeacher _activeTab = Enums.TabCoursesTeacher.Courses;
 
+    private string GetHighlight(Enums.TabCoursesTeacher tab)
+    {
+        if (_activeTab == tab)
+            return "nav_top_link_highligth";
+        else return "";
+    }
 
 }

@@ -10,8 +10,8 @@ else
 {
     <div class="info scroll">
         <div class="nav_top">
-            <div class="nav_top_link border" @onclick="(()=>_activeTab = Enums.TabTestStudent.Test)">Тест</div>
-            <div class="nav_top_link" style="@GetVisibleTabTest()" @onclick="(()=>_activeTab = Enums.TabTestStudent.ResultTest)">Результат</div>
+            <div class="nav_top_link border @GetHighlight(Enums.TabTestStudent.Test)" @onclick="(()=>_activeTab = Enums.TabTestStudent.Test)">Тест</div>
+            <div class="nav_top_link @GetHighlight(Enums.TabTestStudent.ResultTest)" style="@GetVisibleTabTest()" @onclick="(()=>_activeTab = Enums.TabTestStudent.ResultTest)">Результат</div>
             @switch (_activeTab)
             {
                 case Enums.TabTestStudent.Test:
@@ -63,6 +63,14 @@ else
 
 
     private bool _isInProressTest = false;
+
+     private string GetHighlight(Enums.TabTestStudent tab)
+    {
+        if (_activeTab == tab)
+            return "nav_top_link_highligth";
+        else return "";
+    }
+
 
     public async void StartTestAsync()
     {

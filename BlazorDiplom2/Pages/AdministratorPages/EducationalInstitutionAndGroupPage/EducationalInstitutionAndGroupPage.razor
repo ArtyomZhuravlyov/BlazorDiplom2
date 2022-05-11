@@ -1,0 +1,43 @@
+﻿@page "/EducationalInstitutionandgroup"
+@attribute [Authorize(Roles = @Constants.ROLE_ADMINISTRATOR_IDENTITY)]
+
+<div class="menu_info">
+    <NavMenu></NavMenu>
+    <div class="results_student">
+        <div class="nav_top">
+            <div class="nav_top_link border @GetHighlight(Enums.TabUniversityAndGroup.EducationalInstitutions)" @onclick="(()=>_activeTab = Enums.TabUniversityAndGroup.EducationalInstitutions)">Учебные заведения</div>
+            <div class="nav_top_link border @GetHighlight(Enums.TabUniversityAndGroup.AddEducationalInstitution)" @onclick="(()=>_activeTab = Enums.TabUniversityAndGroup.AddEducationalInstitution)">Добавить учебное заведение</div>
+            <div class="nav_top_link border @GetHighlight(Enums.TabUniversityAndGroup.Groups)" @onclick="(()=>_activeTab = Enums.TabUniversityAndGroup.Groups)">Группы</div>
+            <div class="nav_top_link @GetHighlight(Enums.TabUniversityAndGroup.AddGroup)" @onclick="(()=>_activeTab = Enums.TabUniversityAndGroup.AddGroup)">Добавить группу</div>
+        </div>
+
+        @switch (_activeTab)
+        {
+            case Enums.TabUniversityAndGroup.EducationalInstitutions:
+                <ListEducationalInstitutionComp></ListEducationalInstitutionComp>
+                break;
+            case Enums.TabUniversityAndGroup.AddEducationalInstitution:
+                <CreateEditEducationalInstitutionComp EducationalInstitution="new EducationalInstitution()"></CreateEditEducationalInstitutionComp>
+                break;
+            case Enums.TabUniversityAndGroup.Groups:
+                <ListGroupComp></ListGroupComp>
+                break;
+            case Enums.TabUniversityAndGroup.AddGroup:
+                <CreateEditGroupComp Group="new Group()"></CreateEditGroupComp>
+                break;
+        }
+
+    </div>
+</div>
+
+@code {
+    //[CascadingParameter]
+    private Enums.TabUniversityAndGroup _activeTab = Enums.TabUniversityAndGroup.EducationalInstitutions;
+
+    private string GetHighlight(Enums.TabUniversityAndGroup tab)
+    {
+        if (_activeTab == tab)
+            return "nav_top_link_highligth";
+        else return "";
+    }
+}

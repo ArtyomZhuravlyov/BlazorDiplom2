@@ -18,7 +18,7 @@
         //}
         //else
         //{
-            
+
         //    //await _signInManager.SignInAsync(_userManager.Users.First(x=>x.UserName == "art@mail.ru"), isPersistent: false);
         //    //_navigation.NavigateTo("/");
         //    await _signInManager.SignInAsync(_userManager.Users.First(x=>x.UserName == "rab"), isPersistent: false);
@@ -30,7 +30,17 @@
         //    _navigation.NavigateTo("/");
         //}
 
-           _navigation.NavigateTo("/Identity/Account/Login");
+        if (CurrentUser.User == null)
+        {
+            
+            CurrentUser.User = await _userManager.FindByNameAsync("rab");
+            CurrentUser.Role = (await _userManager.GetRolesAsync(CurrentUser.User)).First();
+            await _signInManager.SignInAsync(CurrentUser.User, isPersistent: false);
+            _navigation.NavigateTo("/");
+            //_navigation.NavigateTo("/slnkoans4");
+        }
+
+        // _navigation.NavigateTo("/Identity/Account/Login");
 
         //await base.SetParametersAsync(parameters);
     }

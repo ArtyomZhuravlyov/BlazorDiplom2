@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using BlazorDiplom2.Data;
+using Microsoft.AspNetCore.Components.Authorization;
 
 namespace BlazorDiplom2.Areas.Identity.Pages.Account
 {
@@ -24,13 +25,13 @@ namespace BlazorDiplom2.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<AspNetUsers> _signInManager;
         private readonly ILogger<LoginModel> _logger;
-        //private readonly DB _db;
+        private readonly UserManager<AspNetUsers> _userManager;
 
-        public LoginModel(SignInManager<AspNetUsers> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<AspNetUsers> signInManager, ILogger<LoginModel> logger,UserManager<AspNetUsers> userManager)
         {
             _signInManager = signInManager;
             _logger = logger;
-
+            _userManager = userManager;
         }
 
         /// <summary>
@@ -128,6 +129,11 @@ namespace BlazorDiplom2.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User logged in.");
+                    if (CurrentUser.User == null)
+                    {
+                        CurrentUser.User = await _userManager.FindByNameAsync(Input.SurName);
+                        CurrentUser.Role = (await _userManager.GetRolesAsync(CurrentUser.User)).First();
+                    }//    CurrentUser.User = await _signInManager.UserManager. _userManager.GetUsersForClaimAsync.GetUserAsync(HttpContext.User); //await CurrentUser.SetUserAsync(_authenticationStateProvider, _userManager);
                     return LocalRedirect(returnUrl);
                 }
                 //if (result.RequiresTwoFactor)
